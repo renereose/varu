@@ -357,7 +357,7 @@ function renderRegions() {
 function chooseRegion(id) {
   s.region = s.state.regions.find((r) => r.id === id) ?? s.state.regions[0];
   s.pois = new Set((s.region.pois ?? []).map((p) => p.id)); // all places: they are small
-  s.library = new Set(s.state.library ? (s.region.library ?? []).map((b) => b.name) : []);
+  s.library = new Set(); // books are gigabytes each: opt in, never a surprise download
   s.home = null; s.radius = 0; // whole country until a home is chosen
   $("results").replaceChildren();
 }
