@@ -38,3 +38,17 @@ if (view) {
   view.addEventListener("resize", place);
   view.addEventListener("scroll", place);
 }
+
+// Vikipeedia's front page lists its portals as plain text: the offline
+// edition has no portal pages. Link each to the article of the same name,
+// when the book has one.
+for (const name of document.querySelectorAll(".main-page-portals b")) {
+  if (name.closest("a")) continue;
+  const href = `./${encodeURIComponent(name.textContent.trim().replaceAll(" ", "_"))}`;
+  fetch(href, { method: "HEAD" }).then((res) => {
+    if (!res.ok) return;
+    const link = Object.assign(document.createElement("a"), { href });
+    name.replaceWith(link);
+    link.append(name);
+  }).catch(() => {});
+}
