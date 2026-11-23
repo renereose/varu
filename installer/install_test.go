@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -198,6 +199,10 @@ func TestStickGetsDesktopApps(t *testing.T) {
 	stick := makePlan(index, req, true, nil)
 	if len(stick.Items) != 2 || stick.Items[1].Kind != "desktop" || stick.Items[1].dest != filepath.Join(req.Target, "Varu-macOS.dmg") {
 		t.Errorf("a stick got %+v", stick.Items)
+	}
+	// The temp folder is APFS, ext4 or NTFS: as a stick, not every computer could read it.
+	if !slices.ContainsFunc(stick.Problems, func(p Problem) bool { return p.Code == "portable" }) {
+		t.Errorf("a stick only some computers read was accepted: %+v", stick.Problems)
 	}
 }
 

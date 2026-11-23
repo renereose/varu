@@ -225,8 +225,9 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 	if err == nil && plan.Needed > plan.Free {
 		problem("space", "")
 	}
-	if volumeRoot && !isFAT(fs) && !strings.EqualFold(fs, "exfat") {
-		plan.Warnings = append(plan.Warnings, Problem{"portable", fs})
+	// A stick must work on every computer, whichever made it.
+	if volumeRoot && !portable(fs) {
+		problem("portable", fs)
 	}
 	return plan
 }
@@ -268,6 +269,9 @@ func hasForeignFiles(dir string) bool {
 
 var varuNames = []string{"app", "bin", "maps", "pois", "docs", "library", "licenses",
 	"manifest.json", "build-info.json", "README.txt", ".DS_Store"}
+
+// portable says whether Windows, macOS and Linux all read and write fs.
+func portable(fs string) bool { return isFAT(fs) || strings.EqualFold(fs, "exfat") }
 
 func isFAT(fs string) bool {
 	switch strings.ToLower(fs) {
