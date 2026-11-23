@@ -1,6 +1,7 @@
 # Built drives and downloads
 /drive/
 /dist/
+/build/
 *.part
 *.partial.pmtiles
 

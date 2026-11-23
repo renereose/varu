@@ -1,0 +1,165 @@
+package main
+
+import (
+	"archive/zip"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+func sum(b []byte) string { h := sha256.Sum256(b); return hex.EncodeToString(h[:]) }
+
+func writeZip(t *testing.T, path string, files map[string]string) {
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	zw := zip.NewWriter(f)
+	for name, body := range files {
+		hdr := &zip.FileHeader{Name: name, Method: zip.Deflate}
+		hdr.SetMode(0o644)
+		if strings.HasPrefix(name, "bin/") {
+			hdr.SetMode(0o755)
+		}
+		w, err := zw.CreateHeader(hdr)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _ = w.Write([]byte(body))
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+}
+
+// TestInstall runs a whole install against a fake release: the bundle,
+// a map cut around home, a library book that resumes from an earlier
+// run, and the place layers trimmed to the radius.
+func TestInstall(t *testing.T) {
+	src, target := t.TempDir(), filepath.Join(t.TempDir(), "Varu")
+	manifest := `{"schema":1,"map":{"file":"maps/ee.pmtiles","center":[25,58.6],"zoom":6},
+		"pois":[{"id":"water","file":"pois/water.geojson","count":2},{"id":"fuel","file":"pois/fuel.geojson","count":1}]}`
+	water := `{"type":"FeatureCollection","features":[
+		{"type":"Feature","geometry":{"type":"Point","coordinates":[26.73,58.38]},"properties":{}},
+		{"type":"Feature","geometry":{"type":"Point","coordinates":[24.75,59.43]},"properties":{}}]}`
+	writeZip(t, filepath.Join(src, "varu-ee.zip"), map[string]string{
+		"manifest.json": manifest, "app/index.html": "<h1>", "bin/darwin-arm64/varu": "#!",
+		"pois/water.geojson": water, "pois/fuel.geojson": `{"features":[]}`,
+	})
+	writeArchive(t, filepath.Join(src, "ee.pmtiles"))
+	book := []byte(strings.Repeat("wikipedia ", 5000))
+	if err := os.WriteFile(filepath.Join(src, "book.zim"), book, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	bundle, _ := os.ReadFile(filepath.Join(src, "varu-ee.zip"))
+	mapFile, _ := os.ReadFile(filepath.Join(src, "ee.pmtiles"))
+
+	srv := httptest.NewServer(http.FileServer(http.Dir(src)))
+	defer srv.Close()
+	index := &Index{Schema: 1, Regions: []Region{{
+		ID: "ee", CountryCode: "EE", Bounds: []float64{21.3, 57.45, 28.3, 59.9},
+		Bundle: Asset{Asset: "varu-ee.zip", Size: int64(len(bundle)), SHA256: sum(bundle), Unpacked: 1000},
+		Map:    &Asset{Asset: "ee.pmtiles", Path: "maps/ee.pmtiles", Size: int64(len(mapFile)), SHA256: sum(mapFile)},
+		Pois:   []PoiLayer{{ID: "water"}, {ID: "fuel"}},
+		Library: []Book{{Name: "wp", Title: "Wikipedia", File: "wp_2026-11.zim", URL: srv.URL + "/book.zim",
+			Size: int64(len(book)), SHA256: sum(book)}},
+	}}}
+
+	// Half of the book is already there from an interrupted run.
+	if err := os.MkdirAll(filepath.Join(target, "library"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(target, "library", "wp_2026-11.zim.part"), book[:20000], 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	base, _ := url.Parse(srv.URL + "/")
+	app := &App{Source: base, Client: srv.Client(), index: index}
+	req := Request{Target: target, Region: "ee", Home: &Home{Lat: 58.38, Lon: 26.72, Name: "Tartu"},
+		RadiusKm: 10, Pois: []string{"water"}, Library: []string{"wp"}}
+	plan := app.plan(req)
+	if len(plan.Problems) > 0 {
+		t.Fatalf("problems: %+v", plan.Problems)
+	}
+	if plan.Items[2].Have != 20000 {
+		t.Errorf("plan should count the partial book, have=%d", plan.Items[2].Have)
+	}
+	job := &Job{Target: target, Plan: plan, Source: base, Client: srv.Client()}
+	job.Run()
+	if p := job.snapshot(); len(p.Errors) > 0 || !p.Finished {
+		t.Fatalf("install: %+v", p)
+	}
+
+	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.zim")); string(got) != string(book) {
+		t.Error("resumed book differs from the original")
+	}
+	if info, err := os.Stat(filepath.Join(target, "bin/darwin-arm64/varu")); err != nil || info.Mode()&0o100 == 0 {
+		t.Errorf("launcher should be executable: %v %v", info, err)
+	}
+	if _, err := os.Stat(filepath.Join(target, "pois/fuel.geojson")); !os.IsNotExist(err) {
+		t.Error("an unchosen place layer was kept")
+	}
+	if _, err := openArchive(httpClient(), "file://"+filepath.ToSlash(filepath.Join(target, "maps/ee.pmtiles"))); err != nil {
+		t.Errorf("cut map does not open: %v", err)
+	}
+
+	var m map[string]any
+	raw, _ := os.ReadFile(filepath.Join(target, "manifest.json"))
+	if err := json.Unmarshal(raw, &m); err != nil {
+		t.Fatal(err)
+	}
+	pois := m["pois"].([]any)
+	if len(pois) != 1 || pois[0].(map[string]any)["count"].(float64) != 1 {
+		t.Errorf("want only water with the 1 place within 10 km, got %v", pois)
+	}
+	if lib := m["library"].([]any); len(lib) != 1 {
+		t.Errorf("library = %v", lib)
+	}
+	if home := m["home"].(map[string]any); home["name"] != "Tartu" || home["radius_km"].(float64) != 10 {
+		t.Errorf("home = %v", home)
+	}
+	if center := m["map"].(map[string]any)["center"].([]any); center[0].(float64) != 26.72 {
+		t.Errorf("map should open at home, center = %v", center)
+	}
+}
+
+func TestExtractRefusesEscapes(t *testing.T) {
+	dir := t.TempDir()
+	writeZip(t, filepath.Join(dir, "bad.zip"), map[string]string{"../evil.txt": "x"})
+	if err := extract(filepath.Join(dir, "bad.zip"), filepath.Join(dir, "out"), false); err == nil {
+		t.Fatal("an entry outside the target was accepted")
+	}
+	if _, err := os.Stat(filepath.Join(dir, "evil.txt")); !os.IsNotExist(err) {
+		t.Fatal("file written outside the target")
+	}
+}
+
+func TestAPIGuards(t *testing.T) {
+	app := &App{Token: "secret", index: &Index{Schema: 1}}
+	h := app.Handler("127.0.0.1:8470")
+	for _, c := range []struct {
+		host, token string
+		want        int
+	}{
+		{"127.0.0.1:8470", "secret", 200},
+		{"127.0.0.1:8470", "", 403},          // another website's page has no token
+		{"evil.example:8470", "secret", 403}, // DNS rebinding
+	} {
+		req := httptest.NewRequest("GET", "/api/state", nil)
+		req.Host = c.host
+		req.Header.Set("X-Token", c.token)
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, req)
+		if rec.Code != c.want {
+			t.Errorf("host %s token %q: %d, want %d", c.host, c.token, rec.Code, c.want)
+		}
+	}
+}

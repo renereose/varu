@@ -33,6 +33,10 @@ class PoiSpec:
     color: str
     label: dict[str, str]
     default: bool = False
+    # Instead of OpenStreetMap tags: an official list served as GeoJSON points
+    # in WGS84, and which of its fields become the popup's name, address ...
+    geojson: str | None = None
+    properties: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -109,9 +113,15 @@ def _parse_pois(items: list) -> tuple[PoiSpec, ...]:
         if poi_id in seen:
             raise ConfigError(f"{where}: duplicate id '{poi_id}'")
         seen.add(poi_id)
-        tags = _require(item, "tags", where)
-        if not tags or not all(isinstance(tag, str) and _TAG.match(tag) for tag in tags):
+        geojson = item.get("geojson")
+        if geojson is not None and not str(geojson).startswith("https://"):
+            raise ConfigError(f"{where}: geojson must be an https:// URL")
+        tags = item.get("tags", [])
+        if geojson is None and (not tags or not all(isinstance(tag, str) and _TAG.match(tag) for tag in tags)):
             raise ConfigError(f"{where}: tags must be a list of OpenStreetMap \"key=value\" strings")
+        properties = item.get("properties", {})
+        if not isinstance(properties, dict) or not all(isinstance(v, str) for v in properties.values()):
+            raise ConfigError(f"{where}: properties must map popup fields to source fields")
         color = item.get("color", "#455a64")
         if not _COLOR.match(color):
             raise ConfigError(f"{where}: color must look like #1a2b3c")
@@ -121,6 +131,8 @@ def _parse_pois(items: list) -> tuple[PoiSpec, ...]:
             color=color,
             label=_labels(item.get("label", poi_id), where),
             default=bool(item.get("default", False)),
+            geojson=geojson,
+            properties=dict(properties),
         ))
     return tuple(out)
 
@@ -144,6 +156,11 @@ def _parse_documents(items: list) -> tuple[DocumentSpec, ...]:
 
 
 def parse_region(data: dict) -> Region:
+    # TOML trap: a top-level key written below a [[table]] belongs to that table.
+    for section in ("pois", "library", "documents"):
+        if data.get(section) and "attribution" in data[section][-1]:
+            raise ConfigError(f"attribution sits under the last [[{section}]], so it is not a region setting; "
+                              "move it above the first [[...]] section")
     region_id = _require(data, "id", "region")
     if not _ID.match(region_id):
         raise ConfigError(f"region id '{region_id}' must be lowercase letters, digits, - or _")

@@ -25,10 +25,11 @@ from builder.binaries import extract_kiwix_serve  # noqa: E402
 from builder.config import ConfigError, ZimSpec, load_region, load_sources, parse_region  # noqa: E402
 from builder.context import Context, StepError  # noqa: E402
 from builder.data import (  # noqa: E402
-    choose_zim, older_editions, overpass_query, overpass_to_geojson, parse_catalog,
+    choose_zim, official_to_geojson, older_editions, overpass_query, overpass_to_geojson, parse_catalog,
 )
 from builder.fetch import FetchError, download, sri_matches  # noqa: E402
 from builder.manifest import build_manifest  # noqa: E402
+from builder.release import package  # noqa: E402
 
 
 def sri(data: bytes) -> str:
@@ -81,6 +82,15 @@ class ConfigTests(unittest.TestCase):
             load_region("zz", REPO)
         self.assertIn("ee", str(caught.exception))
 
+    def test_attribution_under_a_table_is_refused(self):
+        data = {"id": "x", "country_code": "EE", "pois": [{"id": "a", "tags": ["a=b"], "attribution": ["c"]}]}
+        with self.assertRaises(ConfigError):
+            parse_region(data)
+
+    def test_shipped_regions_have_attribution(self):
+        for name in ("ee", "ee-sample"):
+            self.assertTrue(load_region(name, REPO).attribution, name)
+
 
 class OverpassTests(unittest.TestCase):
     def test_query(self):
@@ -89,6 +99,26 @@ class OverpassTests(unittest.TestCase):
         self.assertIn('nwr["amenity"="hospital"](area.region);', query)
         self.assertIn('nwr["healthcare"="hospital"](area.region);', query)
         self.assertIn("out center tags;", query)
+
+    def test_official_list(self):
+        poi = parse_region({"id": "x", "country_code": "EE", "pois": [{
+            "id": "shelter", "geojson": "https://example.org/x.json",
+            "properties": {"name": "nimi", "addr:street": "aadress"}}]}).pois[0]
+        payload = {"features": [
+            {"id": "v.1", "geometry": {"type": "Point", "coordinates": [24.7536123, 59.4369876]},
+             "properties": {"nimi": "Varjend", "aadress": "Tallinn", "x": 1}},
+            {"id": "v.2", "geometry": {"type": "Point", "coordinates": [10.0, 10.0]}, "properties": {"nimi": "far"}},
+            {"id": "v.3", "geometry": None, "properties": {}},
+        ]}
+        out = official_to_geojson(payload, poi, (21.3, 57.45, 28.3, 59.9))
+        self.assertEqual(out["features"], [{
+            "type": "Feature", "id": "shelter/v.1",
+            "geometry": {"type": "Point", "coordinates": [24.753612, 59.436988]},
+            "properties": {"name": "Varjend", "addr:street": "Tallinn"}}])
+
+    def test_query_clipped_to_map(self):
+        query = overpass_query("EE", ("amenity=pharmacy",), (22.42, 58.22, 22.56, 58.29))
+        self.assertIn('nwr["amenity"="pharmacy"](area.region)(58.22,22.42,58.29,22.56);', query)
 
     def test_conversion(self):
         payload = {"elements": [
@@ -352,6 +382,34 @@ class CliTests(unittest.TestCase):
             code, text = self.run_cli("--region", "zz", "--out", tmp)
             self.assertEqual(code, 2)
             self.assertIn("region file not found", text)
+
+
+class ReleaseTests(unittest.TestCase):
+    def test_package(self):
+        region = load_region("ee-sample", REPO)
+        with tempfile.TemporaryDirectory() as tmp:
+            drive, out = Path(tmp, "drive"), Path(tmp, "dist")
+            for rel, body in {
+                "manifest.json": "{}", "app/index.html": "x", "bin/darwin-arm64/varu": "#!",
+                "maps/ee-sample.pmtiles": "tiles", "library/a.zim": "z", "build-info.json": "{}", "._junk": "",
+            }.items():
+                Path(drive, rel).parent.mkdir(parents=True, exist_ok=True)
+                Path(drive, rel).write_text(body)
+            Path(drive, "bin/darwin-arm64/varu").chmod(0o755)
+
+            package(region, drive, out, catalog="unused", log=lambda _: None)
+            package(region, drive, out, catalog="unused", log=lambda _: None)  # re-run replaces, not appends
+
+            with zipfile.ZipFile(out / "varu-ee-sample.zip") as bundle:
+                self.assertEqual(sorted(bundle.namelist()),
+                                 ["app/index.html", "bin/darwin-arm64/varu", "manifest.json"])
+                self.assertEqual(bundle.getinfo("bin/darwin-arm64/varu").external_attr >> 16 & 0o777, 0o755)
+            index = json.loads((out / "regions.json").read_text())
+            self.assertEqual([r["id"] for r in index["regions"]], ["ee-sample"])
+            entry = index["regions"][0]
+            self.assertEqual(entry["map"]["path"], "maps/ee-sample.pmtiles")
+            self.assertEqual(entry["map"]["sha256"], hashlib.sha256(b"tiles").hexdigest())
+            self.assertEqual(entry["library"], [])
 
 
 if __name__ == "__main__":

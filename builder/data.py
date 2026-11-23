@@ -81,11 +81,15 @@ KEEP_TAGS = (
 )
 
 
-def overpass_query(country_code: str, tags: tuple[str, ...], timeout: int = 300) -> str:
+def overpass_query(country_code: str, tags: tuple[str, ...], bbox: tuple[float, float, float, float] | None = None,
+                   timeout: int = 300) -> str:
+    """Places in the country and, when a bbox is given, inside the map area too."""
+    # Overpass wants (south, west, north, east); region files use west, south, east, north.
+    box = f"({bbox[1]:g},{bbox[0]:g},{bbox[3]:g},{bbox[2]:g})" if bbox else ""
     clauses = []
     for tag in tags:
         key, value = tag.split("=", 1)
-        clauses.append(f'  nwr["{key}"="{value}"](area.region);')
+        clauses.append(f'  nwr["{key}"="{value}"](area.region){box};')
     return (
         f"[out:json][timeout:{timeout}];\n"
         f'area["ISO3166-1"="{country_code}"][admin_level=2]->.region;\n'
@@ -131,11 +135,12 @@ def step_pois(ctx: Context, *, refresh: bool = False) -> None:
         if target.exists() and not refresh:
             ctx.log(f"have {target.name}")
             continue
-        if asked:
+        if asked and not poi.geojson:
             time.sleep(float(settings.get("pause_seconds", 5)))  # be a polite guest on a shared server
-        asked = True
+        asked = asked or not poi.geojson
         try:
-            collection = fetch_pois(settings["url"], ctx.region.country_code, poi, ctx.region.languages)
+            bbox = ctx.region.map.bbox if ctx.region.map else None
+            collection = fetch_pois(settings["url"], ctx.region.country_code, poi, ctx.region.languages, bbox)
         except (FetchError, ValueError) as err:
             failures.append(f"{poi.id}: {err}")
             continue
@@ -146,8 +151,31 @@ def step_pois(ctx: Context, *, refresh: bool = False) -> None:
         raise StepError("some place layers could not be fetched:\n  " + "\n  ".join(failures))
 
 
-def fetch_pois(endpoint: str, country_code: str, poi: PoiSpec, languages: tuple[str, ...]) -> dict:
-    body = urllib.parse.urlencode({"data": overpass_query(country_code, poi.tags)}).encode()
+def official_to_geojson(payload: dict, poi: PoiSpec, bbox: tuple[float, float, float, float] | None) -> dict:
+    """Points from an official list, with the fields the region file maps."""
+    features = []
+    for i, feature in enumerate(payload.get("features", [])):
+        geometry = feature.get("geometry") or {}
+        if geometry.get("type") != "Point":
+            continue
+        lon, lat = geometry["coordinates"][:2]
+        if bbox and not (bbox[0] <= lon <= bbox[2] and bbox[1] <= lat <= bbox[3]):
+            continue
+        source = feature.get("properties") or {}
+        props = {key: str(source[field]) for key, field in poi.properties.items() if source.get(field) not in (None, "")}
+        features.append({
+            "type": "Feature", "id": f"{poi.id}/{feature.get('id', i)}",
+            "geometry": {"type": "Point", "coordinates": [round(lon, 6), round(lat, 6)]},
+            "properties": props,
+        })
+    return {"type": "FeatureCollection", "features": features}
+
+
+def fetch_pois(endpoint: str, country_code: str, poi: PoiSpec, languages: tuple[str, ...],
+               bbox: tuple[float, float, float, float] | None = None) -> dict:
+    if poi.geojson:
+        return official_to_geojson(json.loads(fetch_bytes(poi.geojson)), poi, bbox)
+    body = urllib.parse.urlencode({"data": overpass_query(country_code, poi.tags, bbox)}).encode()
     payload = json.loads(fetch_bytes(endpoint, data=body, timeout=360))
     return overpass_to_geojson(payload, languages)
 

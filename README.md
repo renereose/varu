@@ -6,36 +6,73 @@ nothing to install. Plug it in, double-click, and it opens in your browser.
 
 *Varu* is Estonian for "reserve" or "supply". The name is a working title.
 
-This repository does not contain the content. It contains the three pieces
-that turn freely available content into a drive:
+This repository does not contain the content. It contains the pieces that
+turn freely available content into a drive:
 
 | Piece | What it is | Folder |
 |---|---|---|
+| **Installer** | The app people download: a wizard that puts Varu on a USB stick, a computer or a phone | `installer/`, `android/` |
 | **Builder** | A Python tool that downloads everything for a region and assembles the drive | `builder/`, `regions/`, `sources.toml` |
 | **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
 | **Viewer** | The web pages you see: start page and map | `viewer/` |
+
+## Installing (for everyone)
+
+Download the installer for your system from the
+[latest release](https://github.com/renereose/varu/releases/latest):
+
+| System | File |
+|---|---|
+| Windows | `Varu-Installer.exe` |
+| macOS | `Varu-Installer-macOS.zip`, then open `Varu Installer` |
+| Android | `Varu.apk` |
+
+The installer opens a wizard (in your browser on a computer, in the app on
+Android) that asks:
+
+1. **Your country.**
+2. **Your home** (search for the town, or use your location) and a
+   **radius**: 10, 25, 50 or 100 km, or the whole country. Inside the radius
+   you get street-level map and places; the rest of the country stays on the
+   map at road level, for travel.
+3. **Which places** to show: drinking water, hospitals, pharmacies, clinics,
+   food stores, fuel, police, rescue stations, border crossings, springs.
+4. **Library** books (computers only for now).
+5. **Where to put it**: a USB stick (listed as soon as it is plugged in),
+   a folder on this computer, or the phone's storage or memory card.
+
+An interrupted install continues where it stopped when you run it again.
+
+**The installers are not signed yet**, so the first start needs one extra step:
+
+- **Windows:** "Windows protected your PC" → *More info* → *Run anyway*.
+- **macOS:** open the app once, close the warning, then *System Settings →
+  Privacy & Security → Open Anyway*.
+- **Android:** allow your browser or file manager to *install unknown apps*
+  when asked.
 
 Estonia is the first region. Adding a country means adding one file in
 `regions/`.
 
 ## Status
 
-Early scaffold. What has been exercised so far:
+Early. What has been exercised so far:
 
-- Launcher: unit-tested, cross-compiles for Windows, macOS (Intel and Apple
-  Silicon) and Linux (x86-64 and ARM64). Run for real only on Linux.
+- Launcher: unit-tested, cross-compiles for Windows, macOS, Linux and
+  Android. Run for real on Linux and macOS.
 - Viewer: start page and map load in a headless browser with zero network
-  requests leaving the machine. The map was tested with a small sample
-  archive in an older basemap format, so full street-level styling against a
-  current Protomaps build has not been seen yet.
-- Builder: unit-tested. The `app`, `launcher` and `manifest` steps have run
-  end to end. The `maps`, `pois`, `library`, `kiwix` and `documents` steps
-  have **not yet run against the real services**.
+  requests leaving the machine, against a current Protomaps build.
+- Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
+  run end to end for the Kuressaare sample. `library` and `documents` have
+  not run against the real services yet.
+- Installer: unit-tested and run end to end on macOS against a locally
+  built release, including the radius map cut and the Android flow in
+  phone mode. Not yet run on Windows or on a phone.
 
 Expect the first real build to need small fixes. The likeliest places are
 listed in [docs/ROADMAP.md](docs/ROADMAP.md).
 
-## Quick start
+## Building it yourself
 
 You need Python 3.11+, Go 1.22+, and the
 [`pmtiles` command](https://github.com/protomaps/go-pmtiles/releases) on your
@@ -55,7 +92,15 @@ python3 -m builder --region ee --out /media/$USER/VARU  # Linux
 python3 -m builder --region ee --out E:\                # Windows
 ```
 
-Useful options:
+To try the installer against a locally built release:
+
+```sh
+make sample
+python3 -m builder.release --region ee-sample --drive ./drive --out ./dist
+cd installer && go run . -source ../dist
+```
+
+Useful builder options:
 
 ```sh
 --dry-run               # show what would be downloaded, change nothing
@@ -87,6 +132,28 @@ and Linux all read and write and that holds files larger than 4 GB.
         └── /library/ ──▶ bin/<os>-<arch>/kiwix-serve ──▶ library/*.zim
 ```
 
+### Releases
+
+Pushing a tag such as `v0.1.0` runs `.github/workflows/release.yml`. It
+builds each country's drive (without the library), packages it with
+`builder/release.py`, builds the three installers and publishes them all
+as one GitHub release. Each installer downloads from the release with its
+own tag, so content and installers always match.
+
+- `regions.json` lists the countries, place layers and library books.
+- `varu-<id>.zip` is the drive without its map and library.
+- `<id>.pmtiles` is the country's map. For a radius install the installer
+  cuts a smaller map out of it with HTTP range requests
+  (`installer/pmtiles.go`), so only that part is downloaded.
+- Library books come straight from the Kiwix mirrors, pinned to the edition
+  that was newest at release time, and are checked against Kiwix's SHA-256.
+
+The Android APK needs a signing key that stays the same for every release.
+Create one once with `keytool -genkeypair -keystore release.keystore -alias
+varu -keyalg RSA -validity 10000`, then store it base64-encoded as the
+`ANDROID_KEYSTORE_BASE64` secret and its password as
+`ANDROID_KEYSTORE_PASSWORD`.
+
 A browser cannot read a multi-gigabyte map straight off a disk, which is why
 there is a launcher at all. It binds to `127.0.0.1` only, rejects requests
 for other host names, hides dotfiles and never lists directories. Started
@@ -101,7 +168,7 @@ greyed-out Library card.
 | Content | Source | Build step |
 |---|---|---|
 | Map tiles | [Protomaps](https://protomaps.com) daily build of OpenStreetMap, cut to the region with `pmtiles extract` | `maps` |
-| Places | OpenStreetMap via the Overpass API, one query per layer | `pois` |
+| Places | OpenStreetMap via the Overpass API, one query per layer, or an official list published as GeoJSON (`geojson =` in the region file) | `pois` |
 | Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
 | Library reader | `kiwix-serve` from kiwix-tools | `kiwix` |
 | Documents | URLs listed in the region file | `documents` |
@@ -139,6 +206,7 @@ reachable.
 
 ## Contributing
 
-Run `make test` before sending a change. The launcher uses only the Go
-standard library and the builder only the Python standard library; please
-keep it that way unless there is a strong reason.
+Run `make test` before sending a change. The launcher and installer use
+only the Go standard library, the builder only the Python standard library
+and the Android app only the Android framework (it builds without Gradle:
+`make android`). Please keep it that way unless there is a strong reason.

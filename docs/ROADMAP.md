@@ -5,13 +5,11 @@
 The scaffold was written and tested without access to the content services.
 A first build on a normal internet connection will settle these:
 
-- [ ] `make sample` end to end. Confirms the `pmtiles extract` call, the
-      Protomaps build lookup and the Overpass queries.
-- [ ] **Map styling against a current Protomaps build.** The viewer was only
-      seen with an older-format sample archive, where just land and water
-      drew. Roads, labels and buildings need a look.
-- [ ] **kiwix-tools file names** in `sources.toml`. They follow the pattern of
-      earlier releases and were not checked for the pinned version.
+- [x] `make sample` end to end (2026-11-23).
+- [x] Map styling against a current Protomaps build: roads, labels and
+      buildings draw in light and dark.
+- [ ] **kiwix-tools version** in `sources.toml`: 3.8.2 has no Windows build
+      (3.8.1 does), so the `kiwix` step and the release workflow fail.
 - [ ] **Kiwix catalogue parsing.** `parse_catalog` was written from the
       documented feed shape and tested against a hand-made fixture. Compare
       with a live response and replace the fixture with a real one.
@@ -26,7 +24,10 @@ A first build on a normal internet connection will settle these:
 
 ## 2. Content
 
-- [ ] Public shelters from the Rescue Board's dataset (not OpenStreetMap).
+- [ ] Public shelters: the importer works (`geojson =`, 303 shelters from the
+      Land Board's WFS) but the layer is off in `regions/ee.toml` until the
+      Rescue Board confirms reuse; its own terms are CC BY-NC-ND 4.0, the
+      Land Board's are CC BY 4.0 equivalent.
 - [ ] Official guidance for Estonia in `[[documents]]`, once reuse terms are
       confirmed with the publisher.
 - [ ] Crisis radio frequencies page.
@@ -56,10 +57,17 @@ A first build on a normal internet connection will settle these:
 
 ## 5. Distribution
 
-- [ ] Prebuilt launchers attached to GitHub releases, so building a drive
-      needs Python only (`--launcher-dir` already accepts them).
-- [ ] Code signing and notarisation for the launcher, if testing shows the
-      warnings are a real obstacle.
+- [x] Installers for Windows, macOS and Android, published by the release
+      workflow, with country, home, radius and place selection.
+- [ ] First tagged release, then a test of every installer on real hardware.
+      The Android app has been built but not yet run on a phone.
+- [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and
+      notarisation) to remove the first-start warnings.
+- [ ] Android: the library (kiwix-serve has no Android build; options are a
+      static linux-arm64 build in the APK, or handing ZIMs to the Kiwix app),
+      an app icon, dark mode, and downloads that continue in the background.
+- [ ] Installer: desktop shortcut for computer installs; remove older ZIM
+      editions when a newer one is installed.
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.
 

@@ -7,6 +7,7 @@ import {
 const SOURCE = "basemap";
 const POI_STATE_KEY = "varu.pois";
 const LABEL_FONT = ["Noto Sans Medium"];
+const OVERVIEW_ZOOM = 12; // matches overviewZoom in installer/pmtiles.go
 
 const manifest = await loadManifest();
 const lang = currentLanguage(manifest);
@@ -21,6 +22,7 @@ function showMessage(key) {
 // Absolute URLs: MapLibre resolves sprites and glyphs in a worker, where
 // relative paths have no page to be relative to.
 const base = new URL("./", document.baseURI).href;
+const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
 
 if (!manifest.map?.file) {
   showMessage("noMap");
@@ -33,8 +35,28 @@ function startMap(mapInfo) {
   const protocol = new globalThis.pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
   const flavor = dark ? "dark" : "light";
+
+  const sources = {
+    [SOURCE]: {
+      type: "vector",
+      url: `pmtiles://${base}${mapInfo.file}`,
+      attribution: "© OpenStreetMap contributors · Protomaps",
+    },
+  };
+  let layers = basemapLayers(SOURCE, namedFlavor(flavor), { lang });
+
+  // A map cut around home has street detail only near home; elsewhere it
+  // stops at OVERVIEW_ZOOM. Draw that overview, stretched, underneath, so
+  // zooming in outside the radius shows roads instead of a blank map.
+  if (Number.isFinite(manifest.home?.radius_km)) {
+    sources.overview = { type: "vector", tiles: [`pmtiles://${base}${mapInfo.file}/{z}/{x}/{y}`], maxzoom: OVERVIEW_ZOOM };
+    const overview = basemapLayers("overview", namedFlavor(flavor), { lang })
+      .filter((layer) => layer.type !== "symbol" && layer.type !== "background")
+      .map((layer) => ({ ...layer, id: `overview-${layer.id}`, minzoom: OVERVIEW_ZOOM + 1 }));
+    const background = layers.filter((layer) => layer.type === "background");
+    layers = [...background, ...overview, ...layers.filter((layer) => layer.type !== "background")];
+  }
 
   const map = new maplibregl.Map({
     container: "map",
@@ -42,14 +64,8 @@ function startMap(mapInfo) {
       version: 8,
       glyphs: `${base}assets/fonts/{fontstack}/{range}.pbf`,
       sprite: `${base}assets/sprites/v4/${flavor}`,
-      sources: {
-        [SOURCE]: {
-          type: "vector",
-          url: `pmtiles://${base}${mapInfo.file}`,
-          attribution: "© OpenStreetMap contributors · Protomaps",
-        },
-      },
-      layers: basemapLayers(SOURCE, namedFlavor(flavor), { lang }),
+      sources,
+      layers,
     },
     center: mapInfo.center ?? [0, 0],
     zoom: mapInfo.zoom ?? 6,
@@ -73,6 +89,10 @@ function startMap(mapInfo) {
     }
   });
 
+  // The installer records the family's home; mark it so "nearest" is obvious.
+  if (Number.isFinite(manifest.home?.lon) && Number.isFinite(manifest.home?.lat)) {
+    new maplibregl.Marker({ color: "#0b5d4b" }).setLngLat([manifest.home.lon, manifest.home.lat]).addTo(map);
+  }
   map.on("load", () => setUpPois(map));
   setUpPanel();
 
@@ -175,8 +195,9 @@ function setPoiVisible(map, poi, visible) {
         "text-optional": true,
       },
       paint: {
-        "text-color": "#1b2420",
-        "text-halo-color": "#ffffff",
+        // Same ink and background as app.css, so labels read on either map flavour.
+        "text-color": dark ? "#e9e6dd" : "#1b2420",
+        "text-halo-color": dark ? "#121715" : "#ffffff",
         "text-halo-width": 1.5,
       },
     });
