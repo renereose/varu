@@ -67,7 +67,7 @@ def _head_size(url: str) -> int | None:
 def resolve_zim(spec: ZimSpec, catalog: str) -> dict:
     """Pin a library entry to one downloadable file."""
     if spec.url:
-        entry = {"url": spec.url, "name": spec.name, "title": spec.name, "size": _head_size(spec.url)}
+        entry = {"url": spec.url, "name": spec.name, "title": spec.name}
     else:
         query = urllib.parse.urlencode({"name": spec.name, "count": -1})
         entry = choose_zim(parse_catalog(fetch_bytes(f"{catalog}?{query}")), spec)
@@ -87,7 +87,8 @@ def resolve_zim(spec: ZimSpec, catalog: str) -> dict:
         "language": entry.get("language", ""),
         "file": file,
         "url": entry["url"],
-        "size": entry.get("size"),
+        # The catalogue rounds sizes up to whole KiB; the installer needs the exact byte count.
+        "size": _head_size(entry["url"]) or entry.get("size"),
         "sha256": checksum,
     }
 
