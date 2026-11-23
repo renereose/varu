@@ -179,7 +179,7 @@ const STRINGS = {
     placesTitle: "Places to show on the map",
     placesHint: "Each layer is small. Locations come from OpenStreetMap or official lists and can be out of date: check on site.",
     libraryTitle: "Library",
-    libraryHint: "Readable offline in any web browser. These are large.",
+    libraryHint: "Readable in Varu without internet. These are large.",
     whereTitle: "Where to put it",
     whereHint: "Plug in a USB stick and it appears here. A stick formatted as exFAT works on every computer.",
     computer: "This computer",
@@ -193,12 +193,14 @@ const STRINGS = {
     step_app: "Downloading the Varu app and places",
     step_map: "Downloading the map",
     step_routing: "Downloading road data for directions",
+    step_desktop: "Downloading Varu for Windows, macOS and Linux",
     step_cut: "Cutting the map around your home",
     step_book: "Downloading {title}",
     of: "{done} of {total}",
     doneTitle: "Varu is ready",
     doneProblems: "Finished, with problems",
-    doneUsb: "Eject the stick before you unplug it. On any computer, open the stick and double-click the Start file for that system (Start-Windows, Start-macOS or Start-Linux).",
+    doneUsb: "Eject the stick before you unplug it. On any computer, open the stick and double-click Varu for that system: Varu-Windows.exe, Varu-macOS.dmg or Varu-Linux-x86_64.AppImage.",
+    doneApp: "Varu is installed. Open it any time from the Varu app, also without internet.",
     doneComputer: "Start Varu any time with the Start file in {path}.",
     retryLater: "Start the installer again to retry. Finished parts are kept.",
     openVaru: "Open Varu now",
@@ -245,7 +247,7 @@ const STRINGS = {
     placesTitle: "Kaardil näidatavad kohad",
     placesHint: "Iga kiht on väike. Asukohad pärinevad OpenStreetMapist või ametlikest nimekirjadest ja võivad olla aegunud: kontrolli kohapeal.",
     libraryTitle: "Raamatukogu",
-    libraryHint: "Loetav ilma internetita igas veebilehitsejas. Need on suured.",
+    libraryHint: "Loetav Varus ilma internetita. Need on suured.",
     whereTitle: "Kuhu panna",
     whereHint: "Ühenda USB-mälupulk ja see ilmub siia. exFAT-vormingus pulk töötab igas arvutis.",
     computer: "See arvuti",
@@ -259,12 +261,14 @@ const STRINGS = {
     step_app: "Laadin alla Varu rakendust ja kohti",
     step_map: "Laadin alla kaarti",
     step_routing: "Laadin alla teekonnaandmeid",
+    step_desktop: "Laadin alla Varu Windowsi, macOSi ja Linuxi jaoks",
     step_cut: "Lõikan kaarti sinu kodu ümbert",
     step_book: "Laadin alla: {title}",
     of: "{done} / {total}",
     doneTitle: "Varu on valmis",
     doneProblems: "Valmis, kuid tekkis probleeme",
-    doneUsb: "Enne pulga eemaldamist väljuta see turvaliselt. Mis tahes arvutis ava pulk ja tee topeltklõps selle süsteemi Start-failil (Start-Windows, Start-macOS või Start-Linux).",
+    doneUsb: "Enne pulga eemaldamist väljuta see turvaliselt. Mis tahes arvutis ava pulk ja tee topeltklõps selle süsteemi Varu failil: Varu-Windows.exe, Varu-macOS.dmg või Varu-Linux-x86_64.AppImage.",
+    doneApp: "Varu on paigaldatud. Ava see igal ajal Varu rakendusest, ka ilma internetita.",
     doneComputer: "Käivita Varu igal ajal Start-failiga kaustas {path}.",
     retryLater: "Uuesti proovimiseks käivita paigaldaja veel kord. Valmis osad jäävad alles.",
     openVaru: "Ava Varu kohe",
@@ -551,20 +555,21 @@ function renderJob(job) {
   $("done-title").textContent = t(problems ? "doneProblems" : "doneTitle");
   $("errors").replaceChildren(...job.errors.map((text) => el("li", { textContent: text })),
     ...(problems ? [el("li", { textContent: t("retryLater") })] : []));
-  $("done-text").textContent = s.state?.phone ? t("donePhone") : job.usb ? t("doneUsb") : t("doneComputer", { path: job.target });
+  $("done-text").textContent = s.state?.phone ? t("donePhone") : job.usb ? t("doneUsb")
+    : window.VaruDesktop ? t("doneApp") : t("doneComputer", { path: job.target });
 }
 
-// Inside the Android app, the app itself switches to the viewer.
-const android = window.VaruAndroid;
-$("open-files").hidden = !!android;
+// Inside the Android or desktop app, the app itself switches to the viewer.
+const host = window.VaruAndroid ?? window.VaruDesktop;
+$("open-files").hidden = !!window.VaruAndroid;
 $("open-varu").addEventListener("click", () => {
-  if (android) { android.openVaru(s.state?.job?.target ?? ""); return; }
+  if (host) { host.openVaru(s.state?.job?.target ?? ""); return; }
   api("/api/open", { What: "varu" }).catch((err) => alert(err.message));
 });
 $("open-files").addEventListener("click", () => api("/api/open", { What: "files" }).catch((err) => alert(err.message)));
 $("quit").addEventListener("click", async () => {
   await api("/api/quit", {}).catch(() => {});
-  if (android) { android.close(); return; }
+  if (host) { host.close(); return; }
   document.querySelector("main").replaceChildren($("closed"));
   $("closed").hidden = false;
 });

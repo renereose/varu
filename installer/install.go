@@ -25,6 +25,7 @@ import (
 type Index struct {
 	Schema  int      `json:"schema"`
 	Regions []Region `json:"regions"`
+	Desktop []Asset  `json:"desktop,omitempty"` // the Varu app for each system, for sticks
 }
 
 type Region struct {
@@ -172,6 +173,16 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 			problem("bad", r.Path)
 		}
 		plan.Items = append(plan.Items, assetItem("routing", r, req.Target))
+	}
+	// A stick carries the Varu app for every system, so it opens on any computer.
+	if volumeRoot {
+		for i := range index.Desktop {
+			if d := &index.Desktop[i]; safeRel(d.Path) {
+				plan.Items = append(plan.Items, assetItem("desktop", d, req.Target))
+			} else {
+				problem("bad", d.Path)
+			}
+		}
 	}
 	for _, name := range req.Library {
 		for _, b := range region.Library {
@@ -499,21 +510,27 @@ func writeEntry(zf *zip.File, dest string) error {
 		return err
 	}
 	defer src.Close()
-	out, err := os.Create(dest)
+	// A new file renamed over the old one: macOS kills a program whose file
+	// was rewritten in place, as it remembers signatures per file.
+	tmp := dest + ".new"
+	out, err := os.Create(tmp)
 	if err != nil {
 		return err
 	}
-	if _, err := io.Copy(out, src); err != nil {
-		out.Close()
-		return err
+	_, err = io.Copy(out, src)
+	if cerr := out.Close(); err == nil {
+		err = cerr
 	}
-	if err := out.Close(); err != nil {
-		return err
+	if err == nil && zf.Mode()&0o111 != 0 {
+		_ = os.Chmod(tmp, 0o755) // exFAT has no modes; macOS and Linux treat it all as executable
 	}
-	if zf.Mode()&0o111 != 0 {
-		_ = os.Chmod(dest, 0o755) // exFAT has no modes; macOS and Linux treat it all as executable
+	if err == nil {
+		err = os.Rename(tmp, dest)
 	}
-	return nil
+	if err != nil {
+		os.Remove(tmp)
+	}
+	return err
 }
 
 // writeManifest updates the bundle's manifest.json to list what is really

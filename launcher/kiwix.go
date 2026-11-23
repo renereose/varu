@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"net/url"
 	"os"
@@ -15,8 +16,9 @@ import (
 // Kiwix is a running kiwix-serve child process that serves the ZIM
 // archives in library/.
 type Kiwix struct {
-	URL *url.URL
-	cmd *exec.Cmd
+	URL  *url.URL
+	cmd  *exec.Cmd
+	done chan struct{} // closed once kiwix-serve has exited
 }
 
 // startKiwix returns (nil, nil) when the drive simply has no library.
@@ -52,10 +54,18 @@ func startKiwix(root string) (*Kiwix, error) {
 	if err := cmd.Start(); err != nil {
 		return nil, fmt.Errorf("starting %s: %w", filepath.Base(bin), err)
 	}
-	return &Kiwix{
-		URL: &url.URL{Scheme: "http", Host: fmt.Sprintf("127.0.0.1:%d", port)},
-		cmd: cmd,
-	}, nil
+	k := &Kiwix{
+		URL:  &url.URL{Scheme: "http", Host: fmt.Sprintf("127.0.0.1:%d", port)},
+		cmd:  cmd,
+		done: make(chan struct{}),
+	}
+	go func() {
+		// Otherwise a reader that dies leaves the library "starting" forever.
+		_ = cmd.Wait()
+		log.Printf("The library reader stopped (%v)", cmd.ProcessState)
+		close(k.done)
+	}()
+	return k, nil
 }
 
 // Stop is safe to call on a nil receiver.
@@ -64,7 +74,7 @@ func (k *Kiwix) Stop() {
 		return
 	}
 	_ = k.cmd.Process.Kill()
-	_, _ = k.cmd.Process.Wait()
+	<-k.done
 }
 
 // findKiwixServe looks in bin/<os>-<arch>/ on the drive, then falls back to

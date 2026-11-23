@@ -1,0 +1,39 @@
+{
+  "name": "varu",
+  "productName": "Varu",
+  "version": "0.0.0",
+  "description": "Offline maps, places and reference books for emergencies",
+  "homepage": "https://github.com/renereose/varu",
+  "author": "renereose",
+  "license": "MIT",
+  "private": true,
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "io.github.renereose.varu",
+    "directories": { "output": "../build/desktop", "buildResources": "res" },
+    "files": ["main.js", "preload.js"],
+    "extraResources": [{ "from": "bin/${os}-${arch}", "to": "bin" }],
+    "mac": {
+      "target": [{ "target": "dmg", "arch": "universal" }],
+      "category": "public.app-category.reference",
+      "identity": "-",
+      "extendInfo": { "NSLocationUsageDescription": "Varu shows where you are on the map." }
+    },
+    "dmg": { "artifactName": "Varu-macOS.dmg", "title": "Varu" },
+    "win": { "target": [{ "target": "nsis", "arch": "x64" }, { "target": "portable", "arch": "x64" }] },
+    "nsis": { "artifactName": "Varu-Setup-Windows.exe" },
+    "portable": { "artifactName": "Varu-Windows.exe" },
+    "linux": {
+      "target": [{ "target": "AppImage", "arch": ["x64", "arm64"] }, { "target": "deb", "arch": ["x64", "arm64"] }],
+      "category": "Education",
+      "maintainer": "renereose"
+    },
+    "appImage": { "artifactName": "Varu-Linux-${arch}.AppImage" },
+    "toolsets": { "appimage": "1.0.3" },
+    "deb": { "artifactName": "varu_${version}_${arch}.deb" }
+  }
+}

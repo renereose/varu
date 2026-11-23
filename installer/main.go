@@ -19,7 +19,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -385,12 +384,8 @@ func (a *App) plan(req Request) Plan {
 	if a.Phone {
 		req.Library = nil
 	}
-	plan := makePlan(index, req, isVolumeRoot(req.Target), a.archive)
-	if a.Phone { // phone storage is not a stick to carry to other computers
-		plan.USB = false
-		plan.Warnings = slices.DeleteFunc(plan.Warnings, func(p Problem) bool { return p.Code == "portable" })
-	}
-	return plan
+	// Phone storage is not a stick to carry to other computers.
+	return makePlan(index, req, isVolumeRoot(req.Target) && !a.Phone, a.archive)
 }
 
 func (a *App) start(req Request) error {
