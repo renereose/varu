@@ -1,8 +1,9 @@
 # Varu
 
-An open-source offline drive: maps, Wikipedia, reference works and official
-guidance for one region on a USB stick that works with no internet and
-nothing to install. Plug it in, double-click, and it opens in your browser.
+An open-source offline kit: maps, directions, Wikipedia, reference works and
+official guidance for one region, on a computer, a phone or a USB stick, that
+works with no internet. Varu is an app for macOS, Windows, Linux and Android,
+and a stick carries it for every computer: plug it in and double-click Varu.
 
 *Varu* is Estonian for "reserve" or "supply". The name is a working title.
 
@@ -11,7 +12,8 @@ turn freely available content into a drive:
 
 | Piece | What it is | Folder |
 |---|---|---|
-| **Installer** | The app people download: a wizard that puts Varu on a USB stick, a computer or a phone | `installer/`, `android/` |
+| **Desktop app** | Varu for macOS, Windows and Linux: one window that installs Varu and then shows it | `desktop/` |
+| **Installer** | The setup wizard inside the apps: puts Varu on a USB stick, a computer or a phone | `installer/`, `android/` |
 | **Builder** | A Python tool that downloads everything for a region and assembles the drive | `builder/`, `regions/`, `sources.toml` |
 | **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
 | **Router** | Varu's own offline directions: builds a road network from OpenStreetMap and finds routes on it | `router/` |
@@ -19,17 +21,17 @@ turn freely available content into a drive:
 
 ## Installing (for everyone)
 
-Download the installer for your system from the
+Download Varu for your system from the
 [latest release](https://github.com/renereose/varu/releases/latest):
 
 | System | File |
 |---|---|
-| Windows | `Varu-Installer.exe` |
-| macOS | `Varu-Installer-macOS.zip`, then open `Varu Installer` |
+| macOS | `Varu-macOS.dmg`, then drag Varu to Applications |
+| Windows | `Varu-Setup-Windows.exe` |
+| Linux | `varu_<version>_amd64.deb` (Debian, Ubuntu) or `Varu-Linux-x86_64.AppImage`; the `arm64` files are for a Raspberry Pi 4 or 5 |
 | Android | `Varu.apk` |
 
-The installer opens a wizard (in your browser on a computer, in the app on
-Android) that asks:
+The first time, Varu opens a setup wizard that asks:
 
 1. **Your country.**
 2. **Your home** (search for the town, or use your location) and a
@@ -38,17 +40,30 @@ Android) that asks:
    map at road level, for travel.
 3. **Which places** to show: drinking water, hospitals, pharmacies, clinics,
    food stores, fuel, police, rescue stations, border crossings, springs.
-4. **Library** books (computers only for now).
+4. **Library** books: Vikipeedia, WikiMed and a post-disaster library.
+   Each is gigabytes, so each is ticked by hand. Computers only for now:
+   the library reader crashes inside Android's app sandbox (see the
+   roadmap).
 5. **Where to put it**: a USB stick (listed as soon as it is plugged in),
    a folder on this computer, or the phone's storage or memory card.
 
+After that, Varu opens straight to the start page: map, library and
+documents in one window. *Go → Install or update…* runs the wizard again.
+
+A USB stick also gets Varu for macOS, Windows and Linux (about 470 MB), so it
+opens on any computer without installing anything: double-click
+`Varu-Windows.exe`, `Varu-macOS.dmg` or `Varu-Linux-x86_64.AppImage` on the
+stick.
+
 An interrupted install continues where it stopped when you run it again.
 
-**The installers are not signed yet**, so the first start needs one extra step:
+**Varu is not signed yet**, so the first start needs one extra step:
 
 - **Windows:** "Windows protected your PC" → *More info* → *Run anyway*.
 - **macOS:** open the app once, close the warning, then *System Settings →
   Privacy & Security → Open Anyway*.
+- **Linux AppImage:** after downloading, allow it to run (file *Properties →
+  Executable as program*, or `chmod +x`). On a stick it already can.
 - **Android:** allow your browser or file manager to *install unknown apps*
   when asked.
 
@@ -72,6 +87,10 @@ Early. What has been exercised so far:
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.
+- Desktop app: built for all three systems on a Mac. On macOS it has run end
+  to end: wizard, install, map, library, and opening from a stick's
+  `Varu-macOS.dmg` on a computer without Varu. The Linux AppImage has started
+  from a stick in Ubuntu 24.04 (in a container). Not yet run on Windows.
 - Installer: unit-tested and run end to end on macOS against a locally
   built release, including the radius map cut and the Android flow in
   phone mode. Not yet run on Windows or on a phone.
@@ -83,7 +102,7 @@ listed in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 You need Python 3.11+, Go 1.22+, and the
 [`pmtiles` command](https://github.com/protomaps/go-pmtiles/releases) on your
-PATH. No Node, no Docker.
+PATH. Node 20+ only for the desktop app (`make desktop`). No Docker.
 
 ```sh
 make test      # run all tests
@@ -107,6 +126,12 @@ python3 -m builder.release --region ee-sample --drive ./drive --out ./dist
 cd installer && go run . -source ../dist
 ```
 
+or the desktop app around it (`make desktop` first):
+
+```sh
+VARU_SOURCE=$PWD/dist build/desktop/mac-universal/Varu.app/Contents/MacOS/Varu
+```
+
 Useful builder options:
 
 ```sh
@@ -127,10 +152,10 @@ and Linux all read and write and that holds files larger than 4 GB.
 ## How it works
 
 ```
- Start-Windows.bat / Start-macOS.command / Start-Linux.sh
+ Varu app (desktop or Android), or Start-* in a browser
         │
         ▼
- bin/<os>-<arch>/varu  ── serves http://localhost:8480 ──▶  your browser
+ bin/<os>-<arch>/varu  ── serves http://localhost:8480 ──▶  the app's window
         │                                                      │
         ├── app/         viewer + MapLibre + fonts             ├── start page
         ├── maps/*.pmtiles   read with HTTP Range requests     ├── map
@@ -151,12 +176,14 @@ sh release.sh v0.1.2             # build, tag and publish the release
 ```
 
 It runs the tests, builds each country's drive with a fresh map and places
-(without the library), packages it with `builder/release.py`, builds the
-three installers and publishes them all as one GitHub release. Each
-installer downloads from the release with its own tag, so content and
-installers always match. It publishes only a clean, up-to-date `main`.
+(without the library), packages it with `builder/release.py`, builds Varu
+for macOS, Windows, Linux and Android and publishes them all as one GitHub
+release. Each app downloads from the release with its own tag, so content
+and apps always match. It publishes only a clean, up-to-date `main`.
 
 - `regions.json` lists the countries, place layers and library books.
+- `Varu-macOS.dmg`, `Varu-Windows.exe` (portable) and
+  `Varu-Linux-x86_64.AppImage` are also what the wizard puts on USB sticks.
 - `varu-<id>.zip` is the drive without its map and library.
 - `<id>.pmtiles` is the country's map. For a radius install the installer
   cuts a smaller map out of it with HTTP range requests
@@ -233,4 +260,6 @@ reachable.
 Run `make test` before sending a change. The router, launcher and installer
 use only the Go standard library, the builder only the Python standard library
 and the Android app only the Android framework (it builds without Gradle:
-`make android`). Please keep it that way unless there is a strong reason.
+`make android`). The desktop app is Electron with one `main.js` and no other
+runtime dependencies; electron-builder packages it. Please keep it that way
+unless there is a strong reason.

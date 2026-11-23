@@ -76,7 +76,7 @@ function render() {
     title: pick(lang, doc.title) || doc.file,
   }));
   renderList("library-list", "library-list-panel", status.library ? zims : [], (zim) => ({
-    href: "library/",
+    href: "library/#lang=", // every language: the reader otherwise shows only the browser's
     title: zim.title || zim.name || zim.file,
   }));
 

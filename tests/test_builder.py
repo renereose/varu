@@ -402,6 +402,8 @@ class ReleaseTests(unittest.TestCase):
                 Path(drive, rel).parent.mkdir(parents=True, exist_ok=True)
                 Path(drive, rel).write_text(body)
             Path(drive, "bin/darwin-arm64/varu").chmod(0o755)
+            out.mkdir()
+            Path(out, "Varu-macOS.dmg").write_text("app")  # from desktop/build.sh
 
             package(region, drive, out, catalog="unused", log=lambda _: None)
             package(region, drive, out, catalog="unused", log=lambda _: None)  # re-run replaces, not appends
@@ -417,6 +419,7 @@ class ReleaseTests(unittest.TestCase):
             self.assertEqual(entry["map"]["sha256"], hashlib.sha256(b"tiles").hexdigest())
             self.assertEqual(entry["routing"]["path"], "maps/ee-sample.graph")
             self.assertEqual(entry["library"], [])
+            self.assertEqual([(d["asset"], d["path"]) for d in index["desktop"]], [("Varu-macOS.dmg", "Varu-macOS.dmg")])
 
 
 if __name__ == "__main__":

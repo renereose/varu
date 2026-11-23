@@ -7,7 +7,8 @@ Writes to dist/:
   varu-<id>.zip    everything on the drive except the map and the library
   <id>.pmtiles     the map, downloaded on its own so it can resume
   <id>.graph       the road network for directions, likewise
-  regions.json     what the installer offers; one entry per packaged region
+  regions.json     what the installer offers; one entry per packaged region,
+                   plus the desktop apps already in dist/ for USB sticks
 
 Library files are not re-hosted: regions.json points at the Kiwix mirrors,
 pinned to the edition that was newest when the release was made.
@@ -32,6 +33,8 @@ from .fetch import CHUNK, USER_AGENT, FetchError, fetch_bytes
 INDEX_SCHEMA = 1
 # Not part of the bundle: shipped separately (maps) or fetched from Kiwix (library).
 LEFT_OUT = {"maps", "library", "build-info.json"}
+# The Varu app a USB stick carries for each system (desktop/build.sh makes them).
+DESKTOP = ("Varu-macOS.dmg", "Varu-Windows.exe", "Varu-Linux-x86_64.AppImage")
 
 
 def sha256(path: Path) -> str:
@@ -131,6 +134,7 @@ def package(region: Region, drive: Path, out: Path, catalog: str, log=print) -> 
     index_path = out / "regions.json"
     index = json.loads(index_path.read_text(encoding="utf-8")) if index_path.is_file() else {"schema": INDEX_SCHEMA}
     index["regions"] = [r for r in index.get("regions", []) if r["id"] != region.id] + [entry]
+    index["desktop"] = [asset(out / name, path=name) for name in DESKTOP if (out / name).is_file()]
     index_path.write_text(json.dumps(index, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return entry
 

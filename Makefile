@@ -2,13 +2,14 @@ REGION  ?= ee
 OUT     ?= ./drive
 VERSION ?= dev
 
-.PHONY: test sample drive run clean release-content installer-windows installer-macos android
+.PHONY: test sample drive run clean release-content desktop android
 
-## Run every test (Go router, launcher and installer, Python builder).
+## Run every test (Go router, launcher and installer, desktop app, Python builder).
 test:
 	cd router && go vet ./... && go test ./... && GOOS=linux GOARCH=arm GOARM=6 go build ./...
 	cd launcher && go vet ./... && go test ./...
 	cd installer && go vet ./... && go test ./...
+	node --check desktop/main.js && node --check desktop/preload.js
 	python3 -m unittest discover -s tests
 
 ## Small trial drive (one town, no library) in ./drive.
@@ -34,14 +35,9 @@ release-content:
 	done
 	python3 -m builder.release --region $(REGION) --drive build/$(REGION) --out dist
 
-## dist/Varu-Installer.exe
-installer-windows:
-	cd installer && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath \
-	  -ldflags "-s -w -H windowsgui -X main.version=$(VERSION)" -o ../dist/Varu-Installer.exe .
-
-## dist/Varu-Installer-macOS.zip (needs macOS)
-installer-macos:
-	sh installer/macos/build-app.sh $(VERSION) dist
+## The Varu app for macOS, Windows and Linux, into dist/ (needs macOS and Node)
+desktop:
+	sh desktop/build.sh $(VERSION) dist
 
 ## dist/Varu.apk (needs an Android SDK and a JDK)
 android:

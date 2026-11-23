@@ -160,7 +160,8 @@ public class MainActivity extends Activity {
         List<String> args = new ArrayList<>();
         args.add(program("libvaruinstaller.so"));
         args.add("-no-browser");
-        args.add("-phone"); // no library (kiwix-serve has no Android build) and no desktop launchers
+        // ponytail: no library on phones yet; kiwix-serve crashes in Android's app sandbox (see docs/ROADMAP.md).
+        args.add("-phone"); // no library and no desktop launchers
         String dns = dnsServers();
         if (!dns.isEmpty()) {
             args.add("-dns");
@@ -199,6 +200,7 @@ public class MainActivity extends Activity {
                 try (BufferedReader out = new BufferedReader(new InputStreamReader(started.getInputStream()))) {
                     boolean opened = false;
                     for (String line; (line = out.readLine()) != null; ) {
+                        android.util.Log.i("Varu", line); // adb logcat -s Varu
                         Matcher m = URL.matcher(line);
                         if (!opened && m.find()) {
                             opened = true;

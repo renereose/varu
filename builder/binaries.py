@@ -51,6 +51,10 @@ README_TXT = """VARU
 ====
 
 EESTI KEELES
+  Kui pulgal on Varu rakendus, tee topeltklõps selle süsteemi failil:
+  Varu-Windows.exe, Varu-macOS.dmg (ava sealt Varu) või Varu-Linux-x86_64.AppImage.
+
+  Ilma rakenduseta, veebilehitsejas:
   Windows:  topeltklõps failil Start-Windows.bat
   macOS:    topeltklõps failil Start-macOS.command
   Linux:    käivita terminalis:  sh Start-Linux.sh
@@ -59,6 +63,10 @@ EESTI KEELES
   Hoia avanenud aken lahti; selle sulgemine peatab Varu.
 
 IN ENGLISH
+  If the stick has the Varu app, double-click the file for your system:
+  Varu-Windows.exe, Varu-macOS.dmg (then open Varu in it) or Varu-Linux-x86_64.AppImage.
+
+  Without the app, in your web browser:
   Windows:  double-click Start-Windows.bat
   macOS:    double-click Start-macOS.command
   Linux:    in a terminal, run:  sh Start-Linux.sh

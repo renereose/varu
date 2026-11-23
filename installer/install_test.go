@@ -187,3 +187,37 @@ func TestManifestDropsMissingRouting(t *testing.T) {
 		t.Errorf("manifest still offers routing: %s", raw)
 	}
 }
+
+func TestStickGetsDesktopApps(t *testing.T) {
+	index := &Index{Schema: 1, Regions: []Region{{ID: "ee", Bundle: Asset{Asset: "varu-ee.zip"}}},
+		Desktop: []Asset{{Asset: "Varu-macOS.dmg", Path: "Varu-macOS.dmg", Size: 5}}}
+	req := Request{Target: t.TempDir(), Region: "ee"}
+	if folder := makePlan(index, req, false, nil); len(folder.Items) != 1 {
+		t.Errorf("a folder on this computer got %+v", folder.Items)
+	}
+	stick := makePlan(index, req, true, nil)
+	if len(stick.Items) != 2 || stick.Items[1].Kind != "desktop" || stick.Items[1].dest != filepath.Join(req.Target, "Varu-macOS.dmg") {
+		t.Errorf("a stick got %+v", stick.Items)
+	}
+}
+
+// Updating must not rewrite a program in place (macOS then kills it).
+func TestExtractReplacesFiles(t *testing.T) {
+	dir := t.TempDir()
+	archive, out := filepath.Join(dir, "a.zip"), filepath.Join(dir, "out")
+	writeZip(t, archive, map[string]string{"bin/varu": "new"})
+	if err := os.MkdirAll(filepath.Join(out, "bin"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(out, "bin/varu"), []byte("old"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	before, _ := os.Stat(filepath.Join(out, "bin/varu"))
+	if err := extract(archive, out, false); err != nil {
+		t.Fatal(err)
+	}
+	after, _ := os.Stat(filepath.Join(out, "bin/varu"))
+	if got, _ := os.ReadFile(filepath.Join(out, "bin/varu")); string(got) != "new" || os.SameFile(before, after) {
+		t.Errorf("want a new file with the new content, got %q (same file: %v)", got, os.SameFile(before, after))
+	}
+}

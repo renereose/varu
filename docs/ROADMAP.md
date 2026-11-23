@@ -73,15 +73,26 @@ A first build on a normal internet connection will settle these:
 
 - [x] Installers for Windows, macOS and Android, published from a Mac
       with `release.sh`, with country, home, radius and place selection.
+- [x] Varu as a desktop app for macOS, Windows and Linux (Electron): one
+      window for the wizard, the map and the library. USB sticks carry it
+      for all three systems.
+- [ ] Desktop app: run on Windows and on a real Linux desktop (so far: macOS,
+      and Ubuntu 24.04 in a container).
 - [ ] First tagged release, then a test of every installer on real hardware.
       The Android app has been built but not yet run on a phone.
 - [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and
       notarisation) to remove the first-start warnings.
-- [ ] Android: the library (kiwix-serve has no Android build; options are a
-      static linux-arm64 build in the APK, or handing ZIMs to the Kiwix app),
-      an app icon, dark mode, and downloads that continue in the background.
-- [ ] Installer: desktop shortcut for computer installs; remove older ZIM
-      editions when a newer one is installed.
+- [ ] Android: the library. Kiwix's static linux-arm64 kiwix-serve cannot
+      run in an app: the glibc build is killed for calling set_robust_list,
+      and the musl build crashes because Android 11+ refuses apps the
+      interface list (RTM_GETLINK) and libkiwix then reads an uninitialised
+      list (src/tools/networkTools.cpp; still so in 14.2.1). Targeting API 29
+      does not help on Android 15. Ways forward: a kiwix-serve built with
+      the Android NDK (bionic's getifaddrs works in apps), or Varu's own ZIM
+      reader in the launcher.
+- [ ] Android: an app icon, dark mode, and downloads that continue in the
+      background.
+- [ ] Installer: remove older ZIM editions when a newer one is installed.
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.
 

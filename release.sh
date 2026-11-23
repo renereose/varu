@@ -5,7 +5,7 @@
 #   sh release.sh v0.1.2            build, tag and publish
 #   sh release.sh v0.1.2 --dry-run  build only; the files end up in dist/
 #
-# Needs macOS (for the .app), Go, Python 3.11+, the pmtiles command, a JDK,
+# Needs macOS (for the Mac app), Go, Node, Python 3.11+, the pmtiles command, a JDK,
 # an Android SDK, gh logged in, and the Android release key: the keystore
 # at ~/.android/varu-release.keystore and its password in the login
 # Keychain under "Varu Android release keystore".
@@ -39,14 +39,14 @@ command -v lipo >/dev/null || fail "run this on a Mac (the macOS app needs lipo)
 make test
 
 rm -rf dist
+# The desktop apps first: regions.json lists them for USB sticks.
+make desktop VERSION="$version"
 for region in $regions; do
   # Fresh map and places every release; the app, launchers and readers are reused.
   rm -rf "build/$region/maps" "build/$region/pois"
   make release-content REGION="$region"
 done
-make installer-windows installer-macos VERSION="$version"
 ANDROID_KEYSTORE=$keystore ANDROID_KEYSTORE_PASS=$pass make android VERSION="$version"
-rm -rf "dist/Varu Installer.app" # shipped zipped as Varu-Installer-macOS.zip
 
 if [ "$mode" = --dry-run ]; then
   echo
@@ -58,5 +58,11 @@ fi
 git tag -a "$version" -m "Varu ${version#v}"
 git push -q origin "$version"
 gh release create "$version" dist/* --verify-tag --title "Varu $version" --notes \
-  "Download the installer for your system: Varu-Installer.exe (Windows), Varu-Installer-macOS.zip (macOS) or Varu.apk (Android). The other files are what the installers download."
+"Download Varu for your system:
+- macOS: Varu-macOS.dmg. The first time, macOS may say it cannot check Varu: open System Settings → Privacy & Security and click Open Anyway.
+- Windows: Varu-Setup-Windows.exe. If Windows protects your PC: More info → Run anyway.
+- Linux: varu_${version#v}_amd64.deb (Debian, Ubuntu), or Varu-Linux-x86_64.AppImage. The arm64 files are for a Raspberry Pi 4 or 5.
+- Android: Varu.apk.
+
+The other files are what the app downloads."
 echo "Published $version"
