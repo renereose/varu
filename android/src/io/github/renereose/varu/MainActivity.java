@@ -2,6 +2,7 @@ package io.github.renereose.varu;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -18,6 +19,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -63,7 +65,13 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
                 if (isLocal(uri)) return false;
-                startActivity(new Intent(Intent.ACTION_VIEW, uri)); // credits, sources: the real browser
+                // Credits and sources open in the browser.
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                } catch (ActivityNotFoundException none) {
+                    Toast.makeText(MainActivity.this, isEstonian() ? "Seda linki ei saa avada." : "No app can open this link.",
+                            Toast.LENGTH_LONG).show();
+                }
                 return true;
             }
         });

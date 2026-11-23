@@ -39,7 +39,16 @@ A first build on a normal internet connection will settle these:
 
 ## 3. Viewer
 
-- [ ] Place search (towns, streets, place layers) that works offline.
+- [x] Show my location (GPS on phones works offline; most laptops need the
+      internet to locate themselves, and browsers refuse location on a drive
+      opened over `-lan`).
+- [ ] Place and address search that works offline. Addresses: an index built
+      at release time from the Land Board's address register (ADS; check its
+      open-data licence) or from OpenStreetMap.
+- [ ] Varu's own offline router (next): a road graph built from OpenStreetMap
+      at release time and a small Go router in the launcher, so routes work on
+      computers, in the Android app and on the pocket device with no other app
+      and no internet.
 - [ ] "Nearest hospital / pharmacy / water" from a point on the map.
 - [ ] Search box on the start page that goes straight into the library.
 - [ ] Review of the Estonian interface text by a native speaker; Russian,
@@ -77,5 +86,5 @@ A first build on a normal internet connection will settle these:
 - **Name.** "Varu" is a placeholder.
 - **Licence.** MIT was chosen as a default. Apache-2.0 (patent grant) and
   GPL-3.0 (keeps derivatives open) are the usual alternatives.
-- **Phones.** The drive needs a computer. Options are the `-lan` mode, or
-  pointing people to the Kiwix and Organic Maps apps with the same content.
+- **Phones.** Settled: the Varu Android app carries the same content, run by
+  Varu's own code. Features never depend on other apps being installed.
