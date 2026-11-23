@@ -1,9 +1,10 @@
 name: CI
 
+# Manual only: releases and checks run on the maintainer's Mac
+# (`make test`, `sh release.sh`) to stay clear of Actions billing.
+# Start it from the Actions tab if you ever want a run on GitHub.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
