@@ -134,11 +134,19 @@ and Linux all read and write and that holds files larger than 4 GB.
 
 ### Releases
 
-Pushing a tag such as `v0.1.0` runs `.github/workflows/release.yml`. It
-builds each country's drive (without the library), packages it with
-`builder/release.py`, builds the three installers and publishes them all
-as one GitHub release. Each installer downloads from the release with its
-own tag, so content and installers always match.
+Releases are built on a Mac and published with one command, without
+GitHub Actions:
+
+```sh
+sh release.sh v0.1.2 --dry-run   # build everything into dist/ and stop
+sh release.sh v0.1.2             # build, tag and publish the release
+```
+
+It runs the tests, builds each country's drive with a fresh map and places
+(without the library), packages it with `builder/release.py`, builds the
+three installers and publishes them all as one GitHub release. Each
+installer downloads from the release with its own tag, so content and
+installers always match. It publishes only a clean, up-to-date `main`.
 
 - `regions.json` lists the countries, place layers and library books.
 - `varu-<id>.zip` is the drive without its map and library.
@@ -148,11 +156,11 @@ own tag, so content and installers always match.
 - Library books come straight from the Kiwix mirrors, pinned to the edition
   that was newest at release time, and are checked against Kiwix's SHA-256.
 
-The Android APK needs a signing key that stays the same for every release.
-Create one once with `keytool -genkeypair -keystore release.keystore -alias
-varu -keyalg RSA -validity 10000`, then store it base64-encoded as the
-`ANDROID_KEYSTORE_BASE64` secret and its password as
-`ANDROID_KEYSTORE_PASSWORD`.
+The Android APK must be signed with the same key in every release, or
+phones refuse the update. The release key lives in
+`~/.android/varu-release.keystore` with its password in the macOS Keychain
+under "Varu Android release keystore". **Back up both**: without them no
+future version can update the app on people's phones.
 
 A browser cannot read a multi-gigabyte map straight off a disk, which is why
 there is a launcher at all. It binds to `127.0.0.1` only, rejects requests

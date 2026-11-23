@@ -58,8 +58,8 @@ A first build on a normal internet connection will settle these:
 
 ## 5. Distribution
 
-- [x] Installers for Windows, macOS and Android, published by the release
-      workflow, with country, home, radius and place selection.
+- [x] Installers for Windows, macOS and Android, published from a Mac
+      with `release.sh`, with country, home, radius and place selection.
 - [ ] First tagged release, then a test of every installer on real hardware.
       The Android app has been built but not yet run on a phone.
 - [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and
