@@ -17,6 +17,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Router tests
+        working-directory: router
+        run: |
+          test -z "$(gofmt -l .)"
+          go vet ./...
+          go test ./...
+          GOOS=linux GOARCH=arm GOARM=6 go build ./...
       - name: Launcher tests
         working-directory: launcher
         run: |

@@ -4,8 +4,9 @@ VERSION ?= dev
 
 .PHONY: test sample drive run clean release-content installer-windows installer-macos android
 
-## Run every test (Go launcher and installer, Python builder).
+## Run every test (Go router, launcher and installer, Python builder).
 test:
+	cd router && go vet ./... && go test ./... && GOOS=linux GOARCH=arm GOARM=6 go build ./...
 	cd launcher && go vet ./... && go test ./...
 	cd installer && go vet ./... && go test ./...
 	python3 -m unittest discover -s tests

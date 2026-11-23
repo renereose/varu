@@ -19,6 +19,19 @@
     <ul id="layer-list" class="layer-list"></ul>
   </aside>
 
+  <section id="route-panel" class="route-panel" hidden aria-live="polite">
+    <div class="route-head">
+      <div class="route-modes" role="group">
+        <button type="button" data-mode="foot" data-i18n="walk">Walk</button>
+        <button type="button" data-mode="car" data-i18n="drive">Drive</button>
+      </div>
+      <button type="button" id="route-clear" data-i18n="clearRoute">Clear</button>
+    </div>
+    <p id="route-summary" class="route-summary"></p>
+    <div id="route-notes" class="route-notes"></div>
+    <p class="route-safety" data-i18n="routeSafety">Estimate from OpenStreetMap. Follow road signs.</p>
+  </section>
+
   <p id="map-message" class="map-message" hidden></p>
 
   <script>

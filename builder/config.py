@@ -65,6 +65,7 @@ class Region:
     library: tuple[ZimSpec, ...] = ()
     documents: tuple[DocumentSpec, ...] = ()
     attribution: tuple[str, ...] = field(default_factory=tuple)
+    osm_extract: str | None = None  # [routing]: the OpenStreetMap extract the road network is built from
 
 
 def _require(table: dict, key: str, where: str):
@@ -171,6 +172,12 @@ def parse_region(data: dict) -> Region:
     if not languages or not all(re.fullmatch(r"[a-z]{2}", code) for code in languages):
         raise ConfigError("languages must be a list of two-letter codes such as [\"et\", \"en\"]")
 
+    osm_extract = None
+    if "routing" in data:
+        osm_extract = _require(data["routing"], "osm_extract", "[routing]")
+        if not (isinstance(osm_extract, str) and osm_extract.startswith("https://") and osm_extract.endswith(".osm.pbf")):
+            raise ConfigError("[routing] osm_extract must be an https:// link to an .osm.pbf file")
+
     library = []
     for i, item in enumerate(data.get("library", [])):
         name = _require(item, "name", f"[[library]] #{i + 1}")
@@ -186,6 +193,7 @@ def parse_region(data: dict) -> Region:
         library=tuple(library),
         documents=_parse_documents(data.get("documents", [])),
         attribution=tuple(data.get("attribution", [])),
+        osm_extract=osm_extract,
     )
 
 

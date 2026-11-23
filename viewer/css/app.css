@@ -218,6 +218,65 @@ footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
 
 .layer-list .empty { color: var(--muted); padding: 0.4rem 0; }
 
+/* No long-press callout or text selection: a long press opens the route menu. */
+#map { -webkit-touch-callout: none; user-select: none; }
+
+.route-panel {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 2.5rem; /* above the scale bar */
+  width: min(20rem, calc(100vw - 1.5rem));
+  padding: 0.6rem 0.8rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.18);
+  font-size: 0.95rem;
+}
+
+.route-panel[hidden] { display: none; }
+
+.route-head { display: flex; justify-content: space-between; gap: 0.5rem; }
+.route-modes { display: flex; gap: 0.25rem; }
+
+.route-panel button {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.route-panel button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+.route-summary { margin: 0.5rem 0 0.1rem; font-size: 1.1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.route-notes p { margin: 0.1rem 0; color: var(--muted); }
+.route-safety { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .route-panel { left: 0.5rem; right: 0.5rem; width: auto; }
+}
+
+.route-buttons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.poi-popup .route-buttons { margin-top: 0.5rem; }
+
+.route-buttons button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid #0b5d4b;
+  border-radius: 6px;
+  background: #0b5d4b;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.route-buttons button + button { background: transparent; color: #0b5d4b; }
+
 .map-message {
   position: absolute;
   inset: 0;

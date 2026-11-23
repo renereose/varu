@@ -6,6 +6,7 @@
 Writes to dist/:
   varu-<id>.zip    everything on the drive except the map and the library
   <id>.pmtiles     the map, downloaded on its own so it can resume
+  <id>.graph       the road network for directions, likewise
   regions.json     what the installer offers; one entry per packaged region
 
 Library files are not re-hosted: regions.json points at the Kiwix mirrors,
@@ -66,7 +67,7 @@ def _head_size(url: str) -> int | None:
 def resolve_zim(spec: ZimSpec, catalog: str) -> dict:
     """Pin a library entry to one downloadable file."""
     if spec.url:
-        entry = {"url": spec.url, "name": spec.name, "title": spec.name, "size": _head_size(spec.url)}
+        entry = {"url": spec.url, "name": spec.name, "title": spec.name}
     else:
         query = urllib.parse.urlencode({"name": spec.name, "count": -1})
         entry = choose_zim(parse_catalog(fetch_bytes(f"{catalog}?{query}")), spec)
@@ -86,7 +87,8 @@ def resolve_zim(spec: ZimSpec, catalog: str) -> dict:
         "language": entry.get("language", ""),
         "file": file,
         "url": entry["url"],
-        "size": entry.get("size"),
+        # The catalogue rounds sizes up to whole KiB; the installer needs the exact byte count.
+        "size": _head_size(entry["url"]) or entry.get("size"),
         "sha256": checksum,
     }
 
@@ -112,12 +114,13 @@ def package(region: Region, drive: Path, out: Path, catalog: str, log=print) -> 
     }
     log(f"wrote {bundle.name} ({bundle.stat().st_size / 1e6:.0f} MB)")
 
-    map_file = drive / "maps" / f"{region.id}.pmtiles"
-    if map_file.is_file():
-        copy = out / map_file.name
-        shutil.copyfile(map_file, copy)
-        entry["map"] = asset(copy, path=f"maps/{map_file.name}")
-        log(f"wrote {copy.name} ({copy.stat().st_size / 1e6:.0f} MB)")
+    for key, suffix in (("map", "pmtiles"), ("routing", "graph")):
+        file = drive / "maps" / f"{region.id}.{suffix}"
+        if file.is_file():
+            copy = out / file.name
+            shutil.copyfile(file, copy)
+            entry[key] = asset(copy, path=f"maps/{file.name}")
+            log(f"wrote {copy.name} ({copy.stat().st_size / 1e6:.0f} MB)")
 
     entry["library"] = []
     for spec in region.library:

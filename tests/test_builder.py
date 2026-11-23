@@ -72,6 +72,8 @@ class ConfigTests(unittest.TestCase):
             {**good, "pois": [{"id": "a", "tags": ["amenity=x"]}, {"id": "a", "tags": ["amenity=y"]}]},
             {**good, "documents": [{"url": "https://example.org/a.pdf", "file": "../a.pdf"}]},
             {**good, "documents": [{"url": "file:///etc/passwd", "file": "a.pdf"}]},
+            {**good, "routing": {"osm_extract": "http://example.org/xx.osm.pbf"}},
+            {**good, "routing": {}},
         ]
         for case in bad_cases:
             with self.assertRaises(ConfigError, msg=str(case)):
@@ -329,6 +331,7 @@ class ManifestTests(unittest.TestCase):
 
             (out / "maps").mkdir()
             (out / "maps" / "ee.pmtiles").write_bytes(b"x" * 10)
+            (out / "maps" / "ee.graph").write_bytes(b"g" * 7)
             (out / "pois").mkdir()
             (out / "pois" / "hospital.geojson").write_text(
                 json.dumps({"type": "FeatureCollection", "features": [{}, {}]}), encoding="utf-8")
@@ -336,13 +339,15 @@ class ManifestTests(unittest.TestCase):
             (out / "library").mkdir()
             (out / "library" / "wikipedia_et_all_maxi_2026-09.zim").write_bytes(b"z" * 5)
             (out / "library" / "._wikipedia_et_all_maxi_2026-09.zim").write_bytes(b"junk")
-            ctx.update_info(map_build="20261120", library={
+            ctx.update_info(map_build="20261120", routing_source="https://example.org/ee-261122.osm.pbf", library={
                 "wikipedia_et_all_maxi_2026-09.zim": {"name": "wikipedia_et_all", "title": "Vikipeedia", "language": "est"}})
 
             with contextlib.redirect_stdout(io.StringIO()):
                 manifest = build_manifest(ctx)
             self.assertEqual(manifest["map"]["file"], "maps/ee.pmtiles")
             self.assertEqual(manifest["map"]["build"], "20261120")
+            self.assertEqual(manifest["routing"], {"file": "maps/ee.graph", "size": 7,
+                                                   "source": "https://example.org/ee-261122.osm.pbf"})
             self.assertEqual([p["id"] for p in manifest["pois"]], ["hospital"])
             self.assertEqual(manifest["pois"][0]["count"], 2)
             self.assertEqual(manifest["pois"][0]["label"]["et"], "Haiglad")
@@ -368,6 +373,7 @@ class CliTests(unittest.TestCase):
             self.assertIn("pmtiles extract https://build.protomaps.com/20261120.pmtiles", text)
             self.assertIn("--bbox=21.3,57.45,28.3,59.9 --maxzoom=15", text)
             self.assertIn("wikipedia_et_all", text)
+            self.assertIn("would download https://download.geofabrik.de/europe/estonia-latest.osm.pbf", text)
 
     def test_only_and_skip(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -391,7 +397,7 @@ class ReleaseTests(unittest.TestCase):
             drive, out = Path(tmp, "drive"), Path(tmp, "dist")
             for rel, body in {
                 "manifest.json": "{}", "app/index.html": "x", "bin/darwin-arm64/varu": "#!",
-                "maps/ee-sample.pmtiles": "tiles", "library/a.zim": "z", "build-info.json": "{}", "._junk": "",
+                "maps/ee-sample.pmtiles": "tiles", "maps/ee-sample.graph": "roads", "library/a.zim": "z", "build-info.json": "{}", "._junk": "",
             }.items():
                 Path(drive, rel).parent.mkdir(parents=True, exist_ok=True)
                 Path(drive, rel).write_text(body)
@@ -409,6 +415,7 @@ class ReleaseTests(unittest.TestCase):
             entry = index["regions"][0]
             self.assertEqual(entry["map"]["path"], "maps/ee-sample.pmtiles")
             self.assertEqual(entry["map"]["sha256"], hashlib.sha256(b"tiles").hexdigest())
+            self.assertEqual(entry["routing"]["path"], "maps/ee-sample.graph")
             self.assertEqual(entry["library"], [])
 
 

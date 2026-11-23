@@ -56,6 +56,15 @@ def exists(url: str, *, timeout: int = 30) -> bool:
         return False
 
 
+def final_url(url: str, *, timeout: int = 60) -> str:
+    """Where url redirects to, such as a "latest" link to today's dated file."""
+    try:
+        with urllib.request.urlopen(_request(url, method="HEAD"), timeout=timeout) as response:
+            return response.url
+    except (urllib.error.URLError, TimeoutError, ConnectionError) as err:
+        raise FetchError(f"{url}: {err}") from err
+
+
 def sri_matches(path: Path, integrity: str) -> bool:
     """Check a file against a Subresource-Integrity string such as "sha512-<base64>"."""
     algorithm, _, expected = integrity.partition("-")

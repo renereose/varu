@@ -14,6 +14,7 @@ turn freely available content into a drive:
 | **Installer** | The app people download: a wizard that puts Varu on a USB stick, a computer or a phone | `installer/`, `android/` |
 | **Builder** | A Python tool that downloads everything for a region and assembles the drive | `builder/`, `regions/`, `sources.toml` |
 | **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
+| **Router** | Varu's own offline directions: builds a road network from OpenStreetMap and finds routes on it | `router/` |
 | **Viewer** | The web pages you see: start page and map | `viewer/` |
 
 ## Installing (for everyone)
@@ -64,6 +65,10 @@ Early. What has been exercised so far:
   requests leaving the machine, against a current Protomaps build.
 - Viewer: "show my location" checked in a browser posing as a phone; not yet
   on a real phone.
+- Directions: built from the full Estonia extract (33 MB, 0.15 s to load,
+  Tallinn → Tartu found in under 50 ms on a Mac) and driven in a headless
+  browser with mouse, keyboard and long-press. Not yet timed on a Pi or a
+  phone.
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.
@@ -129,6 +134,7 @@ and Linux all read and write and that holds files larger than 4 GB.
         │                                                      │
         ├── app/         viewer + MapLibre + fonts             ├── start page
         ├── maps/*.pmtiles   read with HTTP Range requests     ├── map
+        ├── maps/*.graph     road network ─▶ /api/route        ├── directions
         ├── pois/*.geojson   hospitals, pharmacies, water …    │
         ├── docs/            PDFs                              │
         └── /library/ ──▶ bin/<os>-<arch>/kiwix-serve ──▶ library/*.zim
@@ -155,6 +161,8 @@ installers always match. It publishes only a clean, up-to-date `main`.
 - `<id>.pmtiles` is the country's map. For a radius install the installer
   cuts a smaller map out of it with HTTP range requests
   (`installer/pmtiles.go`), so only that part is downloaded.
+- `<id>.graph` is the road network for directions (about 35 MB), always
+  for the whole country.
 - Library books come straight from the Kiwix mirrors, pinned to the edition
   that was newest at release time, and are checked against Kiwix's SHA-256.
 
@@ -178,6 +186,7 @@ greyed-out Library card.
 | Content | Source | Build step |
 |---|---|---|
 | Map tiles | [Protomaps](https://protomaps.com) daily build of OpenStreetMap, cut to the region with `pmtiles extract` | `maps` |
+| Road network | The [Geofabrik](https://download.geofabrik.de) OpenStreetMap extract (`[routing]` in the region file, about 125 MB to download), turned into `maps/<id>.graph` by `router/cmd/varu-graph` | `routing` |
 | Places | OpenStreetMap via the Overpass API, one query per layer, or an official list published as GeoJSON (`geojson =` in the region file) | `pois` |
 | Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
 | Library reader | `kiwix-serve` from kiwix-tools | `kiwix` |
@@ -199,7 +208,8 @@ there and list its code under `languages` in the region file.
 - **kiwix-serve** is GPL-3.0-or-later. The drive ships it as a separate,
   unmodified program that the launcher starts; it is not linked into Varu.
 - **Map data** is © OpenStreetMap contributors under the ODbL. Attribution
-  is shown on the map and start page and must stay.
+  is shown on the map and start page and must stay. The road network is a
+  derived database under the same licence.
 - **Library content** keeps the licence of each source, mostly CC BY-SA for
   Wikimedia projects.
 - **Documents** are only as redistributable as their publishers allow. Check
@@ -207,6 +217,10 @@ there and list its code under `languages` in the region file.
 - Third-party notices are written to `licenses/` on every drive.
 
 ## A note on crisis information
+
+Directions are an estimate from OpenStreetMap: no traffic, no closures, no
+turn restrictions or barriers yet, and ferries without timetables. The route
+panel says so every time. Follow road signs.
 
 A drive is a snapshot. Maps, opening hours and official guidance go out of
 date, and place data from OpenStreetMap is volunteer-maintained and can be
@@ -216,7 +230,7 @@ reachable.
 
 ## Contributing
 
-Run `make test` before sending a change. The launcher and installer use
-only the Go standard library, the builder only the Python standard library
+Run `make test` before sending a change. The router, launcher and installer
+use only the Go standard library, the builder only the Python standard library
 and the Android app only the Android framework (it builds without Gradle:
 `make android`). Please keep it that way unless there is a strong reason.

@@ -45,10 +45,14 @@ A first build on a normal internet connection will settle these:
 - [ ] Place and address search that works offline. Addresses: an index built
       at release time from the Land Board's address register (ADS; check its
       open-data licence) or from OpenStreetMap.
-- [ ] Varu's own offline router (next): a road graph built from OpenStreetMap
-      at release time and a small Go router in the launcher, so routes work on
-      computers, in the Android app and on the pocket device with no other app
-      and no internet.
+- [x] Varu's own offline router: a road network built from OpenStreetMap at
+      release time and a Go router in the launcher (`router/`), so routes work
+      on computers and in the Android app with no other app and no internet.
+      Walk or drive; Route here / Start here by right-click, long-press or the
+      keyboard menu key.
+- [ ] Router follow-ups: turn restrictions and barriers, turn-by-turn
+      directions and voice, re-routing while moving, cycling, timing on a
+      Pi Zero 2 W and a phone, "nearest hospital by road".
 - [ ] "Nearest hospital / pharmacy / water" from a point on the map.
 - [ ] Search box on the start page that goes straight into the library.
 - [ ] Review of the Estonian interface text by a native speaker; Russian,

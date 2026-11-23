@@ -36,6 +36,7 @@ type Region struct {
 	Center      []float64         `json:"center"` // lon, lat
 	Bundle      Asset             `json:"bundle"`
 	Map         *Asset            `json:"map,omitempty"`
+	Routing     *Asset            `json:"routing,omitempty"` // road network for directions, whole country
 	Pois        []PoiLayer        `json:"pois"`
 	Library     []Book            `json:"library"`
 }
@@ -72,7 +73,7 @@ type Book struct {
 
 // Item is one download in a plan.
 type Item struct {
-	Kind   string `json:"kind"` // app, map or book
+	Kind   string `json:"kind"` // app, map, routing or book
 	Title  string `json:"title"`
 	Size   int64  `json:"size"`
 	Have   int64  `json:"have"` // bytes already on disk from an earlier run
@@ -153,10 +154,7 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 		if !safeRel(m.Path) {
 			problem("bad", m.Path)
 		}
-		item := Item{
-			Kind: "map", Title: m.Asset, Size: m.Size, url: base(m.Asset), sha256: m.SHA256,
-			dest: filepath.Join(req.Target, filepath.FromSlash(m.Path)),
-		}
+		item := assetItem("map", m, req.Target)
 		if req.RadiusKm > 0 && req.Home != nil {
 			src, err := open(m.Asset)
 			if err != nil {
@@ -167,6 +165,13 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 			}
 		}
 		plan.Items = append(plan.Items, item)
+	}
+	// ponytail: the road network is not cut to the radius; ~35 MB for the whole country.
+	if r := region.Routing; r != nil {
+		if !safeRel(r.Path) {
+			problem("bad", r.Path)
+		}
+		plan.Items = append(plan.Items, assetItem("routing", r, req.Target))
 	}
 	for _, name := range req.Library {
 		for _, b := range region.Library {
@@ -213,6 +218,12 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 		plan.Warnings = append(plan.Warnings, Problem{"portable", fs})
 	}
 	return plan
+}
+
+// assetItem downloads a release file to its place on the drive.
+func assetItem(kind string, a *Asset, target string) Item {
+	return Item{Kind: kind, Title: a.Asset, Size: a.Size, url: base(a.Asset), sha256: a.SHA256,
+		dest: filepath.Join(target, filepath.FromSlash(a.Path))}
 }
 
 // base marks an asset name as relative to the release; Job resolves it.
@@ -519,6 +530,9 @@ func writeManifest(target string, region *Region, req Request) error {
 	}
 	if region.Map != nil && !isFile(filepath.Join(target, filepath.FromSlash(region.Map.Path))) {
 		delete(manifest, "map")
+	}
+	if region.Routing == nil || !isFile(filepath.Join(target, filepath.FromSlash(region.Routing.Path))) {
+		delete(manifest, "routing")
 	}
 	library := []map[string]any{}
 	for _, b := range region.Library {
