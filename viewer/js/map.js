@@ -3,6 +3,7 @@ import { layers as basemapLayers, namedFlavor } from "../vendor/basemaps.mjs";
 import {
   applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
 } from "./common.js";
+import { setUpRouting } from "./route.js";
 
 const SOURCE = "basemap";
 const POI_STATE_KEY = "varu.pois";
@@ -23,6 +24,7 @@ function showMessage(key) {
 // relative paths have no page to be relative to.
 const base = new URL("./", document.baseURI).href;
 const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+let routing = null; // Route here / Start here, when the drive has road data
 
 if (!manifest.map?.file) {
   showMessage("noMap");
@@ -82,10 +84,11 @@ function startMap(mapInfo) {
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
   // Your position. A phone's GPS works offline; a laptop usually locates itself
   // online. Browsers allow it only on localhost, not on a drive shared with -lan.
-  map.addControl(new maplibregl.GeolocateControl({
+  const geolocate = new maplibregl.GeolocateControl({
     positionOptions: { enableHighAccuracy: true },
     trackUserLocation: true,
-  }), "top-right");
+  });
+  map.addControl(geolocate, "top-right");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
   let failed = false;
@@ -103,7 +106,10 @@ function startMap(mapInfo) {
   if (Number.isFinite(manifest.home?.lon) && Number.isFinite(manifest.home?.lat)) {
     new maplibregl.Marker({ color: "#0b5d4b" }).setLngLat([manifest.home.lon, manifest.home.lat]).addTo(map);
   }
-  map.on("load", () => setUpPois(map));
+  map.on("load", () => {
+    routing = setUpRouting(map, { manifest, lang, geolocate, dark });
+    setUpPois(map);
+  });
   setUpPanel();
 
   // Handy when poking at the map from the browser console.
@@ -241,8 +247,8 @@ function showPopup(map, poi, feature) {
   if (phone) line("p", `${t(lang, "phone")}: ${phone}`);
   if (props.operator) line("p", `${t(lang, "operator")}: ${props.operator}`);
 
-  new maplibregl.Popup({ offset: 10 })
-    .setLngLat(feature.geometry.coordinates)
-    .setDOMContent(root)
-    .addTo(map);
+  const popup = new maplibregl.Popup({ offset: 10 }).setLngLat(feature.geometry.coordinates);
+  const buttons = routing?.buttons(feature.geometry.coordinates, () => popup.remove());
+  if (buttons) root.append(buttons);
+  popup.setDOMContent(root).addTo(map);
 }

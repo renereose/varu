@@ -6,6 +6,7 @@
 Writes to dist/:
   varu-<id>.zip    everything on the drive except the map and the library
   <id>.pmtiles     the map, downloaded on its own so it can resume
+  <id>.graph       the road network for directions, likewise
   regions.json     what the installer offers; one entry per packaged region
 
 Library files are not re-hosted: regions.json points at the Kiwix mirrors,
@@ -112,12 +113,13 @@ def package(region: Region, drive: Path, out: Path, catalog: str, log=print) -> 
     }
     log(f"wrote {bundle.name} ({bundle.stat().st_size / 1e6:.0f} MB)")
 
-    map_file = drive / "maps" / f"{region.id}.pmtiles"
-    if map_file.is_file():
-        copy = out / map_file.name
-        shutil.copyfile(map_file, copy)
-        entry["map"] = asset(copy, path=f"maps/{map_file.name}")
-        log(f"wrote {copy.name} ({copy.stat().st_size / 1e6:.0f} MB)")
+    for key, suffix in (("map", "pmtiles"), ("routing", "graph")):
+        file = drive / "maps" / f"{region.id}.{suffix}"
+        if file.is_file():
+            copy = out / file.name
+            shutil.copyfile(file, copy)
+            entry[key] = asset(copy, path=f"maps/{file.name}")
+            log(f"wrote {copy.name} ({copy.stat().st_size / 1e6:.0f} MB)")
 
     entry["library"] = []
     for spec in region.library:

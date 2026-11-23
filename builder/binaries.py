@@ -107,11 +107,15 @@ def _binary_name(target: str, base: str) -> str:
     return base + (".exe" if target.startswith("windows-") else "")
 
 
-def _compile(ctx: Context, targets: list[str]) -> None:
+def go_command(hint: str = "") -> str:
     go = shutil.which("go")
     if go is None:
-        raise StepError("Go is not installed. Install it from https://go.dev/dl/ "
-                        "or pass --launcher-dir with prebuilt launchers.")
+        raise StepError("Go is not installed. Install it from https://go.dev/dl/" + hint)
+    return go
+
+
+def _compile(ctx: Context, targets: list[str]) -> None:
+    go = go_command(" or pass --launcher-dir with prebuilt launchers.")
     for target in targets:
         goos, goarch = target.split("-", 1)
         output = ctx.out / "bin" / target / _binary_name(target, "varu")

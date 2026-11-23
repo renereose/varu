@@ -24,6 +24,12 @@ maxzoom = 15                 # 15 = full street level; each level less roughly h
 center = [25.0, 58.65]
 zoom = 6.5
 
+# --- Directions ------------------------------------------------------------------
+# Varu's own router finds routes on a road network built from this extract
+# (about 125 MB to download at build time; the drive gets a ~35 MB file).
+[routing]
+osm_extract = "https://download.geofabrik.de/europe/estonia-latest.osm.pbf"
+
 # --- Places shown as map layers --------------------------------------------------
 # Each layer is one or more OpenStreetMap tags ("key=value"); an object matching
 # any of them is included.

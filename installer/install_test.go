@@ -45,7 +45,7 @@ func writeZip(t *testing.T, path string, files map[string]string) {
 // run, and the place layers trimmed to the radius.
 func TestInstall(t *testing.T) {
 	src, target := t.TempDir(), filepath.Join(t.TempDir(), "Varu")
-	manifest := `{"schema":1,"map":{"file":"maps/ee.pmtiles","center":[25,58.6],"zoom":6},
+	manifest := `{"schema":1,"map":{"file":"maps/ee.pmtiles","center":[25,58.6],"zoom":6},"routing":{"file":"maps/ee.graph"},
 		"pois":[{"id":"water","file":"pois/water.geojson","count":2},{"id":"fuel","file":"pois/fuel.geojson","count":1}]}`
 	water := `{"type":"FeatureCollection","features":[
 		{"type":"Feature","geometry":{"type":"Point","coordinates":[26.73,58.38]},"properties":{}},
@@ -56,8 +56,11 @@ func TestInstall(t *testing.T) {
 	})
 	writeArchive(t, filepath.Join(src, "ee.pmtiles"))
 	book := []byte(strings.Repeat("wikipedia ", 5000))
-	if err := os.WriteFile(filepath.Join(src, "book.zim"), book, 0o644); err != nil {
-		t.Fatal(err)
+	roads := []byte("VARUGRPH roads")
+	for name, body := range map[string][]byte{"book.zim": book, "ee.graph": roads} {
+		if err := os.WriteFile(filepath.Join(src, name), body, 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
 	bundle, _ := os.ReadFile(filepath.Join(src, "varu-ee.zip"))
 	mapFile, _ := os.ReadFile(filepath.Join(src, "ee.pmtiles"))
@@ -66,9 +69,10 @@ func TestInstall(t *testing.T) {
 	defer srv.Close()
 	index := &Index{Schema: 1, Regions: []Region{{
 		ID: "ee", CountryCode: "EE", Bounds: []float64{21.3, 57.45, 28.3, 59.9},
-		Bundle: Asset{Asset: "varu-ee.zip", Size: int64(len(bundle)), SHA256: sum(bundle), Unpacked: 1000},
-		Map:    &Asset{Asset: "ee.pmtiles", Path: "maps/ee.pmtiles", Size: int64(len(mapFile)), SHA256: sum(mapFile)},
-		Pois:   []PoiLayer{{ID: "water"}, {ID: "fuel"}},
+		Bundle:  Asset{Asset: "varu-ee.zip", Size: int64(len(bundle)), SHA256: sum(bundle), Unpacked: 1000},
+		Map:     &Asset{Asset: "ee.pmtiles", Path: "maps/ee.pmtiles", Size: int64(len(mapFile)), SHA256: sum(mapFile)},
+		Routing: &Asset{Asset: "ee.graph", Path: "maps/ee.graph", Size: int64(len(roads)), SHA256: sum(roads)},
+		Pois:    []PoiLayer{{ID: "water"}, {ID: "fuel"}},
 		Library: []Book{{Name: "wp", Title: "Wikipedia", File: "wp_2026-11.zim", URL: srv.URL + "/book.zim",
 			Size: int64(len(book)), SHA256: sum(book)}},
 	}}}
@@ -89,7 +93,7 @@ func TestInstall(t *testing.T) {
 	if len(plan.Problems) > 0 {
 		t.Fatalf("problems: %+v", plan.Problems)
 	}
-	if plan.Items[2].Have != 20000 {
+	if plan.Items[2].Kind != "routing" || plan.Items[3].Have != 20000 {
 		t.Errorf("plan should count the partial book, have=%d", plan.Items[2].Have)
 	}
 	job := &Job{Target: target, Plan: plan, Source: base, Client: srv.Client()}
@@ -100,6 +104,9 @@ func TestInstall(t *testing.T) {
 
 	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.zim")); string(got) != string(book) {
 		t.Error("resumed book differs from the original")
+	}
+	if got, _ := os.ReadFile(filepath.Join(target, "maps", "ee.graph")); string(got) != string(roads) {
+		t.Error("road data missing or different")
 	}
 	if info, err := os.Stat(filepath.Join(target, "bin/darwin-arm64/varu")); err != nil || info.Mode()&0o100 == 0 {
 		t.Errorf("launcher should be executable: %v %v", info, err)
@@ -119,6 +126,9 @@ func TestInstall(t *testing.T) {
 	pois := m["pois"].([]any)
 	if len(pois) != 1 || pois[0].(map[string]any)["count"].(float64) != 1 {
 		t.Errorf("want only water with the 1 place within 10 km, got %v", pois)
+	}
+	if m["routing"] == nil {
+		t.Error("manifest lost the road data")
 	}
 	if lib := m["library"].([]any); len(lib) != 1 {
 		t.Errorf("library = %v", lib)
@@ -161,5 +171,19 @@ func TestAPIGuards(t *testing.T) {
 		if rec.Code != c.want {
 			t.Errorf("host %s token %q: %d, want %d", c.host, c.token, rec.Code, c.want)
 		}
+	}
+}
+
+// A failed road data download must not leave the viewer offering directions.
+func TestManifestDropsMissingRouting(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "manifest.json"), []byte(`{"routing":{"file":"maps/ee.graph"}}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeManifest(dir, &Region{Routing: &Asset{Path: "maps/ee.graph"}}, Request{}); err != nil {
+		t.Fatal(err)
+	}
+	if raw, _ := os.ReadFile(filepath.Join(dir, "manifest.json")); strings.Contains(string(raw), "routing") {
+		t.Errorf("manifest still offers routing: %s", raw)
 	}
 }

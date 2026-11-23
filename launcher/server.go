@@ -51,6 +51,7 @@ var dataDirs = []string{"maps", "pois", "docs"}
 //	/maps/ /pois/ /docs/   the matching drive folders (Range requests supported)
 //	/manifest.json    what the build put on the drive
 //	/api/status       launcher status for the viewer
+//	/api/route        directions on the drive's road network
 //	/library/         reverse proxy to kiwix-serve
 func NewHandler(cfg Config) http.Handler {
 	mux := http.NewServeMux()
@@ -79,6 +80,8 @@ func NewHandler(cfg Config) http.Handler {
 			"lan":     cfg.LAN,
 		})
 	})
+
+	mux.Handle("/api/route", &routes{root: cfg.Root})
 
 	mux.Handle("/library/", libraryHandler(cfg.KiwixURL))
 	mux.HandleFunc("/library", func(w http.ResponseWriter, r *http.Request) {

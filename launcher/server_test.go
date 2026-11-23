@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/renereose/varu/router"
 )
 
 // newDrive lays out a miniature drive in a temp folder.
@@ -186,5 +188,48 @@ func TestResolveRoot(t *testing.T) {
 	}
 	if _, err := resolveRoot(filepath.Join(root, "maps")); err == nil {
 		t.Error("a folder without app/ must be rejected")
+	}
+}
+
+func TestRouteAPI(t *testing.T) {
+	root := newDrive(t)
+	h := NewHandler(Config{Root: root})
+	if res, body := get(t, h, "/api/route?from=58.38,26.72&to=58.381,26.72&mode=foot", nil); res.StatusCode != 404 ||
+		!strings.Contains(body, "noGraph") {
+		t.Fatalf("without road data: %d %s", res.StatusCode, body)
+	}
+
+	// One street in Tartu, 111 m north to south.
+	g, err := router.Build([]router.Way{{ID: 1, Nodes: []int64{1, 2}, Tags: map[string]string{"highway": "residential"}}},
+		map[int64][2]float64{1: {58.380, 26.72}, 2: {58.381, 26.72}}, router.Meta{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	f, err := os.Create(filepath.Join(root, "maps", "ee.graph"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := g.WriteTo(f); err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+	if err := os.WriteFile(filepath.Join(root, "manifest.json"), []byte(`{"routing":{"file":"maps/ee.graph"}}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	h = NewHandler(Config{Root: root})
+	for _, c := range []struct {
+		query, want string
+		status      int
+	}{
+		{"from=58.380,26.72&to=58.381,26.72&mode=foot", `"distance_m":111`, 200},
+		{"from=58.380,26.72&to=58.381,26.72&mode=bike", "badRequest", 400},
+		{"from=58.380&to=58.381,26.72&mode=car", "badRequest", 400},
+		{"from=59.4,24.7&to=58.381,26.72&mode=car", "startTooFar", 422},
+	} {
+		res, body := get(t, h, "/api/route?"+c.query, nil)
+		if res.StatusCode != c.status || !strings.Contains(body, c.want) {
+			t.Errorf("%s: %d %s; want %d with %s", c.query, res.StatusCode, body, c.status, c.want)
+		}
 	}
 }

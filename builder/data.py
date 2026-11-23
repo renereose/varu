@@ -1,4 +1,4 @@
-"""The content steps: `maps`, `pois`, `library` and `documents`."""
+"""The content steps: `maps`, `pois`, `routing`, `library` and `documents`."""
 
 from __future__ import annotations
 
@@ -14,7 +14,8 @@ from pathlib import Path
 
 from .config import PoiSpec, ZimSpec
 from .context import Context, StepError
-from .fetch import FetchError, download, exists, fetch_bytes
+from .binaries import go_command
+from .fetch import FetchError, download, exists, fetch_bytes, final_url
 
 # ---------------------------------------------------------------- maps ------
 
@@ -178,6 +179,50 @@ def fetch_pois(endpoint: str, country_code: str, poi: PoiSpec, languages: tuple[
     body = urllib.parse.urlencode({"data": overpass_query(country_code, poi.tags, bbox)}).encode()
     payload = json.loads(fetch_bytes(endpoint, data=body, timeout=360))
     return overpass_to_geojson(payload, languages)
+
+
+# ------------------------------------------------------------- routing ------
+
+_EXTRACT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*\.osm\.pbf$")
+
+
+def step_routing(ctx: Context, *, refresh: bool = False) -> None:
+    """maps/<id>.graph: the road network Varu's own router finds routes on."""
+    if ctx.region.osm_extract is None:
+        ctx.log("region has no [routing]; skipping")
+        return
+    target = ctx.out / "maps" / f"{ctx.region.id}.graph"
+    if target.exists() and not refresh and not ctx.dry_run:
+        ctx.log(f"have {target.name}; use --refresh to build a newer one")
+        return
+    if ctx.dry_run:
+        ctx.log(f"would download {ctx.region.osm_extract} and build {target.name} from it")
+        return
+
+    go = go_command()
+    try:
+        url = final_url(ctx.region.osm_extract)  # the dated file, so the source is exact
+        name = urllib.parse.unquote(url.rsplit("/", 1)[-1])
+        if not _EXTRACT.match(name):
+            raise StepError(f"unexpected download link {url}")
+        cache = ctx.cache / "osm" / ctx.region.id
+        extract = download(url, cache / name, log=ctx.log)
+    except FetchError as err:
+        raise StepError(str(err)) from err
+    for old in cache.glob("*.osm.pbf"):
+        if old != extract:
+            old.unlink()
+
+    partial = target.with_name(f"{ctx.region.id}.partial.graph")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    result = subprocess.run([go, "run", "./cmd/varu-graph", "-in", str(extract), "-out", str(partial),
+                             "-source", url], cwd=ctx.repo / "router")
+    if result.returncode != 0 or not partial.exists():
+        partial.unlink(missing_ok=True)
+        raise StepError(f"building the road network failed (exit code {result.returncode})")
+    partial.replace(target)
+    ctx.update_info(routing_source=url)
+    ctx.log(f"wrote {target.name} ({target.stat().st_size / 1e6:.0f} MB)")
 
 
 # ------------------------------------------------------------- library ------
