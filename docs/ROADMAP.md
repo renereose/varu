@@ -8,12 +8,13 @@ A first build on a normal internet connection will settle these:
 - [x] `make sample` end to end (2026-11-23).
 - [x] Map styling against a current Protomaps build: roads, labels and
       buildings draw in light and dark.
-- [ ] **kiwix-tools version** in `sources.toml`: 3.8.2 has no Windows build
-      (3.8.1 does), so the `kiwix` step and the release workflow fail.
+- [x] kiwix-tools file names checked; pinned to 3.8.1, the newest version
+      with builds for every system.
 - [ ] **Kiwix catalogue parsing.** `parse_catalog` was written from the
       documented feed shape and tested against a hand-made fixture. Compare
       with a live response and replace the fixture with a real one.
-- [ ] **ZIM names** in `regions/ee.toml` against https://library.kiwix.org.
+- [x] ZIM names in `regions/ee.toml` resolve in the Kiwix catalogue, with
+      checksums (2026-11-23).
 - [ ] **Real hardware.** An exFAT stick on Windows 10/11, macOS (Intel and
       Apple Silicon) and at least two Linux desktops. Things to watch:
   - whether macOS Gatekeeper or Windows SmartScreen object to the unsigned

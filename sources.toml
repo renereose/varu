@@ -69,11 +69,10 @@ pause_seconds = 5
 url = "https://library.kiwix.org/catalog/v2/entries"
 
 # kiwix-serve, the reader that the launcher starts for library/*.zim.
-# NOTE: the file names below follow the pattern of earlier releases and have
-# not been checked against the download server for this version. If a
-# download 404s, open base_url in a browser and correct the name here.
+# 3.8.1, not 3.8.2: 3.8.2 has no Windows build. Before upgrading, check that
+# every file below exists for the new version at base_url.
 [kiwix_tools]
-version = "3.8.2"
+version = "3.8.1"
 base_url = "https://download.kiwix.org/release/kiwix-tools"
 [kiwix_tools.targets]
 "linux-amd64" = "kiwix-tools_linux-x86_64-{version}.tar.gz"
