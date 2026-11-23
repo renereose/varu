@@ -4,13 +4,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/renereose/varu/router"
+	"github.com/renereose/varu/zim/zimtest"
 )
 
 // newDrive lays out a miniature drive in a temp folder.
@@ -101,8 +101,8 @@ func TestRangeRequests(t *testing.T) {
 
 func TestHidesDotfilesListingsAndOtherFolders(t *testing.T) {
 	h := NewHandler(Config{Root: newDrive(t)})
-	// Dotfiles, directory listings, folders without an index page, library/
-	// (only reachable through kiwix), path escapes and bin/ must never be
+	// Dotfiles, directory listings, folders without an index page, files in
+	// library/ (only books are served), path escapes and bin/ must never be
 	// answered with a 200.
 	for _, path := range []string{
 		"/.secret",
@@ -143,40 +143,54 @@ func TestHostGuard(t *testing.T) {
 	}
 }
 
-func TestLibraryWithoutKiwix(t *testing.T) {
-	h := NewHandler(Config{Root: newDrive(t)})
-	res, body := get(t, h, "/library/", nil)
-	if res.StatusCode != http.StatusNotFound || !strings.Contains(body, "No library") {
-		t.Errorf("got %d %q", res.StatusCode, body)
+func TestLibrary(t *testing.T) {
+	root := newDrive(t)
+	h := NewHandler(Config{Root: root})
+	if _, status := get(t, h, "/api/status", nil); !strings.Contains(status, `"library":false`) {
+		t.Errorf("no books yet, status %q", status)
 	}
-}
-
-func TestLibraryProxy(t *testing.T) {
-	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _ = io.WriteString(w, "kiwix saw "+r.URL.Path)
-	}))
-	defer backend.Close()
-	u, _ := url.Parse(backend.URL)
-
-	h := NewHandler(Config{Root: newDrive(t), KiwixURL: u})
-	res, body := get(t, h, "/library/content/wikipedia_et_all/A/Tallinn", nil)
-	if res.StatusCode != http.StatusOK || body != "kiwix saw /library/content/wikipedia_et_all/A/Tallinn" {
-		t.Errorf("got %d %q", res.StatusCode, body)
+	if res, _ := get(t, h, "/library/wikipedia_et/", nil); res.StatusCode != http.StatusNotFound {
+		t.Errorf("missing book: %d", res.StatusCode)
 	}
 
-	_, status := get(t, h, "/api/status", nil)
-	if !strings.Contains(status, `"library":true`) {
+	err := zimtest.Write(filepath.Join(root, "library", "wikipedia_et.zim"), []zimtest.Entry{
+		{Namespace: 'C', Path: "Tallinn", Title: "Tallinn", MIME: "text/html", Data: []byte("<html><head></head><body>capital</body></html>")},
+		{Namespace: 'C', Path: "Tartu", Title: "Tartu", MIME: "text/html", Data: []byte("<p>university</p>")},
+		{Namespace: 'C', Path: "Reval", Redirect: "Tallinn"},
+		{Namespace: 'C', Path: "images/flag one.png", MIME: "image/png", Data: []byte("PNG!"), Stored: true},
+		{Namespace: 'M', Path: "Title", MIME: "text/plain", Data: []byte("Vikipeedia")},
+	}, "Tallinn")
+	if err != nil {
+		t.Fatal(err)
+	}
+	h = NewHandler(Config{Root: root})
+	if _, status := get(t, h, "/api/status", nil); !strings.Contains(status, `"library":true`) {
 		t.Errorf("status %q", status)
 	}
-}
-
-func TestLibraryStartingPage(t *testing.T) {
-	// A backend address nobody listens on: kiwix-serve still opening archives.
-	u, _ := url.Parse("http://127.0.0.1:1")
-	h := NewHandler(Config{Root: newDrive(t), KiwixURL: u})
-	res, body := get(t, h, "/library/", nil)
-	if res.StatusCode != http.StatusServiceUnavailable || !strings.Contains(body, "starting") {
-		t.Errorf("got %d %q", res.StatusCode, body)
+	if _, books := get(t, h, "/api/library", nil); !strings.Contains(books, `"id":"wikipedia_et","title":"Vikipeedia"`) {
+		t.Errorf("books %s", books)
+	}
+	for path, want := range map[string]string{
+		"/library/wikipedia_et/":      "/library/wikipedia_et/Tallinn",
+		"/library/wikipedia_et/Reval": "/library/wikipedia_et/Tallinn",
+	} {
+		if res, _ := get(t, h, path, nil); res.StatusCode != http.StatusFound || res.Header.Get("Location") != want {
+			t.Errorf("%s: %d to %q, want %s", path, res.StatusCode, res.Header.Get("Location"), want)
+		}
+	}
+	res, page := get(t, h, "/library/wikipedia_et/Tallinn", nil)
+	if res.StatusCode != http.StatusOK || !strings.Contains(page, `library-bar.js"></script></head><body>capital`) {
+		t.Errorf("page %d %q", res.StatusCode, page)
+	}
+	res, part := get(t, h, "/library/wikipedia_et/images/flag%20one.png", func(r *http.Request) { r.Header.Set("Range", "bytes=1-2") })
+	if res.StatusCode != http.StatusPartialContent || part != "NG" || res.Header.Get("Content-Type") != "image/png" {
+		t.Errorf("image range: %d %q %s", res.StatusCode, part, res.Header.Get("Content-Type"))
+	}
+	if res, _ := get(t, h, "/library/wikipedia_et/Pärnu", nil); res.StatusCode != http.StatusNotFound {
+		t.Errorf("missing page: %d", res.StatusCode)
+	}
+	if _, hits := get(t, h, "/api/library/search?q=ta", nil); !strings.Contains(hits, `"title":"Tallinn","url":"/library/wikipedia_et/Tallinn"`) || !strings.Contains(hits, "Tartu") {
+		t.Errorf("search %s", hits)
 	}
 }
 

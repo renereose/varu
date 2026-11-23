@@ -396,7 +396,7 @@ function renderPois() {
 }
 
 function renderLibrary() {
-  const books = s.state.library ? s.region.library ?? [] : [];
+  const books = s.region.library ?? [];
   $("library").replaceChildren(...books.map((b) => {
     const box = checkbox(s.library.has(b.name), (on) => { on ? s.library.add(b.name) : s.library.delete(b.name); replan(); });
     return el("li", {}, el("label", { className: "choice" }, box,

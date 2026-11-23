@@ -130,7 +130,7 @@ function menu() {
       submenu: [
         nav(l.home, "CmdOrCtrl+Shift+H", "/"),
         nav(l.map, "CmdOrCtrl+M", "/map.html"),
-        nav(l.library, "CmdOrCtrl+L", "/library/#lang="),
+        nav(l.library, "CmdOrCtrl+L", "/library/"),
         { type: "separator" },
         { label: l.back, accelerator: mac ? "Cmd+[" : "Alt+Left", click: () => focused().navigationHistory.goBack() },
         { label: l.forward, accelerator: mac ? "Cmd+]" : "Alt+Right", click: () => focused().navigationHistory.goForward() },

@@ -160,8 +160,7 @@ public class MainActivity extends Activity {
         List<String> args = new ArrayList<>();
         args.add(program("libvaruinstaller.so"));
         args.add("-no-browser");
-        // ponytail: no library on phones yet; kiwix-serve crashes in Android's app sandbox (see docs/ROADMAP.md).
-        args.add("-phone"); // no library and no desktop launchers
+        args.add("-phone"); // no desktop launchers
         String dns = dnsServers();
         if (!dns.isEmpty()) {
             args.add("-dns");

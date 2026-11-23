@@ -217,7 +217,7 @@ def load_sources(repo: Path) -> dict:
     path = repo / "sources.toml"
     with path.open("rb") as handle:
         sources = tomllib.load(handle)
-    for section in ("npm", "assets", "protomaps", "overpass", "kiwix_catalog", "kiwix_tools", "launcher"):
+    for section in ("npm", "assets", "protomaps", "overpass", "kiwix_catalog", "launcher"):
         if section not in sources:
             raise ConfigError(f"sources.toml: missing [{section}]")
     return sources

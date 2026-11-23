@@ -21,7 +21,6 @@ sys.path.insert(0, str(REPO))
 
 from builder import cli  # noqa: E402
 from builder.app import extract_members  # noqa: E402
-from builder.binaries import extract_kiwix_serve  # noqa: E402
 from builder.config import ConfigError, ZimSpec, load_region, load_sources, parse_region  # noqa: E402
 from builder.context import Context, StepError  # noqa: E402
 from builder.data import (  # noqa: E402
@@ -296,30 +295,6 @@ class ArchiveTests(unittest.TestCase):
             with self.assertRaises(StepError):
                 extract_members(tmp / "pkg.tgz", {"package/dist/missing.js": tmp / "x.js"})
 
-    def test_kiwix_serve_from_tar_and_zip(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            tmp = Path(tmp)
-            make_tar(tmp / "kiwix-tools_linux-x86_64-9.9.9.tar.gz", {
-                "kiwix-tools_linux-x86_64-9.9.9/kiwix-serve": b"ELF",
-                "kiwix-tools_linux-x86_64-9.9.9/kiwix-manage": b"ELF",
-            })
-            self.assertEqual(extract_kiwix_serve(tmp / "kiwix-tools_linux-x86_64-9.9.9.tar.gz", tmp / "linux"), 1)
-            self.assertEqual([p.name for p in (tmp / "linux").iterdir()], ["kiwix-serve"])
-
-            with zipfile.ZipFile(tmp / "kiwix-tools_win-x86_64-9.9.9.zip", "w") as bundle:
-                bundle.writestr("kiwix-tools_win-x86_64-9.9.9/kiwix-serve.exe", b"MZ")
-                bundle.writestr("kiwix-tools_win-x86_64-9.9.9/kiwix-search.exe", b"MZ")
-                bundle.writestr("kiwix-tools_win-x86_64-9.9.9/../../evil.dll", b"MZ")
-            extract_kiwix_serve(tmp / "kiwix-tools_win-x86_64-9.9.9.zip", tmp / "win")
-            self.assertEqual(sorted(p.name for p in (tmp / "win").iterdir()), ["evil.dll", "kiwix-serve.exe"])
-            self.assertFalse((tmp / "evil.dll").exists(), "members are flattened into the target folder")
-
-            make_tar(tmp / "empty.tar.gz", {"x/readme": b"-"})
-            with self.assertRaises(StepError):
-                extract_kiwix_serve(tmp / "empty.tar.gz", tmp / "none")
-
-
-class ManifestTests(unittest.TestCase):
     def test_lists_only_what_exists(self):
         region = load_region("ee", REPO)
         with tempfile.TemporaryDirectory() as tmp:

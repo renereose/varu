@@ -46,6 +46,9 @@ const STRINGS = {
     routeFerry: "Includes a ferry. Check whether ferries are running.",
     snapNote: "Starts or ends {n} from the nearest road or path.",
     routeSafety: "Estimate from OpenStreetMap. Follow road signs.",
+    searchLibrary: "Search the library by title",
+    noHits: "No titles start with that.",
+    noBooks: "There are no books on this drive.",
   },
   et: {
     offline: "Töötab ilma internetita",
@@ -89,6 +92,9 @@ const STRINGS = {
     routeFerry: "Teekonnal on praam. Kontrolli, kas praamid sõidavad.",
     snapNote: "Algab või lõpeb lähimast teest või rajast {n} kaugusel.",
     routeSafety: "Hinnang OpenStreetMapi põhjal. Järgi liiklusmärke.",
+    searchLibrary: "Otsi raamatukogust pealkirja järgi",
+    noHits: "Nii algavaid pealkirju pole.",
+    noBooks: "Sellel mälupulgal pole raamatuid.",
   },
 };
 
@@ -143,7 +149,7 @@ export function applyStrings(lang) {
 
 export async function loadManifest() {
   try {
-    const res = await fetch("manifest.json");
+    const res = await fetch("/manifest.json");
     return res.ok ? await res.json() : {};
   } catch {
     return {};
@@ -152,7 +158,7 @@ export async function loadManifest() {
 
 export async function loadStatus() {
   try {
-    const res = await fetch("api/status");
+    const res = await fetch("/api/status");
     return res.ok ? await res.json() : {};
   } catch {
     return {};

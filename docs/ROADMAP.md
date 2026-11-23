@@ -8,8 +8,6 @@ A first build on a normal internet connection will settle these:
 - [x] `make sample` end to end (2026-11-23).
 - [x] Map styling against a current Protomaps build: roads, labels and
       buildings draw in light and dark.
-- [x] kiwix-tools file names checked; pinned to 3.8.1, the newest version
-      with builds for every system.
 - [ ] **Kiwix catalogue parsing.** `parse_catalog` was written from the
       documented feed shape and tested against a hand-made fixture. Compare
       with a live response and replace the fixture with a real one.
@@ -20,7 +18,7 @@ A first build on a normal internet connection will settle these:
   - whether macOS Gatekeeper or Windows SmartScreen object to the unsigned
     launcher on a locally built stick;
   - whether Linux desktops mount the stick with permission to run programs;
-  - how long kiwix-serve takes to open large archives from a slow stick;
+  - how quickly library pages open from a slow stick;
   - map responsiveness from USB 2.0 ports.
 
 ## 2. Content
@@ -82,14 +80,11 @@ A first build on a normal internet connection will settle these:
       The Android app has been built but not yet run on a phone.
 - [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and
       notarisation) to remove the first-start warnings.
-- [ ] Android: the library. Kiwix's static linux-arm64 kiwix-serve cannot
-      run in an app: the glibc build is killed for calling set_robust_list,
-      and the musl build crashes because Android 11+ refuses apps the
-      interface list (RTM_GETLINK) and libkiwix then reads an uninitialised
-      list (src/tools/networkTools.cpp; still so in 14.2.1). Targeting API 29
-      does not help on Android 15. Ways forward: a kiwix-serve built with
-      the Android NDK (bionic's getifaddrs works in apps), or Varu's own ZIM
-      reader in the launcher.
+- [x] Varu's own library reader (`zim/`) in place of kiwix-serve, on every
+      device including Android, where kiwix-serve cannot run in an app.
+- [ ] Library: search inside the text (Kiwix's ZIMs carry a Xapian index
+      that the reader cannot use yet; titles only for now), random article,
+      and xz-compressed archives (editions from before about 2021).
 - [ ] Android: an app icon, dark mode, and downloads that continue in the
       background.
 - [ ] Installer: remove older ZIM editions when a newer one is installed.

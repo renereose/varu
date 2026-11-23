@@ -53,16 +53,7 @@ func main() {
 	}
 	actualPort := ln.Addr().(*net.TCPAddr).Port
 
-	kiwix, err := startKiwix(root)
-	if err != nil {
-		log.Printf("Library unavailable: %v", err)
-	}
-	defer kiwix.Stop()
-
 	cfg := Config{Root: root, LAN: *lan, Version: version}
-	if kiwix != nil {
-		cfg.KiwixURL = kiwix.URL
-	}
 
 	srv := &http.Server{
 		Handler:           NewHandler(cfg),

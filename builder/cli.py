@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .app import step_app
-from .binaries import step_kiwix, step_launcher
+from .binaries import step_launcher
 from .config import ConfigError, load_region, load_sources
 from .context import Context, StepError
 from .data import step_documents, step_library, step_maps, step_pois, step_routing
@@ -19,7 +19,6 @@ from .manifest import step_manifest
 STEPS = {
     "app": "the viewer, its libraries, map fonts and icons",
     "launcher": "the start program for Windows, macOS and Linux",
-    "kiwix": "the library reader (kiwix-serve) for each system",
     "maps": "the region's map, cut from the Protomaps planet build",
     "pois": "hospitals, pharmacies and other place layers from OpenStreetMap",
     "routing": "the road network for offline directions, built from an OpenStreetMap extract",
@@ -85,7 +84,6 @@ def main(argv: list[str] | None = None) -> int:
     runners = {
         "app": step_app,
         "launcher": step_launcher,
-        "kiwix": step_kiwix,
         "maps": lambda c: step_maps(c, refresh=args.refresh),
         "pois": lambda c: step_pois(c, refresh=args.refresh),
         "routing": lambda c: step_routing(c, refresh=args.refresh),
