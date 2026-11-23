@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Varu – map</title>
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="map-page">
+  <div id="map" role="application" aria-label="Map"></div>
+
+  <aside class="map-panel" id="panel">
+    <div class="map-panel-head">
+      <a class="back" href="./" data-i18n="back">Back</a>
+      <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="layer-list" data-i18n="layers">Layers</button>
+    </div>
+    <ul id="layer-list" class="layer-list"></ul>
+  </aside>
+
+  <p id="map-message" class="map-message" hidden></p>
+
+  <script>
+    // If a script fails before the map exists, say so instead of showing a blank page.
+    window.addEventListener("error", function () {
+      if (window.varuMap) return;
+      var note = document.getElementById("map-message");
+      if (!note.textContent) note.textContent = "The map could not be loaded.";
+      note.hidden = false;
+    });
+  </script>
+  <script src="vendor/pmtiles.js"></script>
+  <script type="module" src="js/map.js"></script>
+</body>
+</html>

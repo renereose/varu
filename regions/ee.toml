@@ -1,0 +1,119 @@
+# Estonia – the first region and the test case for the build.
+# Copy this file to add a country; nothing else in the repository is
+# Estonia-specific.
+
+id = "ee"
+country_code = "EE"          # ISO 3166-1 alpha-2, used to select the area in OpenStreetMap
+languages = ["et", "en"]     # interface languages offered, first one is the default
+
+[name]
+en = "Varu – Estonia"
+et = "Varu – Eesti"
+
+# --- Map ----------------------------------------------------------------------
+[map]
+# west, south, east, north. A little generous so border areas are included.
+bbox = [21.3, 57.45, 28.3, 59.9]
+maxzoom = 15                 # 15 = full street level; each level less roughly halves the size
+center = [25.0, 58.65]
+zoom = 6.5
+
+# --- Places shown as map layers --------------------------------------------------
+# Each layer is one or more OpenStreetMap tags ("key=value"); an object matching
+# any of them is included.
+
+[[pois]]
+id = "hospital"
+tags = ["amenity=hospital"]
+color = "#c62828"
+default = true
+label = { en = "Hospitals", et = "Haiglad" }
+
+[[pois]]
+id = "pharmacy"
+tags = ["amenity=pharmacy"]
+color = "#2e7d32"
+label = { en = "Pharmacies", et = "Apteegid" }
+
+[[pois]]
+id = "water"
+tags = ["amenity=drinking_water", "amenity=water_point", "man_made=water_well"]
+color = "#1565c0"
+label = { en = "Drinking water", et = "Joogivesi" }
+
+[[pois]]
+id = "fuel"
+tags = ["amenity=fuel"]
+color = "#ef6c00"
+label = { en = "Fuel stations", et = "Tanklad" }
+
+[[pois]]
+id = "food"
+tags = ["shop=supermarket", "shop=convenience"]
+color = "#6a1b9a"
+label = { en = "Grocery stores", et = "Toidupoed" }
+
+[[pois]]
+id = "police"
+tags = ["amenity=police"]
+color = "#283593"
+label = { en = "Police", et = "Politsei" }
+
+[[pois]]
+id = "rescue"
+tags = ["amenity=fire_station"]
+color = "#ad1457"
+label = { en = "Rescue stations", et = "Päästekomandod" }
+
+[[pois]]
+id = "border"
+tags = ["barrier=border_control"]
+color = "#37474f"
+label = { en = "Border crossings", et = "Piiripunktid" }
+
+# TODO: public shelters. OpenStreetMap coverage of civil-defence shelters is
+# patchy; the authoritative list is the Rescue Board's (Päästeamet). Add an
+# importer for that dataset rather than relying on OSM tags.
+
+# --- Library ----------------------------------------------------------------------
+# ZIM archives, looked up by name in the Kiwix catalogue (browse it at
+# https://library.kiwix.org). `flavour` is usually maxi (with pictures),
+# nopic or mini; leave it out to take whatever the newest edition is.
+# The names below should be checked against the catalogue before a first
+# real build: an unknown name is reported and skipped, not fatal.
+
+[[library]]
+name = "wikipedia_et_all"
+flavour = "maxi"
+
+[[library]]
+name = "wikipedia_en_medicine"
+flavour = "maxi"
+
+[[library]]
+name = "zimgit-post-disaster_en"
+
+# English Wikipedia without pictures: tens of gigabytes. Enable for a full drive.
+# [[library]]
+# name = "wikipedia_en_all"
+# flavour = "nopic"
+
+# --- Documents ----------------------------------------------------------------------
+# Files copied to docs/ and listed on the start page. Only add documents whose
+# publisher allows redistribution, and prefer the publisher's own URL.
+#
+# Example (the state's "behaviour guidelines for crisis situations"; this is
+# the 2018 edition, so look for the current one on olevalmis.ee and confirm
+# the reuse terms before enabling):
+#
+# [[documents]]
+# url = "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+# file = "kaitumisjuhised-kriisiolukordadeks.pdf"
+# lang = "et"
+# title = { et = "Käitumisjuhised kriisiolukordadeks", en = "Behaviour guidelines for crisis situations (Estonian)" }
+
+# --- Credits shown on the start page ------------------------------------------------
+attribution = [
+  "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
+  "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
+]

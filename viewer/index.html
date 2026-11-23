@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Varu</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="home">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow" data-i18n="offline">Works without internet</p>
+      <h1 id="drive-name">Varu</h1>
+      <p class="meta" id="drive-meta"></p>
+    </div>
+    <nav class="langs" id="langs" aria-label="Language"></nav>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Contents">
+      <a class="card" id="card-map" href="map.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 0v14m6-12v14"/></svg>
+        <h2 data-i18n="maps">Maps</h2>
+        <p id="card-map-text" data-i18n="mapsText">Street-level map with hospitals, pharmacies, water and fuel.</p>
+      </a>
+      <a class="card" id="card-library" href="library/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h5v16H6a2 2 0 0 0-2 2V5Zm16 0a2 2 0 0 0-2-2h-5v16h5a2 2 0 0 1 2 2V5Z"/></svg>
+        <h2 data-i18n="library">Library</h2>
+        <p id="card-library-text" data-i18n="libraryText">Wikipedia and reference works, searchable.</p>
+      </a>
+      <a class="card" id="card-docs" href="#documents">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7V3Zm7 0v5h5M10 13h6m-6 4h6"/></svg>
+        <h2 data-i18n="documents">Documents</h2>
+        <p id="card-docs-text" data-i18n="documentsText">Official guidance and practical guides.</p>
+      </a>
+    </section>
+
+    <section id="documents" class="panel" hidden>
+      <h2 data-i18n="documents">Documents</h2>
+      <ul id="doc-list" class="doc-list"></ul>
+    </section>
+
+    <section id="library-list-panel" class="panel" hidden>
+      <h2 data-i18n="inLibrary">In the library</h2>
+      <ul id="library-list" class="doc-list"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p id="lan-note" hidden data-i18n="lanNote">This drive is being shared with other devices on the local network.</p>
+    <ul id="attribution" class="attribution"></ul>
+    <p class="meta" id="version"></p>
+  </footer>
+
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>

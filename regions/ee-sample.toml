@@ -1,0 +1,41 @@
+# A small test build: the town of Kuressaare only, no library.
+# Builds in a minute or two and fits in a few megabytes, so use it to try
+# the whole pipeline before committing to the full Estonia download.
+
+id = "ee-sample"
+country_code = "EE"
+languages = ["et", "en"]
+
+[name]
+en = "Varu – sample (Kuressaare)"
+et = "Varu – näidis (Kuressaare)"
+
+[map]
+bbox = [22.42, 58.22, 22.56, 58.29]
+maxzoom = 15
+center = [22.487, 58.252]
+zoom = 13
+
+[[pois]]
+id = "hospital"
+tags = ["amenity=hospital"]
+color = "#c62828"
+default = true
+label = { en = "Hospitals", et = "Haiglad" }
+
+[[pois]]
+id = "pharmacy"
+tags = ["amenity=pharmacy"]
+color = "#2e7d32"
+default = true
+label = { en = "Pharmacies", et = "Apteegid" }
+
+[[pois]]
+id = "fuel"
+tags = ["amenity=fuel"]
+color = "#ef6c00"
+label = { en = "Fuel stations", et = "Tanklad" }
+
+attribution = [
+  "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
+]

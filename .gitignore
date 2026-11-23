@@ -1,0 +1,19 @@
+# Built drives and downloads
+/drive/
+/dist/
+*.part
+*.partial.pmtiles
+
+# Python
+__pycache__/
+*.pyc
+
+# Go
+/launcher/varu
+/launcher/varu.exe
+
+# Editors and operating systems
+.DS_Store
+._*
+.idea/
+.vscode/
