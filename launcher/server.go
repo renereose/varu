@@ -17,6 +17,7 @@ type Config struct {
 	Root    string // drive root
 	LAN     bool   // accept requests from other hosts
 	Version string
+	Search  bool // prepare the library's search indexes in the background
 }
 
 func init() {
@@ -80,7 +81,11 @@ func NewHandler(cfg Config) http.Handler {
 
 	mux.Handle("/api/route", &routes{root: cfg.Root})
 
-	(&library{root: cfg.Root}).register(mux)
+	lib := &library{root: cfg.Root, prepare: cfg.Search}
+	lib.register(mux)
+	if cfg.Search {
+		go lib.open() // start on the indexes now, not at the first visit
+	}
 
 	mux.Handle("/", http.FileServer(quietFS{http.Dir(filepath.Join(cfg.Root, "app"))}))
 

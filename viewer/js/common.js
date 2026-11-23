@@ -46,8 +46,9 @@ const STRINGS = {
     routeFerry: "Includes a ferry. Check whether ferries are running.",
     snapNote: "Starts or ends {n} from the nearest road or path.",
     routeSafety: "Estimate from OpenStreetMap. Follow road signs.",
-    searchLibrary: "Search the library by title",
-    noHits: "No titles start with that.",
+    searchLibrary: "Search the library",
+    noHits: "Nothing found.",
+    searchPreparing: "Preparing search inside {book}: {n}%. Titles can be searched already.",
     noBooks: "There are no books on this drive.",
   },
   et: {
@@ -92,8 +93,9 @@ const STRINGS = {
     routeFerry: "Teekonnal on praam. Kontrolli, kas praamid sõidavad.",
     snapNote: "Algab või lõpeb lähimast teest või rajast {n} kaugusel.",
     routeSafety: "Hinnang OpenStreetMapi põhjal. Järgi liiklusmärke.",
-    searchLibrary: "Otsi raamatukogust pealkirja järgi",
-    noHits: "Nii algavaid pealkirju pole.",
+    searchLibrary: "Otsi raamatukogust",
+    noHits: "Midagi ei leitud.",
+    searchPreparing: "Valmistan ette otsingut raamatus {book}: {n}%. Pealkirju saab juba otsida.",
     noBooks: "Sellel mälupulgal pole raamatuid.",
   },
 };

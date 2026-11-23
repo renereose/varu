@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/renereose/varu/zim"
@@ -24,46 +25,99 @@ import (
 //	/library/<book>/          the book's main page
 //	/library/<book>/<path>    a page, image or file; pages get Varu's bar
 //	/api/library              the books, for the library page
-//	/api/library/search?q=    articles whose title starts with q, in every book
+//	/api/library/search?q=    titles that start with q, then articles that
+//	                          contain its words, in every book
 //	/api/library/icon?book=   a book's icon
 //
 // A book is its file name without ".zim". Archives open on first use and
-// stay open.
+// stay open. Searching inside the text needs Varu's index of the book
+// (<book>.search beside it); when prepare is set, missing ones are built in
+// the background, one book at a time.
 type library struct {
-	root  string
-	once  sync.Once
-	books map[string]*book
-	order []string
+	root    string
+	prepare bool
+	once    sync.Once
+	books   map[string]*book
+	order   []string
 }
 
 type book struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Language    string `json:"language"`
-	a           *zim.Archive
+	ID, Title, Description, Language string
+	file                             string
+	a                                *zim.Archive
+	index                            atomic.Pointer[zim.Index]
+	progress                         atomic.Int32 // percent while its index is built, else -1
 }
+
+func (b *book) indexPath() string { return strings.TrimSuffix(b.file, ".zim") + ".search" }
 
 func (l *library) open() {
 	l.once.Do(func() {
 		l.books = map[string]*book{}
 		files, _ := filepath.Glob(filepath.Join(l.root, "library", "*.zim"))
 		sort.Strings(files)
+		var unindexed []*book
 		for _, file := range files {
 			a, err := zim.Open(file)
 			if err != nil {
 				log.Printf("Library: %v", err)
 				continue
 			}
-			b := &book{ID: strings.TrimSuffix(filepath.Base(file), ".zim"), a: a,
+			b := &book{ID: strings.TrimSuffix(filepath.Base(file), ".zim"), file: file, a: a,
 				Title: a.Metadata("Title"), Description: a.Metadata("Description"), Language: a.Metadata("Language")}
 			if b.Title == "" {
 				b.Title = b.ID
 			}
+			b.progress.Store(-1)
+			if x, err := zim.OpenIndex(b.indexPath(), a); err == nil {
+				b.index.Store(x)
+			} else if l.prepare {
+				b.progress.Store(0)
+				unindexed = append(unindexed, b)
+			}
 			l.books[b.ID] = b
 			l.order = append(l.order, b.ID)
 		}
+		if len(unindexed) > 0 {
+			go prepareSearch(unindexed)
+		}
 	})
+}
+
+// prepareSearch builds the books' search indexes, one at a time.
+func prepareSearch(books []*book) {
+	for _, b := range books {
+		start := time.Now()
+		if err := buildIndex(b); err != nil {
+			log.Printf("Library: cannot prepare search inside %s: %v", b.Title, err)
+			b.progress.Store(-1)
+			continue
+		}
+		log.Printf("Library: search inside %s is ready (%v)", b.Title, time.Since(start).Round(time.Second))
+	}
+}
+
+func buildIndex(b *book) error {
+	// Its own copy of the archive, so building does not push the pages
+	// people are reading out of the shared cache.
+	a, err := zim.Open(b.file)
+	if err != nil {
+		return err
+	}
+	defer a.Close()
+	err = zim.BuildIndex(a, b.indexPath(), func(done, total int) {
+		b.progress.Store(int32(100 * done / max(total, 1)))
+	})
+	if err != nil {
+		return err
+	}
+	x, err := zim.OpenIndex(b.indexPath(), b.a)
+	if err != nil {
+		return err
+	}
+	b.index.Store(x)
+	b.progress.Store(-1)
+	return nil
 }
 
 // hasBooks says whether the drive has a library, without opening it.
@@ -79,9 +133,24 @@ func (l *library) register(mux *http.ServeMux) {
 	mux.HandleFunc("/library/", l.serve)
 	mux.HandleFunc("/api/library", func(w http.ResponseWriter, r *http.Request) {
 		l.open()
-		list := []*book{}
+		type info struct {
+			ID          string `json:"id"`
+			Title       string `json:"title"`
+			Description string `json:"description"`
+			Language    string `json:"language"`
+			Search      string `json:"search"` // "ready", "preparing" or "titles" (only)
+			Progress    int    `json:"progress,omitempty"`
+		}
+		list := []info{}
 		for _, id := range l.order {
-			list = append(list, l.books[id])
+			b := l.books[id]
+			i := info{ID: b.ID, Title: b.Title, Description: b.Description, Language: b.Language, Search: "titles"}
+			if b.index.Load() != nil {
+				i.Search = "ready"
+			} else if p := b.progress.Load(); p >= 0 {
+				i.Search, i.Progress = "preparing", int(p)
+			}
+			list = append(list, i)
 		}
 		writeJSON(w, list)
 	})
@@ -198,29 +267,74 @@ func (b *book) url(e zim.Entry) string {
 }
 
 type hit struct {
-	Book  string `json:"book"`
-	Title string `json:"title"`
-	URL   string `json:"url"`
+	Book    string `json:"book"`
+	Title   string `json:"title"`
+	URL     string `json:"url"`
+	Snippet string `json:"snippet,omitempty"`
+	words   int    // text matches only: query words found, and how well
+	score   float64
 }
 
+// search answers with titles that start with the query, then articles that
+// contain its words (best first, across books), and which books cannot be
+// searched inside yet.
 func (l *library) search(w http.ResponseWriter, r *http.Request) {
 	l.open()
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
-	hits := []hit{}
-	if q != "" {
-		for _, id := range l.order {
-			b := l.books[id]
-			found, err := b.a.Titles(q, 8)
+	type preparing struct {
+		Title    string `json:"title"`
+		Progress int    `json:"progress"`
+	}
+	out := struct {
+		Hits      []hit       `json:"hits"`
+		Preparing []preparing `json:"preparing"`
+	}{[]hit{}, []preparing{}}
+	seen := map[string]bool{}
+	var text []hit
+	for _, id := range l.order {
+		b := l.books[id]
+		if p := b.progress.Load(); p >= 0 {
+			out.Preparing = append(out.Preparing, preparing{b.Title, int(p)})
+		}
+		if q == "" {
+			continue
+		}
+		titles, err := b.a.Titles(q, 3)
+		if err != nil {
+			log.Printf("Library search in %s: %v", id, err)
+		}
+		for _, e := range titles {
+			if target, err := b.a.Resolve(e); err == nil {
+				e = target // several titles often lead to one article
+			}
+			if h := (hit{Book: id, Title: e.Title, URL: b.url(e)}); !seen[h.URL] {
+				seen[h.URL] = true
+				out.Hits = append(out.Hits, h)
+			}
+		}
+		if x := b.index.Load(); x != nil {
+			found, err := x.Search(q, 8)
 			if err != nil {
 				log.Printf("Library search in %s: %v", id, err)
-				continue
 			}
-			for _, e := range found {
-				hits = append(hits, hit{Book: id, Title: e.Title, URL: b.url(e)})
+			for _, f := range found {
+				text = append(text, hit{Book: id, Title: f.Entry.Title, URL: b.url(f.Entry), Snippet: f.Snippet, words: f.Words, score: f.Score})
 			}
 		}
 	}
-	writeJSON(w, hits)
+	sort.SliceStable(text, func(i, j int) bool {
+		if text[i].words != text[j].words {
+			return text[i].words > text[j].words // all the words before some of them
+		}
+		return text[i].score > text[j].score
+	})
+	for _, h := range text {
+		if !seen[h.URL] && len(out.Hits) < 20 {
+			seen[h.URL] = true
+			out.Hits = append(out.Hits, h)
+		}
+	}
+	writeJSON(w, out)
 }
 
 func writeJSON(w http.ResponseWriter, v any) {

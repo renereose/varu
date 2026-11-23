@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/renereose/varu/router"
+	"github.com/renereose/varu/zim"
 	"github.com/renereose/varu/zim/zimtest"
 )
 
@@ -163,11 +164,19 @@ func TestLibrary(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	a, err := zim.Open(filepath.Join(root, "library", "wikipedia_et.zim"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := zim.BuildIndex(a, filepath.Join(root, "library", "wikipedia_et.search"), nil); err != nil {
+		t.Fatal(err)
+	}
+	a.Close()
 	h = NewHandler(Config{Root: root})
 	if _, status := get(t, h, "/api/status", nil); !strings.Contains(status, `"library":true`) {
 		t.Errorf("status %q", status)
 	}
-	if _, books := get(t, h, "/api/library", nil); !strings.Contains(books, `"id":"wikipedia_et","title":"Vikipeedia"`) {
+	if _, books := get(t, h, "/api/library", nil); !strings.Contains(books, `"id":"wikipedia_et","title":"Vikipeedia"`) || !strings.Contains(books, `"search":"ready"`) {
 		t.Errorf("books %s", books)
 	}
 	for path, want := range map[string]string{
@@ -190,7 +199,10 @@ func TestLibrary(t *testing.T) {
 		t.Errorf("missing page: %d", res.StatusCode)
 	}
 	if _, hits := get(t, h, "/api/library/search?q=ta", nil); !strings.Contains(hits, `"title":"Tallinn","url":"/library/wikipedia_et/Tallinn"`) || !strings.Contains(hits, "Tartu") {
-		t.Errorf("search %s", hits)
+		t.Errorf("title search %s", hits)
+	}
+	if _, hits := get(t, h, "/api/library/search?q=university", nil); !strings.Contains(hits, `"title":"Tartu","url":"/library/wikipedia_et/Tartu","snippet":"`) {
+		t.Errorf("text search %s", hits)
 	}
 }
 

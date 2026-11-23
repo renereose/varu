@@ -82,9 +82,11 @@ A first build on a normal internet connection will settle these:
       notarisation) to remove the first-start warnings.
 - [x] Varu's own library reader (`zim/`) in place of kiwix-serve, on every
       device including Android, where kiwix-serve cannot run in an app.
-- [ ] Library: search inside the text (Kiwix's ZIMs carry a Xapian index
-      that the reader cannot use yet; titles only for now), random article,
-      and xz-compressed archives (editions from before about 2021).
+- [x] Library: search inside the text, with Varu's own index of each book
+      (built by the launcher on first start; Kiwix's Xapian index is not used).
+- [ ] Library: build the search index while installing, so a stick is ready
+      before it reaches a Pi; delete indexes of removed books; random
+      article; xz-compressed archives (editions from before about 2021).
 - [ ] Android: an app icon, dark mode, and downloads that continue in the
       background.
 - [ ] Installer: remove older ZIM editions when a newer one is installed.
