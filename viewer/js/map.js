@@ -73,9 +73,19 @@ function startMap(mapInfo) {
     maxBounds: mapInfo.bounds ? padBounds(mapInfo.bounds, 1.5) : undefined,
     hash: true,
     attributionControl: { compact: true },
+    locale: {
+      "GeolocateControl.FindMyLocation": t(lang, "findMyLocation"),
+      "GeolocateControl.LocationNotAvailable": t(lang, "locationUnavailable"),
+    },
   });
 
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  // Your position. A phone's GPS works offline; a laptop usually locates itself
+  // online. Browsers allow it only on localhost, not on a drive shared with -lan.
+  map.addControl(new maplibregl.GeolocateControl({
+    positionOptions: { enableHighAccuracy: true },
+    trackUserLocation: true,
+  }), "top-right");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
   let failed = false;

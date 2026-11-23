@@ -62,6 +62,8 @@ Early. What has been exercised so far:
   Android. Run for real on Linux and macOS.
 - Viewer: start page and map load in a headless browser with zero network
   requests leaving the machine, against a current Protomaps build.
+- Viewer: "show my location" checked in a browser posing as a phone; not yet
+  on a real phone.
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.

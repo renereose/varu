@@ -25,6 +25,8 @@ const STRINGS = {
     openingHours: "Open",
     phone: "Phone",
     operator: "Operator",
+    findMyLocation: "Show my location",
+    locationUnavailable: "Location not available",
   },
   et: {
     offline: "Töötab ilma internetita",
@@ -47,6 +49,8 @@ const STRINGS = {
     openingHours: "Avatud",
     phone: "Telefon",
     operator: "Haldaja",
+    findMyLocation: "Näita minu asukohta",
+    locationUnavailable: "Asukoht pole kättesaadav",
   },
 };
 
