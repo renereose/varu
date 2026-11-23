@@ -6,6 +6,12 @@ id = "ee"
 country_code = "EE"          # ISO 3166-1 alpha-2, used to select the area in OpenStreetMap
 languages = ["et", "en"]     # interface languages offered, first one is the default
 
+# --- Credits shown on the start page ------------------------------------------------
+attribution = [
+  "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
+  "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
+]
+
 [name]
 en = "Varu – Estonia"
 et = "Varu – Eesti"
@@ -37,9 +43,22 @@ label = { en = "Pharmacies", et = "Apteegid" }
 
 [[pois]]
 id = "water"
-tags = ["amenity=drinking_water", "amenity=water_point", "man_made=water_well"]
+tags = ["amenity=drinking_water", "amenity=water_point", "man_made=water_well", "man_made=water_tap"]
 color = "#1565c0"
+default = true
 label = { en = "Drinking water", et = "Joogivesi" }
+
+[[pois]]
+id = "spring"
+tags = ["natural=spring"]
+color = "#00838f"
+label = { en = "Springs (boil before drinking)", et = "Allikad (keeda enne joomist)" }
+
+[[pois]]
+id = "clinic"
+tags = ["amenity=clinic", "amenity=doctors"]
+color = "#d84315"
+label = { en = "Clinics and family doctors", et = "Kliinikud ja perearstid" }
 
 [[pois]]
 id = "fuel"
@@ -71,9 +90,21 @@ tags = ["barrier=border_control"]
 color = "#37474f"
 label = { en = "Border crossings", et = "Piiripunktid" }
 
-# TODO: public shelters. OpenStreetMap coverage of civil-defence shelters is
-# patchy; the authoritative list is the Rescue Board's (Päästeamet). Add an
-# importer for that dataset rather than relying on OSM tags.
+# Public shelters: the Rescue Board's official list (OpenStreetMap has none).
+# OFF until reuse is confirmed: the Land Board's WFS says its data is under
+# its open-data licence (CC BY 4.0 equivalent), but the Rescue Board's own
+# terms for the same list are CC BY-NC-ND 4.0
+# (https://www.rescue.ee/et/juhend/avaandmed). Ask info@paasteamet.ee, then
+# uncomment, and add "Public shelters: Päästeamet, via Maa- ja Ruumiamet"
+# to the attribution above.
+#
+# [[pois]]
+# id = "shelter"
+# color = "#4e342e"
+# default = true
+# label = { en = "Public shelters", et = "Avalikud varjumiskohad" }
+# geojson = "https://gsavalik.envir.ee/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=huvipunkt:varjumiskoht&outputFormat=application/json&srsName=EPSG:4326"
+# properties = { name = "nimi", "addr:street" = "aadress" }
 
 # --- Library ----------------------------------------------------------------------
 # ZIM archives, looked up by name in the Kiwix catalogue (browse it at
@@ -111,9 +142,3 @@ name = "zimgit-post-disaster_en"
 # file = "kaitumisjuhised-kriisiolukordadeks.pdf"
 # lang = "et"
 # title = { et = "Käitumisjuhised kriisiolukordadeks", en = "Behaviour guidelines for crisis situations (Estonian)" }
-
-# --- Credits shown on the start page ------------------------------------------------
-attribution = [
-  "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
-  "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
-]

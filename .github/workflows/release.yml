@@ -1,0 +1,94 @@
+name: Release
+
+# Push a tag such as v0.1.0 to publish installers and content. The
+# installers download content from the release with the same tag.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pmtiles
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -fsSL https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles_1.31.2_Linux_x86_64.tar.gz \
+            | tar -xz -C "$HOME/bin" pmtiles
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      # One line per country offered in the installers.
+      - run: make release-content REGION=ee
+      - run: make installer-windows VERSION=${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content
+          path: dist/
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: make installer-macos VERSION=${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/Varu-Installer-macOS.zip
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      # Releases must always be signed with the same key, or phones refuse
+      # the update. Store it once as the two secrets below.
+      - name: Signing key
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE" ]; then
+            echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "ANDROID_KEYSTORE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set; the APK is signed with a throwaway key and cannot be updated in place."
+          fi
+      - run: make android VERSION=${{ github.ref_name }}
+        env:
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: dist/Varu.apk
+
+  publish:
+    needs: [content, macos, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Varu $GITHUB_REF_NAME" --notes \
+            "Download the installer for your system: Varu-Installer.exe (Windows), Varu-Installer-macOS.zip (macOS) or Varu.apk (Android). The other files are what the installers download."

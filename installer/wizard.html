@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varu installer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+<style>
+/* Same palette as the viewer (viewer/css/app.css). */
+:root {
+  --bg: #f3f0e8; --surface: #fffdf8; --ink: #1b2420; --muted: #5d6963; --line: #d9d4c7;
+  --accent: #0b5d4b; --accent-ink: #ffffff; --warn: #8a4b00; --bad: #b3261e; --radius: 10px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121715; --surface: #1a211e; --ink: #e9e6dd; --muted: #9aa69f; --line: #2c3632;
+    --accent: #74d3b6; --accent-ink: #0d1512; --warn: #f0b060; --bad: #ff8a80;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 720px; margin: 0 auto; padding: 2rem 16px 4rem; }
+header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.eyebrow { margin: 0; color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: .2rem 0 .4rem; font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1.1; }
+h2 { margin: 2.2rem 0 .3rem; font-size: 1.15rem; }
+/* Counters skip hidden steps, so the numbers stay 1, 2, 3 ... */
+#setup { counter-reset: step; }
+#setup h2::before { counter-increment: step; content: counter(step); color: var(--accent); margin-right: .6rem; }
+.lead, .hint { color: var(--muted); margin: 0 0 .8rem; }
+.hint { font-size: .9rem; }
+.lang { display: flex; gap: .3rem; }
+button, select, input[type=text], input[type=search] {
+  font: inherit; color: inherit; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: .5rem .8rem;
+}
+button { cursor: pointer; }
+button:hover:not(:disabled), button:focus-visible { border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; padding: .75rem 1.6rem; }
+.lang button[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+select { width: 100%; }
+.row { display: flex; gap: .5rem; flex-wrap: wrap; }
+.row > input { flex: 1 1 14rem; min-width: 0; }
+.choices { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.choice { display: flex; gap: .75rem; align-items: center; padding: .7rem .9rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.choice:has(input:checked) { border-color: var(--accent); }
+.choice input[type=radio], .choice input[type=checkbox] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); flex: none; margin: 0; }
+.choice .grow { flex: 1; min-width: 0; }
+.choice .grow input[type=text] { width: 100%; margin-top: .4rem; }
+.choice small, .size { color: var(--muted); }
+.size { font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.swatch { width: .8rem; height: .8rem; border-radius: 50%; flex: none; }
+.radius { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.radius button[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.home { margin: .6rem 0 0; font-weight: 600; }
+.results { list-style: none; padding: 0; margin: .4rem 0 0; display: grid; gap: .3rem; }
+.results button { width: 100%; text-align: left; }
+.summary { margin-top: 2rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.summary p { margin: 0 0 .4rem; }
+.msgs { margin: .4rem 0 1rem; padding-left: 1.2rem; }
+.msgs.bad { color: var(--bad); }
+.msgs.warn { color: var(--warn); }
+.notice { padding: .8rem 1rem; border-radius: var(--radius); border: 1px solid var(--bad); color: var(--bad); }
+progress { width: 100%; height: 1rem; accent-color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <p class="eyebrow">Varu</p>
+      <h1 data-t="title"></h1>
+      <p class="lead" id="lead" data-t="lead"></p>
+    </div>
+    <div class="lang">
+      <button type="button" data-lang="et">ET</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <div id="notice" class="notice" hidden>
+    <p id="notice-text"></p>
+    <button type="button" id="retry" data-t="retry"></button>
+  </div>
+  <p id="loading" class="hint" data-t="loading"></p>
+
+  <section id="setup" hidden>
+    <h2 data-t="country"></h2>
+    <select id="region" aria-labelledby="region-label"></select>
+
+    <h2 data-t="homeTitle"></h2>
+    <p class="hint" data-t="homeHint"></p>
+    <form id="search" class="row">
+      <input type="search" id="query" autocomplete="off" data-ph="searchPh">
+      <button type="submit" data-t="find"></button>
+      <button type="button" id="locate" data-t="locate"></button>
+    </form>
+    <ul id="results" class="results"></ul>
+    <p id="home" class="home" hidden></p>
+    <div class="radius" id="radius" role="group"></div>
+    <p class="hint" id="radius-hint"></p>
+
+    <h2 data-t="placesTitle"></h2>
+    <p class="hint" data-t="placesHint"></p>
+    <ul id="pois" class="choices"></ul>
+
+    <h2 data-t="libraryTitle"></h2>
+    <p class="hint" data-t="libraryHint"></p>
+    <ul id="library" class="choices"></ul>
+
+    <h2 data-t="whereTitle"></h2>
+    <p class="hint" id="where-hint" data-t="whereHint"></p>
+    <ul id="targets" class="choices" role="radiogroup"></ul>
+
+    <div class="summary" aria-live="polite">
+      <p id="sizes"></p>
+      <ul id="problems" class="msgs bad"></ul>
+      <ul id="warnings" class="msgs warn"></ul>
+      <button type="button" class="primary" id="install" data-t="install" disabled></button>
+    </div>
+  </section>
+
+  <section id="progress" hidden aria-live="polite">
+    <h2 data-t="installing"></h2>
+    <progress id="bar" max="1" value="0"></progress>
+    <p id="current"></p>
+    <p class="hint" data-t="keepOpen"></p>
+  </section>
+
+  <section id="done" hidden>
+    <h2 id="done-title"></h2>
+    <ul id="errors" class="msgs bad"></ul>
+    <p id="done-text"></p>
+    <div class="actions">
+      <button type="button" class="primary" id="open-varu" data-t="openVaru"></button>
+      <button type="button" id="open-files" data-t="openFiles"></button>
+      <button type="button" id="quit" data-t="quit"></button>
+    </div>
+  </section>
+
+  <p id="closed" class="hint" data-t="closed" hidden></p>
+</main>
+
+<script>
+"use strict";
+const STRINGS = {
+  en: {
+    title: "Install Varu",
+    lead: "Maps, places that matter in an emergency, and reference books that work without internet or electricity from the grid. Put them on a USB stick or on this computer.",
+    leadPhone: "Maps and places that matter in an emergency, working on this phone without internet or electricity from the grid.",
+    wherePhone: "A memory card, if the phone has one, keeps the phone's own storage free.",
+    donePhone: "Varu is on this phone. Open it any time from the Varu app, also without internet.",
+    loading: "Loading the list of downloads…",
+    retry: "Try again",
+    offline: "Could not load the list of downloads. Check the internet connection.",
+    country: "Your country",
+    homeTitle: "Your home",
+    homeHint: "Street-level map and places are kept around your home. The whole country stays on the map at road level, for travel.",
+    searchPh: "Town, village or address",
+    find: "Find",
+    locate: "Use my location",
+    myLocation: "My current location",
+    locating: "Finding your location…",
+    locateFailed: "Could not get your location (the browser may not be allowed to use it). Search for your town instead.",
+    gone: "The installer has closed. Open Varu Installer again to continue; finished downloads are kept.",
+    noResults: "Nothing found. Try the name of your town or village.",
+    homeIs: "Home: {name}",
+    within: "Within {km} km",
+    whole: "Whole country",
+    radiusHint: "Street detail and places within {km} km of home; the rest of the country at road level.",
+    wholeHint: "Street detail and places for the whole country.",
+    placesTitle: "Places to show on the map",
+    placesHint: "Each layer is small. Locations come from OpenStreetMap or official lists and can be out of date: check on site.",
+    libraryTitle: "Library",
+    libraryHint: "Readable offline in any web browser. These are large.",
+    whereTitle: "Where to put it",
+    whereHint: "Plug in a USB stick and it appears here. A stick formatted as exFAT works on every computer.",
+    computer: "This computer",
+    folder: "Folder",
+    free: "{free} free",
+    sizes: "Download about {download}. Needs {needed} of space; {free} free there.",
+    calculating: "Working out the size…",
+    install: "Install",
+    installing: "Installing…",
+    keepOpen: "Keep this page open. If the connection breaks, start the installer again: it continues where it stopped.",
+    step_app: "Downloading the Varu app and places",
+    step_map: "Downloading the map",
+    step_cut: "Cutting the map around your home",
+    step_book: "Downloading {title}",
+    of: "{done} of {total}",
+    doneTitle: "Varu is ready",
+    doneProblems: "Finished, with problems",
+    doneUsb: "Eject the stick before you unplug it. On any computer, open the stick and double-click the Start file for that system (Start-Windows, Start-macOS or Start-Linux).",
+    doneComputer: "Start Varu any time with the Start file in {path}.",
+    retryLater: "Start the installer again to retry. Finished parts are kept.",
+    openVaru: "Open Varu now",
+    openFiles: "Show the files",
+    quit: "Close the installer",
+    closed: "The installer has closed. You can close this tab.",
+    p_space: "Not enough space: needs {needed}, {free} free.",
+    p_fat32: "“{detail}” is larger than 4 GB, which a FAT32 drive cannot hold. Reformat the stick as exFAT, or leave it out.",
+    p_notEmpty: "That folder already has other files in it. Choose an empty or new folder.",
+    p_notFolder: "That path is a file, not a folder.",
+    p_home: "Choose your home, or pick “Whole country”.",
+    p_region: "Unknown country.",
+    p_tooOld: "This installer is too old for the current downloads. Download the newest installer.",
+    p_bad: "The download list looks damaged ({detail}).",
+    p_noTarget: "Choose where to put Varu.",
+    w_portable: "This drive is formatted as {detail}, which not every computer can read. exFAT works on Windows, macOS and Linux.",
+    w_outside: "Your home is outside this country's map.",
+  },
+  et: {
+    title: "Paigalda Varu",
+    lead: "Kaardid, hädaolukorras olulised kohad ja teatmeteosed, mis töötavad ilma internetita ja vooluvõrguta. Pane need USB-mälupulgale või sellesse arvutisse.",
+    leadPhone: "Hädaolukorras olulised kaardid ja kohad, mis töötavad selles telefonis ilma internetita ja vooluvõrguta.",
+    wherePhone: "Kui telefonis on mälukaart, hoiab see telefoni enda mälu vabana.",
+    donePhone: "Varu on nüüd selles telefonis. Ava see igal ajal Varu rakendusest, ka ilma internetita.",
+    loading: "Laadin allalaadimiste nimekirja…",
+    retry: "Proovi uuesti",
+    offline: "Allalaadimiste nimekirja ei õnnestunud laadida. Kontrolli internetiühendust.",
+    country: "Sinu riik",
+    homeTitle: "Sinu kodu",
+    homeHint: "Tänavatasemel kaart ja kohad salvestatakse sinu kodu ümbruse kohta. Kogu riik jääb kaardile teede tasemel, et saaksid liikuda.",
+    searchPh: "Linn, küla või aadress",
+    find: "Otsi",
+    locate: "Kasuta minu asukohta",
+    myLocation: "Minu praegune asukoht",
+    locating: "Otsin sinu asukohta…",
+    locateFailed: "Asukohta ei õnnestunud saada (veebilehitsejal ei pruugi olla luba seda kasutada). Otsi oma linna nime järgi.",
+    gone: "Paigaldaja on suletud. Jätkamiseks ava Varu Installer uuesti; valmis allalaadimised jäävad alles.",
+    noResults: "Midagi ei leitud. Proovi oma linna või küla nime.",
+    homeIs: "Kodu: {name}",
+    within: "{km} km raadiuses",
+    whole: "Kogu riik",
+    radiusHint: "Tänavad ja kohad {km} km raadiuses kodust; ülejäänud riik teede tasemel.",
+    wholeHint: "Tänavad ja kohad kogu riigi kohta.",
+    placesTitle: "Kaardil näidatavad kohad",
+    placesHint: "Iga kiht on väike. Asukohad pärinevad OpenStreetMapist või ametlikest nimekirjadest ja võivad olla aegunud: kontrolli kohapeal.",
+    libraryTitle: "Raamatukogu",
+    libraryHint: "Loetav ilma internetita igas veebilehitsejas. Need on suured.",
+    whereTitle: "Kuhu panna",
+    whereHint: "Ühenda USB-mälupulk ja see ilmub siia. exFAT-vormingus pulk töötab igas arvutis.",
+    computer: "See arvuti",
+    folder: "Kaust",
+    free: "vaba {free}",
+    sizes: "Alla laaditakse umbes {download}. Vaja on {needed} ruumi, vaba on {free}.",
+    calculating: "Arvutan suurust…",
+    install: "Paigalda",
+    installing: "Paigaldan…",
+    keepOpen: "Hoia see leht avatuna. Kui ühendus katkeb, käivita paigaldaja uuesti – see jätkab sealt, kus pooleli jäi.",
+    step_app: "Laadin alla Varu rakendust ja kohti",
+    step_map: "Laadin alla kaarti",
+    step_cut: "Lõikan kaarti sinu kodu ümbert",
+    step_book: "Laadin alla: {title}",
+    of: "{done} / {total}",
+    doneTitle: "Varu on valmis",
+    doneProblems: "Valmis, kuid tekkis probleeme",
+    doneUsb: "Enne pulga eemaldamist väljuta see turvaliselt. Mis tahes arvutis ava pulk ja tee topeltklõps selle süsteemi Start-failil (Start-Windows, Start-macOS või Start-Linux).",
+    doneComputer: "Käivita Varu igal ajal Start-failiga kaustas {path}.",
+    retryLater: "Uuesti proovimiseks käivita paigaldaja veel kord. Valmis osad jäävad alles.",
+    openVaru: "Ava Varu kohe",
+    openFiles: "Näita faile",
+    quit: "Sulge paigaldaja",
+    closed: "Paigaldaja on suletud. Võid selle vahelehe sulgeda.",
+    p_space: "Ruumi ei jätku: vaja on {needed}, vaba on {free}.",
+    p_fat32: "„{detail}” on suurem kui 4 GB ja FAT32-vormingus pulgale see ei mahu. Vorminda pulk exFAT-vormingusse või jäta see välja.",
+    p_notEmpty: "Selles kaustas on juba teisi faile. Vali tühi või uus kaust.",
+    p_notFolder: "See on fail, mitte kaust.",
+    p_home: "Vali oma kodu või „Kogu riik”.",
+    p_region: "Tundmatu riik.",
+    p_tooOld: "See paigaldaja on praeguste allalaadimiste jaoks liiga vana. Laadi alla uusim paigaldaja.",
+    p_bad: "Allalaadimiste nimekiri tundub vigane ({detail}).",
+    p_noTarget: "Vali, kuhu Varu panna.",
+    w_portable: "See pulk on vormingus {detail}, mida kõik arvutid ei loe. exFAT töötab Windowsis, macOSis ja Linuxis.",
+    w_outside: "Sinu kodu on selle riigi kaardist väljas.",
+  },
+};
+const RADII = [10, 25, 50, 100, 0];
+const token = location.hash.slice(1);
+const $ = (id) => document.getElementById(id);
+
+let lang = (() => {
+  try { const saved = localStorage.getItem("varu.lang"); if (saved in STRINGS) return saved; } catch {}
+  return (navigator.language || "").toLowerCase().startsWith("et") ? "et" : "en";
+})();
+const s = {
+  state: null, region: null, home: null, radius: 50,
+  pois: new Set(), library: new Set(), target: null, computerPath: "",
+  plan: null, planning: false, volumesKey: "", installing: false, targetChosen: false,
+};
+
+function t(key, vars = {}) {
+  const text = STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
+  return text.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+}
+function pick(labels) { return labels?.[lang] ?? labels?.en ?? Object.values(labels ?? {})[0] ?? ""; }
+function size(bytes) {
+  if (!bytes) return "0 MB";
+  const units = ["B", "kB", "MB", "GB", "TB"];
+  let i = 0;
+  while (bytes >= 1000 && i < units.length - 1) { bytes /= 1000; i++; }
+  return `${bytes.toLocaleString(lang, { maximumFractionDigits: i >= 3 ? 1 : 0 })} ${units[i]}`;
+}
+function el(tag, props = {}, ...children) {
+  const node = Object.assign(document.createElement(tag), props);
+  node.append(...children.filter((c) => c != null));
+  return node;
+}
+
+async function api(path, body) {
+  const res = await fetch(path, {
+    method: body === undefined ? "GET" : "POST",
+    headers: { "X-Token": token, "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+// ---------- language ----------
+
+function applyLanguage() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((node) => { node.textContent = t(node.dataset.t); });
+  document.querySelectorAll("[data-ph]").forEach((node) => { node.placeholder = t(node.dataset.ph); });
+  document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  if (s.state) renderAll();
+}
+document.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem("varu.lang", lang); } catch {}
+  applyLanguage();
+}));
+
+// ---------- rendering ----------
+
+function renderAll() {
+  if (s.state.phone) { $("lead").dataset.t = "leadPhone"; $("where-hint").dataset.t = "wherePhone"; }
+  $("lead").textContent = t($("lead").dataset.t); $("where-hint").textContent = t($("where-hint").dataset.t);
+  renderRegions(); renderHome(); renderPois(); renderLibrary(); renderTargets(true); renderSummary();
+}
+
+function renderRegions() {
+  const select = $("region");
+  select.replaceChildren(...s.state.regions.map((r) => el("option", { value: r.id, textContent: pick(r.name), selected: r.id === s.region?.id })));
+  select.disabled = s.state.regions.length < 2;
+}
+
+function chooseRegion(id) {
+  s.region = s.state.regions.find((r) => r.id === id) ?? s.state.regions[0];
+  s.pois = new Set((s.region.pois ?? []).map((p) => p.id)); // all places: they are small
+  s.library = new Set(s.state.library ? (s.region.library ?? []).map((b) => b.name) : []);
+  s.home = null; s.radius = 0; // whole country until a home is chosen
+  $("results").replaceChildren();
+}
+
+function renderHome() {
+  $("home").hidden = !s.home;
+  if (s.home) $("home").textContent = t("homeIs", { name: s.home.name });
+  $("radius").replaceChildren(...RADII.map((km) => {
+    const b = el("button", { type: "button", textContent: km ? t("within", { km }) : t("whole") });
+    b.setAttribute("aria-pressed", String(km === s.radius));
+    b.addEventListener("click", () => { s.radius = km; renderHome(); replan(); });
+    return b;
+  }));
+  $("radius-hint").textContent = s.radius ? t("radiusHint", { km: s.radius }) : t("wholeHint");
+}
+
+function checkbox(checked, onChange) {
+  const box = el("input", { type: "checkbox", checked });
+  box.addEventListener("change", () => onChange(box.checked));
+  return box;
+}
+
+function renderPois() {
+  $("pois").replaceChildren(...(s.region.pois ?? []).map((p) => {
+    const swatch = el("span", { className: "swatch" });
+    swatch.style.background = p.color;
+    const box = checkbox(s.pois.has(p.id), (on) => { on ? s.pois.add(p.id) : s.pois.delete(p.id); replan(); });
+    return el("li", {}, el("label", { className: "choice" }, box, swatch, el("span", { className: "grow", textContent: pick(p.label) })));
+  }));
+}
+
+function renderLibrary() {
+  const books = s.state.library ? s.region.library ?? [] : [];
+  $("library").replaceChildren(...books.map((b) => {
+    const box = checkbox(s.library.has(b.name), (on) => { on ? s.library.add(b.name) : s.library.delete(b.name); replan(); });
+    return el("li", {}, el("label", { className: "choice" }, box,
+      el("span", { className: "grow", textContent: b.title }), el("span", { className: "size", textContent: b.size ? size(b.size) : "" })));
+  }));
+  $("library").hidden = $("library").previousElementSibling.hidden =
+    $("library").previousElementSibling.previousElementSibling.hidden = books.length === 0;
+}
+
+function renderTargets(force) {
+  const volumes = s.state.volumes;
+  const key = JSON.stringify(volumes.map((v) => [v.path, v.free]));
+  if (!force && key === s.volumesKey) return;
+  s.volumesKey = key;
+  if (s.target && s.target !== "computer" && !volumes.some((v) => v.path === s.target)) s.target = null;
+  // Until the user picks, a lone USB stick wins, then this computer.
+  if (!s.targetChosen || !s.target) {
+    const next = volumes.length === 1 ? volumes[0].path : s.state.computer ? "computer" : volumes[0]?.path ?? null;
+    if (next !== s.target) { s.target = next; if (!force) replan(); }
+  }
+
+  const radio = (value) => {
+    const input = el("input", { type: "radio", name: "target", value, checked: s.target === value });
+    input.addEventListener("change", () => { s.target = value; s.targetChosen = true; replan(); });
+    return input;
+  };
+  const items = volumes.map((v) => el("li", {}, el("label", { className: "choice" }, radio(v.path),
+    el("span", { className: "grow" }, el("strong", { textContent: v.label }), " ", el("small", { textContent: v.fs })),
+    el("span", { className: "size", textContent: t("free", { free: size(v.free) }) }))));
+
+  if (!s.state.computer) { $("targets").replaceChildren(...items); return; }
+  const folder = el("input", { type: "text", value: s.computerPath, spellcheck: false });
+  folder.setAttribute("aria-label", t("folder"));
+  folder.addEventListener("input", () => { s.computerPath = folder.value; s.target = "computer"; s.targetChosen = true; renderTargetChecks(); replan(); });
+  items.push(el("li", {}, el("label", { className: "choice" }, radio("computer"),
+    el("span", { className: "grow" }, el("strong", { textContent: t("computer") }), folder))));
+  $("targets").replaceChildren(...items);
+}
+function renderTargetChecks() {
+  document.querySelectorAll("input[name=target]").forEach((r) => { r.checked = r.value === s.target; });
+}
+
+function targetPath() { return s.target === "computer" ? s.computerPath.trim() : s.target; }
+
+function renderSummary() {
+  const plan = s.plan;
+  const problems = [], warnings = [];
+  if (!targetPath()) problems.push(t("p_noTarget"));
+  if (plan) {
+    const vars = (p) => ({ detail: p.detail, needed: size(plan.needed), free: size(plan.free) });
+    plan.problems.forEach((p) => problems.push(STRINGS.en[`p_${p.code}`] ? t(`p_${p.code}`, vars(p)) : p.detail || p.code));
+    plan.warnings.forEach((p) => warnings.push(t(`w_${p.code}`, vars(p))));
+  }
+  const download = plan ? plan.items.reduce((sum, it) => sum + it.size - it.have, 0) : 0;
+  $("sizes").textContent = s.planning ? t("calculating")
+    : plan && targetPath() ? t("sizes", { download: size(download), needed: size(plan.needed), free: size(plan.free) }) : "";
+  $("problems").replaceChildren(...[...new Set(problems)].map((text) => el("li", { textContent: text })));
+  $("warnings").replaceChildren(...warnings.map((text) => el("li", { textContent: text })));
+  $("install").disabled = s.planning || !plan || problems.length > 0 || s.installing;
+}
+
+// ---------- planning and installing ----------
+
+function request() {
+  return {
+    target: targetPath(), region: s.region.id, home: s.home, radius_km: s.radius,
+    pois: [...s.pois], library: [...s.library],
+  };
+}
+
+let planTimer = 0, planSeq = 0;
+function replan() {
+  clearTimeout(planTimer);
+  s.planning = true; renderSummary();
+  planTimer = setTimeout(async () => {
+    const seq = ++planSeq;
+    if (!targetPath()) { s.plan = null; s.planning = false; renderSummary(); return; }
+    try {
+      const plan = await api("/api/plan", request());
+      if (seq === planSeq) s.plan = plan;
+    } catch (err) {
+      if (seq === planSeq) s.plan = { items: [], problems: [{ code: "", detail: err.message }], warnings: [], needed: 0, free: 0 };
+    }
+    if (seq === planSeq) { s.planning = false; renderSummary(); }
+  }, 400);
+}
+
+$("search").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const q = $("query").value.trim();
+  if (!q) return;
+  $("results").replaceChildren(el("li", { className: "hint", textContent: "…" }));
+  try {
+    const found = await api(`/api/geocode?${new URLSearchParams({ q, country: s.region.country_code ?? "" })}`);
+    $("results").replaceChildren(...(found.length ? found.map((place) => {
+      const b = el("button", { type: "button", textContent: place.name });
+      b.addEventListener("click", () => setHome(place));
+      return el("li", {}, b);
+    }) : [el("li", { className: "hint", textContent: t("noResults") })]));
+  } catch (err) {
+    $("results").replaceChildren(el("li", { className: "hint", textContent: err.message }));
+  }
+});
+
+$("locate").addEventListener("click", () => {
+  const say = (key) => $("results").replaceChildren(el("li", { className: "hint", textContent: t(key) }));
+  if (!navigator.geolocation) { say("locateFailed"); return; }
+  say("locating");
+  navigator.geolocation.getCurrentPosition(
+    (pos) => setHome({ lat: pos.coords.latitude, lon: pos.coords.longitude, name: t("myLocation") }),
+    () => say("locateFailed"),
+    { timeout: 10000, maximumAge: 600000 },
+  );
+});
+
+function setHome(place) {
+  s.home = { lat: place.lat, lon: place.lon, name: place.name };
+  if (!s.radius) s.radius = 50;
+  $("results").replaceChildren();
+  renderHome(); replan();
+}
+
+$("region").addEventListener("change", () => { chooseRegion($("region").value); renderAll(); replan(); });
+
+$("install").addEventListener("click", async () => {
+  $("install").disabled = true;
+  try {
+    await api("/api/install", request());
+    s.installing = true;
+    showProgress();
+  } catch (err) {
+    $("problems").replaceChildren(el("li", { textContent: err.message }));
+    $("install").disabled = false;
+  }
+});
+
+function showProgress() {
+  $("setup").hidden = true; $("progress").hidden = false;
+  window.scrollTo(0, 0);
+}
+
+function renderJob(job) {
+  if (!job) return;
+  if (!job.finished) {
+    if ($("progress").hidden) showProgress();
+    s.installing = true;
+    $("bar").max = job.total || 1; $("bar").value = job.done;
+    const c = job.current;
+    const what = !c ? "" : c.kind === "book" ? t("step_book", { title: c.title }) : t(c.cut ? "step_cut" : `step_${c.kind}`);
+    $("current").textContent = `${what} – ${t("of", { done: size(job.done), total: size(job.total) })}`;
+    return;
+  }
+  s.installing = false;
+  $("setup").hidden = true; $("progress").hidden = true; $("done").hidden = false;
+  const problems = job.errors.length > 0;
+  $("done-title").textContent = t(problems ? "doneProblems" : "doneTitle");
+  $("errors").replaceChildren(...job.errors.map((text) => el("li", { textContent: text })),
+    ...(problems ? [el("li", { textContent: t("retryLater") })] : []));
+  $("done-text").textContent = s.state?.phone ? t("donePhone") : job.usb ? t("doneUsb") : t("doneComputer", { path: job.target });
+}
+
+// Inside the Android app, the app itself switches to the viewer.
+const android = window.VaruAndroid;
+$("open-files").hidden = !!android;
+$("open-varu").addEventListener("click", () => {
+  if (android) { android.openVaru(s.state?.job?.target ?? ""); return; }
+  api("/api/open", { What: "varu" }).catch((err) => alert(err.message));
+});
+$("open-files").addEventListener("click", () => api("/api/open", { What: "files" }).catch((err) => alert(err.message)));
+$("quit").addEventListener("click", async () => {
+  await api("/api/quit", {}).catch(() => {});
+  if (android) { android.close(); return; }
+  document.querySelector("main").replaceChildren($("closed"));
+  $("closed").hidden = false;
+});
+
+// ---------- state polling (also tells the installer the page is open) ----------
+
+async function poll() {
+  try {
+    const state = await api("/api/state");
+    const first = !s.state;
+    s.state = state;
+    $("loading").hidden = true;
+    if (state.error && !state.regions?.length) {
+      $("notice").hidden = false; $("notice-text").textContent = `${t("offline")} (${state.error})`;
+    } else {
+      $("notice").hidden = true;
+      if (first || !s.region) {
+        s.computerPath = state.computer;
+        chooseRegion(state.regions[0].id);
+        $("setup").hidden = !!state.job;
+        renderAll(); replan();
+      } else {
+        renderTargets(false);
+      }
+    }
+    renderJob(state.job);
+  } catch (err) {
+    $("loading").hidden = true;
+    $("notice").hidden = false;
+    // A network error here means the installer program itself is gone.
+    $("notice-text").textContent = err instanceof TypeError ? t("gone") : err.message;
+  }
+  setTimeout(poll, s.installing ? 1000 : 5000);
+}
+$("retry").addEventListener("click", () => { $("notice").hidden = true; $("loading").hidden = false; });
+
+applyLanguage();
+poll();
+</script>
+</body>
+</html>
