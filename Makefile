@@ -23,8 +23,14 @@ run:
 	cd launcher && go run . -root "$(abspath $(OUT))"
 
 ## Release files the installers download: make release-content REGION=ee
+## The public Overpass server is often briefly overloaded (HTTP 502), so a
+## failed build runs again after a pause; finished steps are skipped.
 release-content:
-	python3 -m builder --region $(REGION) --out build/$(REGION) --skip library
+	@for try in 1 2 3; do \
+	  python3 -m builder --region $(REGION) --out build/$(REGION) --skip library && break; \
+	  if [ "$$try" = 3 ]; then exit 1; fi; \
+	  echo "Retrying the failed steps in 2 minutes"; sleep 120; \
+	done
 	python3 -m builder.release --region $(REGION) --drive build/$(REGION) --out dist
 
 ## dist/Varu-Installer.exe
