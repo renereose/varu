@@ -247,6 +247,11 @@ const STRINGS = {
     p_portable: "This stick is formatted as {detail}, which not every computer can read. In step 1, format it for all computers.",
     notPortable: "{fs}: not every computer can read this stick.",
     formatButton: "Erase and format for all computers",
+    freeOfStick: "{free} free ({disk} stick)",
+    partOfStick: "Only {total} of this {disk} stick is in use.",
+    stickFull: "There is not enough room on this stick for what you chose.",
+    eraseWhole: "Erase the stick and use all of it",
+    spaceStick: "Go back to step 1 to erase the stick and use all of it.",
     formatConfirm: "Everything on {name} ({size}) will be erased. It is then formatted as exFAT, which Windows, macOS and Linux all read. Your computer may ask for permission.",
     formatYes: "Erase and format",
     cancel: "Cancel",
@@ -330,6 +335,11 @@ const STRINGS = {
     p_portable: "See pulk on vormingus {detail}, mida kõik arvutid ei loe. Vorminda see 1. sammus kõigile arvutitele sobivaks.",
     notPortable: "{fs}: kõik arvutid seda pulka ei loe.",
     formatButton: "Kustuta ja vorminda kõigile arvutitele sobivaks",
+    freeOfStick: "{free} vaba ({disk} pulk)",
+    partOfStick: "Sellest {disk} pulgast on kasutusel vaid {total}.",
+    stickFull: "Sellel pulgal pole valitud asjade jaoks piisavalt ruumi.",
+    eraseWhole: "Kustuta pulk ja kasuta seda tervenisti",
+    spaceStick: "Mine tagasi 1. sammu, et pulk kustutada ja seda tervenisti kasutada.",
     formatConfirm: "Kõik andmed pulgal {name} ({size}) kustutatakse. Seejärel vormindatakse see exFAT-vormingusse, mida loevad Windows, macOS ja Linux. Arvuti võib küsida luba.",
     formatYes: "Kustuta ja vorminda",
     cancel: "Loobu",
@@ -473,7 +483,8 @@ function renderTargets(force) {
   };
   const items = volumes.map((v) => el("li", {}, el("label", { className: "choice" }, radio(v.path),
     el("span", { className: "grow" }, el("strong", { textContent: v.label }), " ", el("small", { textContent: v.fs })),
-    el("span", { className: "size", textContent: t("free", { free: size(v.free) }) })), formatBox(v)));
+    el("span", { className: "size", textContent: partOfStick(v) ? t("freeOfStick", { free: size(v.free), disk: size(v.disk) })
+      : t("free", { free: size(v.free) }) })), formatBox(v)));
 
   if (!s.state.computer) { $("targets").replaceChildren(...items); return; }
   // On a computer, a stick is always one of the two choices, even before it is plugged in.
@@ -491,25 +502,31 @@ function renderTargets(force) {
 // ---------- formatting a stick that not every computer reads ----------
 
 const portableFS = (fs) => /^(msdos|fat|fat16|fat32|vfat|exfat)$/i.test(fs ?? "");
+// A partition much smaller than its stick: a boot stick, say, made by Rufus.
+const partOfStick = (v) => v.disk > v.total * 1.1;
+const tooFull = (v) => s.target === v.path && !!s.plan?.problems?.some((p) => p.code === "space");
+const offerErase = (v) => !s.state.phone && (!portableFS(v.fs) || partOfStick(v) || tooFull(v));
 const notPortable = (path) => {
   const v = s.state && !s.state.phone && s.state.volumes.find((x) => x.path === path);
   return !!v && !portableFS(v.fs);
 };
 
 function formatBox(v) {
-  if (s.state.phone || portableFS(v.fs)) return s.formatted === v.path ? el("p", { className: "format hint", textContent: t("formatted") }) : null;
+  if (!offerErase(v)) return s.formatted === v.path ? el("p", { className: "format hint", textContent: t("formatted") }) : null;
   const box = el("div", { className: "format" });
   const ask = () => {
-    const button = el("button", { type: "button", textContent: t("formatButton") });
+    const why = !portableFS(v.fs) ? t("notPortable", { fs: v.fs })
+      : partOfStick(v) ? t("partOfStick", { total: size(v.total), disk: size(v.disk) }) : t("stickFull");
+    const button = el("button", { type: "button", textContent: t(portableFS(v.fs) ? "eraseWhole" : "formatButton") });
     button.addEventListener("click", areYouSure);
-    box.replaceChildren(el("p", { className: "warn-text", textContent: t("notPortable", { fs: v.fs }) }), button);
+    box.replaceChildren(el("p", { className: "warn-text", textContent: why }), button);
   };
   const areYouSure = () => {
     const yes = el("button", { type: "button", className: "danger", textContent: t("formatYes") });
     const no = el("button", { type: "button", textContent: t("cancel") });
     yes.addEventListener("click", run);
     no.addEventListener("click", ask);
-    box.replaceChildren(el("p", { textContent: t("formatConfirm", { name: v.label, size: size(v.total) }) }), el("div", { className: "row" }, yes, no));
+    box.replaceChildren(el("p", { textContent: t("formatConfirm", { name: v.label, size: size(v.disk || v.total) }) }), el("div", { className: "row" }, yes, no));
   };
   const run = async () => {
     s.formatting = true;
@@ -545,6 +562,9 @@ function renderSummary() {
     plan.problems.forEach((p) => problems.push(STRINGS.en[`p_${p.code}`] ? t(`p_${p.code}`, vars(p)) : p.detail || p.code));
     plan.warnings.forEach((p) => warnings.push(t(`w_${p.code}`, vars(p))));
   }
+  if (plan?.problems.some((p) => p.code === "space") && s.target !== "computer" && !s.state.phone) problems.push(t("spaceStick"));
+  const offers = s.state.volumes.filter(offerErase).map((v) => v.path).join("|");
+  if (offers !== s.offers) { s.offers = offers; renderTargets(true); }
   const download = plan ? plan.items.reduce((sum, it) => sum + it.size - it.have, 0) : 0;
   $("sizes").textContent = s.planning ? t("calculating")
     : plan && targetPath() ? t("sizes", { download: size(download), needed: size(plan.needed), free: size(plan.free) }) : "";

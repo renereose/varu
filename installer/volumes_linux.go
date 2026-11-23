@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 )
@@ -23,7 +24,7 @@ func volumes() []Volume {
 			continue
 		}
 		out = append(out, Volume{Path: m.dir, Label: filepath.Base(m.dir), FS: m.fs,
-			Free: int64(st.Bavail) * int64(st.Bsize), Total: int64(st.Blocks) * int64(st.Bsize)})
+			Free: int64(st.Bavail) * int64(st.Bsize), Total: int64(st.Blocks) * int64(st.Bsize), Disk: diskOf(m.dev)})
 	}
 	return out
 }
@@ -35,6 +36,24 @@ func diskInfo(path string) (free int64, fs string, err error) {
 		return 0, "", err
 	}
 	return int64(st.Bavail) * int64(st.Bsize), mountOf(dir).fs, nil
+}
+
+// diskOf is the size of the whole disk a partition such as /dev/sdb1 is on.
+func diskOf(dev string) int64 {
+	part, err := filepath.EvalSymlinks("/sys/class/block/" + filepath.Base(dev))
+	if err != nil {
+		return 0
+	}
+	disk := part
+	if _, err := os.Stat(filepath.Join(part, "partition")); err == nil {
+		disk = filepath.Dir(part)
+	}
+	raw, err := os.ReadFile(filepath.Join(disk, "size"))
+	sectors, _ := strconv.ParseInt(strings.TrimSpace(string(raw)), 10, 64)
+	if err != nil {
+		return 0
+	}
+	return sectors * 512
 }
 
 type mount struct {
