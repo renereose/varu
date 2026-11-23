@@ -32,21 +32,22 @@ Download Varu for your system from the
 | Linux | `varu_<version>_amd64.deb` (Debian, Ubuntu) or `Varu-Linux-x86_64.AppImage`; the `arm64` files are for a Raspberry Pi 4 or 5 |
 | Android | `Varu.apk` |
 
-The first time, Varu opens a setup wizard that asks:
+The first time, Varu opens a setup wizard, one step at a time:
 
-1. **Your country.**
-2. **Your home** (search for the town, or use your location) and a
-   **radius**: 10, 25, 50 or 100 km, or the whole country. Inside the radius
-   you get street-level map and places; the rest of the country stays on the
-   map at road level, for travel.
-3. **Which places** to show: drinking water, hospitals, pharmacies, clinics,
-   food stores, fuel, police, rescue stations, border crossings, springs.
-4. **Library** books: Vikipeedia, WikiMed and a post-disaster library.
-   Each is gigabytes, so each is ticked by hand. The library page searches
-   every book, titles first, then the text: all the words must appear, and
-   longer words also match their forms ("tallinn" finds "Tallinnas").
-5. **Where to put it**: a USB stick (listed as soon as it is plugged in),
-   a folder on this computer, or the phone's storage or memory card.
+1. **Where you want Varu**: a USB stick (listed as soon as it is plugged in)
+   or a folder on this computer; on a phone, its storage or memory card.
+2. **Your country**, **your home** (search for the town, or use your
+   location) and a **radius**: 10, 25, 50 or 100 km, or the whole country.
+   Inside the radius you get street-level map and places; the rest of the
+   country stays on the map at road level, for travel.
+3. **Which places** to show (drinking water, hospitals, pharmacies, clinics,
+   food stores, fuel, police, rescue stations, border crossings, springs) and
+   which **library** books to add (Vikipeedia, WikiMed and a post-disaster
+   library; each is gigabytes, so each is ticked by hand). The library page
+   searches every book, titles first, then the text: all the words must
+   appear, and longer words also match their forms ("tallinn" finds
+   "Tallinnas").
+4. **A last look**: where it goes, how much it downloads, and Install.
 
 After that, Varu opens straight to the start page: map, library and
 documents in one window. *Go → Install or update…* runs the wizard again.

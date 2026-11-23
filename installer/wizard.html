@@ -29,8 +29,7 @@ header { display: flex; justify-content: space-between; gap: 1rem; align-items: 
 h1 { margin: .2rem 0 .4rem; font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1.1; }
 h2 { margin: 2.2rem 0 .3rem; font-size: 1.15rem; }
 /* Counters skip hidden steps, so the numbers stay 1, 2, 3 ... */
-#setup { counter-reset: step; }
-#setup h2::before { counter-increment: step; content: counter(step); color: var(--accent); margin-right: .6rem; }
+.choice.waiting { opacity: .6; }
 .lead, .hint { color: var(--muted); margin: 0 0 .8rem; }
 .hint { font-size: .9rem; }
 .lang { display: flex; gap: .3rem; }
@@ -92,6 +91,15 @@ progress { width: 100%; height: 1rem; accent-color: var(--accent); }
   <p id="loading" class="hint" data-t="loading"></p>
 
   <section id="setup" hidden>
+    <p class="eyebrow" id="step-count"></p>
+
+    <div class="step" data-step="1">
+    <h2 data-t="whereTitle"></h2>
+    <p class="hint" id="where-hint" data-t="whereHint"></p>
+    <ul id="targets" class="choices" role="radiogroup"></ul>
+    </div>
+
+    <div class="step" data-step="2">
     <h2 data-t="country"></h2>
     <select id="region" aria-labelledby="region-label"></select>
 
@@ -106,7 +114,9 @@ progress { width: 100%; height: 1rem; accent-color: var(--accent); }
     <p id="home" class="home" hidden></p>
     <div class="radius" id="radius" role="group"></div>
     <p class="hint" id="radius-hint"></p>
+    </div>
 
+    <div class="step" data-step="3">
     <h2 data-t="placesTitle"></h2>
     <p class="hint" data-t="placesHint"></p>
     <ul id="pois" class="choices"></ul>
@@ -114,16 +124,22 @@ progress { width: 100%; height: 1rem; accent-color: var(--accent); }
     <h2 data-t="libraryTitle"></h2>
     <p class="hint" data-t="libraryHint"></p>
     <ul id="library" class="choices"></ul>
+    </div>
 
-    <h2 data-t="whereTitle"></h2>
-    <p class="hint" id="where-hint" data-t="whereHint"></p>
-    <ul id="targets" class="choices" role="radiogroup"></ul>
-
+    <div class="step" data-step="4">
+    <h2 data-t="reviewTitle"></h2>
     <div class="summary" aria-live="polite">
+      <p id="recap"></p>
       <p id="sizes"></p>
       <ul id="problems" class="msgs bad"></ul>
       <ul id="warnings" class="msgs warn"></ul>
       <button type="button" class="primary" id="install" data-t="install" disabled></button>
+    </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="back" data-t="back"></button>
+      <button type="button" class="primary" id="next" data-t="next"></button>
     </div>
   </section>
 
@@ -180,9 +196,16 @@ const STRINGS = {
     placesHint: "Each layer is small. Locations come from OpenStreetMap or official lists and can be out of date: check on site.",
     libraryTitle: "Library",
     libraryHint: "Readable in Varu without internet. These are large.",
-    whereTitle: "Where to put it",
+    whereTitle: "Where do you want Varu?",
+    reviewTitle: "Ready to install",
+    installTo: "Varu goes to: {where}",
+    stepOf: "Step {n} of {total}",
+    next: "Next",
+    back: "Back",
     whereHint: "Plug in a USB stick and it appears here. A stick formatted as exFAT works on every computer.",
     computer: "This computer",
+    usbStick: "USB stick",
+    noStick: "Plug one in and it appears here.",
     folder: "Folder",
     free: "{free} free",
     sizes: "Download about {download}. Needs {needed} of space; {free} free there.",
@@ -248,9 +271,16 @@ const STRINGS = {
     placesHint: "Iga kiht on väike. Asukohad pärinevad OpenStreetMapist või ametlikest nimekirjadest ja võivad olla aegunud: kontrolli kohapeal.",
     libraryTitle: "Raamatukogu",
     libraryHint: "Loetav Varus ilma internetita. Need on suured.",
-    whereTitle: "Kuhu panna",
+    whereTitle: "Kuhu Varu panna?",
+    reviewTitle: "Valmis paigaldama",
+    installTo: "Varu läheb: {where}",
+    stepOf: "Samm {n}/{total}",
+    next: "Edasi",
+    back: "Tagasi",
     whereHint: "Ühenda USB-mälupulk ja see ilmub siia. exFAT-vormingus pulk töötab igas arvutis.",
     computer: "See arvuti",
+    usbStick: "USB-mälupulk",
+    noStick: "Ühenda pulk arvutiga ja see ilmub siia.",
     folder: "Kaust",
     free: "vaba {free}",
     sizes: "Alla laaditakse umbes {download}. Vaja on {needed} ruumi, vaba on {free}.",
@@ -299,7 +329,7 @@ let lang = (() => {
 const s = {
   state: null, region: null, home: null, radius: 50,
   pois: new Set(), library: new Set(), target: null, computerPath: "",
-  plan: null, planning: false, volumesKey: "", installing: false, targetChosen: false,
+  plan: null, planning: false, volumesKey: "", installing: false, step: 1,
 };
 
 function t(key, vars = {}) {
@@ -411,16 +441,12 @@ function renderTargets(force) {
   const key = JSON.stringify(volumes.map((v) => [v.path, v.free]));
   if (!force && key === s.volumesKey) return;
   s.volumesKey = key;
-  if (s.target && s.target !== "computer" && !volumes.some((v) => v.path === s.target)) s.target = null;
-  // Until the user picks, a lone USB stick wins, then this computer.
-  if (!s.targetChosen || !s.target) {
-    const next = volumes.length === 1 ? volumes[0].path : s.state.computer ? "computer" : volumes[0]?.path ?? null;
-    if (next !== s.target) { s.target = next; if (!force) replan(); }
-  }
+  // Nothing is chosen for the user; a stick that is pulled out is no longer chosen.
+  if (s.target && s.target !== "computer" && !volumes.some((v) => v.path === s.target)) { s.target = null; replan(); }
 
   const radio = (value) => {
     const input = el("input", { type: "radio", name: "target", value, checked: s.target === value });
-    input.addEventListener("change", () => { s.target = value; s.targetChosen = true; replan(); });
+    input.addEventListener("change", () => { s.target = value; replan(); });
     return input;
   };
   const items = volumes.map((v) => el("li", {}, el("label", { className: "choice" }, radio(v.path),
@@ -428,9 +454,14 @@ function renderTargets(force) {
     el("span", { className: "size", textContent: t("free", { free: size(v.free) }) }))));
 
   if (!s.state.computer) { $("targets").replaceChildren(...items); return; }
+  // On a computer, a stick is always one of the two choices, even before it is plugged in.
+  if (!volumes.length) {
+    items.push(el("li", {}, el("label", { className: "choice waiting" }, el("input", { type: "radio", name: "target", disabled: true }),
+      el("span", { className: "grow" }, el("strong", { textContent: t("usbStick") }), " ", el("small", { textContent: t("noStick") })))));
+  }
   const folder = el("input", { type: "text", value: s.computerPath, spellcheck: false });
   folder.setAttribute("aria-label", t("folder"));
-  folder.addEventListener("input", () => { s.computerPath = folder.value; s.target = "computer"; s.targetChosen = true; renderTargetChecks(); replan(); });
+  folder.addEventListener("input", () => { s.computerPath = folder.value; s.target = "computer"; renderTargetChecks(); replan(); });
   items.push(el("li", {}, el("label", { className: "choice" }, radio("computer"),
     el("span", { className: "grow" }, el("strong", { textContent: t("computer") }), folder))));
   $("targets").replaceChildren(...items);
@@ -456,7 +487,31 @@ function renderSummary() {
   $("problems").replaceChildren(...[...new Set(problems)].map((text) => el("li", { textContent: text })));
   $("warnings").replaceChildren(...warnings.map((text) => el("li", { textContent: text })));
   $("install").disabled = s.planning || !plan || problems.length > 0 || s.installing;
+  const volume = s.state.volumes.find((v) => v.path === s.target);
+  $("recap").textContent = !targetPath() ? "" : t("installTo", {
+    where: s.target === "computer" ? `${t("computer")} (${targetPath()})` : `${volume?.label ?? ""} (${targetPath()})`,
+  });
+  renderStep();
 }
+
+// ---------- steps ----------
+
+const STEPS = 4;
+function renderStep() {
+  document.querySelectorAll("#setup .step").forEach((d) => { d.hidden = Number(d.dataset.step) !== s.step; });
+  $("step-count").textContent = t("stepOf", { n: s.step, total: STEPS });
+  $("back").hidden = s.step === 1;
+  $("next").hidden = s.step === STEPS;
+  // A place to put it first; a home whenever the map is cut around one.
+  $("next").disabled = s.step === 1 ? !targetPath() : s.step === 2 && s.radius > 0 && !s.home;
+}
+function goStep(n) {
+  s.step = Math.min(Math.max(n, 1), STEPS);
+  renderStep();
+  scrollTo(0, 0);
+}
+$("back").addEventListener("click", () => goStep(s.step - 1));
+$("next").addEventListener("click", () => goStep(s.step + 1));
 
 // ---------- planning and installing ----------
 
