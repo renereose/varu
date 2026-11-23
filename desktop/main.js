@@ -117,6 +117,8 @@ const LABELS = {
   et: { go: "Mine", home: "Avaleht", map: "Kaart", library: "Raamatukogu", back: "Tagasi", forward: "Edasi", install: "Paigalda või uuenda…" },
 };
 
+const focused = () => (BrowserWindow.getFocusedWindow() ?? win).webContents;
+
 function menu() {
   const mac = process.platform === "darwin";
   const l = LABELS[app.getLocale().slice(0, 2)] ?? LABELS.en;
@@ -130,8 +132,8 @@ function menu() {
         nav(l.map, "CmdOrCtrl+M", "/map.html"),
         nav(l.library, "CmdOrCtrl+L", "/library/#lang="),
         { type: "separator" },
-        { label: l.back, accelerator: mac ? "Cmd+[" : "Alt+Left", click: () => win.webContents.navigationHistory.goBack() },
-        { label: l.forward, accelerator: mac ? "Cmd+]" : "Alt+Right", click: () => win.webContents.navigationHistory.goForward() },
+        { label: l.back, accelerator: mac ? "Cmd+[" : "Alt+Left", click: () => focused().navigationHistory.goBack() },
+        { label: l.forward, accelerator: mac ? "Cmd+]" : "Alt+Right", click: () => focused().navigationHistory.goForward() },
         { type: "separator" },
         nav(l.install, undefined, "installer"),
         ...(mac ? [] : [{ type: "separator" }, { role: "quit" }]),
@@ -155,16 +157,7 @@ app.whenReady().then(() => {
     backgroundColor: "#f3f0e8",
     webPreferences: { preload: path.join(__dirname, "preload.js") },
   });
-  // Varu's own pages stay in the app; credits and sources open in the browser.
-  const outside = (url) => { if (/^https?:\/\//.test(url)) shell.openExternal(url); };
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (isLocal(url)) win.loadURL(url);
-    else outside(url);
-    return { action: "deny" };
-  });
-  win.webContents.on("will-navigate", (event, url) => {
-    if (!isLocal(url)) { event.preventDefault(); outside(url); }
-  });
+  win.on("closed", () => app.quit()); // a document window alone is no use
 
   // The installer page, when it runs in this app (installer/wizard.html).
   const fromInstaller = (event) => mode === "installer" && isLocal(event.senderFrame?.url ?? "");
@@ -182,6 +175,21 @@ app.whenReady().then(() => {
   const drive = findDrive();
   if (drive) startViewer(drive);
   else startInstaller();
+});
+
+// Every window: Varu's own pages stay in the app, and a link that asks for a
+// new window (documents, PDFs) gets one, so closing it returns to where you
+// were. Credits and sources open in the browser.
+const outside = (url) => { if (/^https?:\/\//.test(url)) shell.openExternal(url); };
+app.on("web-contents-created", (_event, contents) => {
+  contents.setWindowOpenHandler(({ url }) => {
+    if (isLocal(url)) return { action: "allow", overrideBrowserWindowOptions: { width: 1000, height: 860, autoHideMenuBar: true } };
+    outside(url);
+    return { action: "deny" };
+  });
+  contents.on("will-navigate", (event, url) => {
+    if (!isLocal(url)) { event.preventDefault(); outside(url); }
+  });
 });
 
 app.on("window-all-closed", () => app.quit());
