@@ -17,7 +17,8 @@ turn freely available content into a drive:
 | **Builder** | A Python tool that downloads everything for a region and assembles the drive | `builder/`, `regions/`, `sources.toml` |
 | **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
 | **Router** | Varu's own offline directions: builds a road network from OpenStreetMap and finds routes on it | `router/` |
-| **Viewer** | The web pages you see: start page and map | `viewer/` |
+| **Library reader** | Varu's own reader for the ZIM books (Wikipedia and others): pages, images, files, and search by title and inside the text | `zim/` |
+| **Viewer** | The web pages you see: start page, map and library | `viewer/` |
 
 ## Installing (for everyone)
 
@@ -41,9 +42,9 @@ The first time, Varu opens a setup wizard that asks:
 3. **Which places** to show: drinking water, hospitals, pharmacies, clinics,
    food stores, fuel, police, rescue stations, border crossings, springs.
 4. **Library** books: Vikipeedia, WikiMed and a post-disaster library.
-   Each is gigabytes, so each is ticked by hand. Computers only for now:
-   the library reader crashes inside Android's app sandbox (see the
-   roadmap).
+   Each is gigabytes, so each is ticked by hand. The library page searches
+   every book, titles first, then the text: all the words must appear, and
+   longer words also match their forms ("tallinn" finds "Tallinnas").
 5. **Where to put it**: a USB stick (listed as soon as it is plugged in),
    a folder on this computer, or the phone's storage or memory card.
 
@@ -87,6 +88,14 @@ Early. What has been exercised so far:
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.
+- Library reader: reads the real books (Vikipeedia, 761,588 entries; WikiMed;
+  the post-disaster library) in about a millisecond to open and 5–15 ms per
+  page or title search on a Mac; pages, images, PDFs and title search checked
+  in a browser and in the Android app (Android 15 emulator).
+- Library search inside the text: the index is built once per book, in the
+  background (Vikipeedia: 264,000 articles in under 2 minutes on a Mac,
+  183 MB, about 150 MB of memory while building); searches take 15–100 ms.
+  Not yet timed on a phone or a Pi, where building will take longer.
 - Desktop app: built for all three systems on a Mac. On macOS it has run end
   to end: wizard, install, map, library, and opening from a stick's
   `Varu-macOS.dmg` on a computer without Varu. The Linux AppImage has started
@@ -162,7 +171,8 @@ and Linux all read and write and that holds files larger than 4 GB.
         ├── maps/*.graph     road network ─▶ /api/route        ├── directions
         ├── pois/*.geojson   hospitals, pharmacies, water …    │
         ├── docs/            PDFs                              │
-        └── /library/ ──▶ bin/<os>-<arch>/kiwix-serve ──▶ library/*.zim
+        └── library/*.zim   read by the launcher itself ──▶ /library/
+            library/*.search  Varu's search index of each book, built on first start
 ```
 
 ### Releases
@@ -216,7 +226,6 @@ greyed-out Library card.
 | Road network | The [Geofabrik](https://download.geofabrik.de) OpenStreetMap extract (`[routing]` in the region file, about 125 MB to download), turned into `maps/<id>.graph` by `router/cmd/varu-graph` | `routing` |
 | Places | OpenStreetMap via the Overpass API, one query per layer, or an official list published as GeoJSON (`geojson =` in the region file) | `pois` |
 | Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
-| Library reader | `kiwix-serve` from kiwix-tools | `kiwix` |
 | Documents | URLs listed in the region file | `documents` |
 | Map renderer, fonts, icons | MapLibre GL JS, PMTiles, Protomaps basemaps, pinned and checksummed in `sources.toml` | `app` |
 
@@ -232,8 +241,8 @@ there and list its code under `languages` in the region file.
 ## Licensing
 
 - **This repository's code** is MIT licensed. See `LICENSE`.
-- **kiwix-serve** is GPL-3.0-or-later. The drive ships it as a separate,
-  unmodified program that the launcher starts; it is not linked into Varu.
+- **klauspost/compress** (BSD-3-Clause) unpacks the library's zstd
+  compression inside the launcher.
 - **Map data** is © OpenStreetMap contributors under the ODbL. Attribution
   is shown on the map and start page and must stay. The road network is a
   derived database under the same licence.
@@ -258,7 +267,9 @@ reachable.
 ## Contributing
 
 Run `make test` before sending a change. The router, launcher and installer
-use only the Go standard library, the builder only the Python standard library
+use only the Go standard library, except for one zstd decoder
+(klauspost/compress) in the library reader; the builder uses only the Python
+standard library
 and the Android app only the Android framework (it builds without Gradle:
 `make android`). The desktop app is Electron with one `main.js` and no other
 runtime dependencies; electron-builder packages it. Please keep it that way

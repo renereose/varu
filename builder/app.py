@@ -40,7 +40,7 @@ def step_app(ctx: Context) -> None:
     assets = ctx.sources["assets"]
     notices += [
         f"Protomaps basemaps-assets ({assets['commit'][:10]}) – fonts: SIL OFL 1.1, icons: MIT – {assets['repo']}",
-        "kiwix-serve (bin/*/kiwix-serve) – GPL-3.0-or-later – https://github.com/kiwix/kiwix-tools",
+        "klauspost/compress (zstd, in bin/*/varu) – BSD-3-Clause – https://github.com/klauspost/compress",
         "",
         "Full licence texts are in this folder where the upstream project ships one.",
         "",

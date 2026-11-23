@@ -7,8 +7,6 @@ import (
 	"mime"
 	"net"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,10 +14,10 @@ import (
 
 // Config describes one running instance.
 type Config struct {
-	Root     string   // drive root
-	LAN      bool     // accept requests from other hosts
-	KiwixURL *url.URL // kiwix-serve backend, nil when there is no library
-	Version  string
+	Root    string // drive root
+	LAN     bool   // accept requests from other hosts
+	Version string
+	Search  bool // prepare the library's search indexes in the background
 }
 
 func init() {
@@ -52,7 +50,7 @@ var dataDirs = []string{"maps", "pois", "docs"}
 //	/manifest.json    what the build put on the drive
 //	/api/status       launcher status for the viewer
 //	/api/route        directions on the drive's road network
-//	/library/         reverse proxy to kiwix-serve
+//	/library/  /api/library   the books in library/ (library.go)
 func NewHandler(cfg Config) http.Handler {
 	mux := http.NewServeMux()
 
@@ -76,39 +74,22 @@ func NewHandler(cfg Config) http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"version": cfg.Version,
-			"library": cfg.KiwixURL != nil,
+			"library": hasBooks(cfg.Root),
 			"lan":     cfg.LAN,
 		})
 	})
 
 	mux.Handle("/api/route", &routes{root: cfg.Root})
 
-	mux.Handle("/library/", libraryHandler(cfg.KiwixURL))
-	mux.HandleFunc("/library", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/library/", http.StatusFound)
-	})
+	lib := &library{root: cfg.Root, prepare: cfg.Search}
+	lib.register(mux)
+	if cfg.Search {
+		go lib.open() // start on the indexes now, not at the first visit
+	}
 
 	mux.Handle("/", http.FileServer(quietFS{http.Dir(filepath.Join(cfg.Root, "app"))}))
 
 	return commonHeaders(hostGuard(cfg.LAN, mux))
-}
-
-// libraryHandler proxies to kiwix-serve, which is started with
-// --urlRootLocation=/library so paths pass through unchanged.
-func libraryHandler(backend *url.URL) http.Handler {
-	if backend == nil {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			messagePage(w, http.StatusNotFound, "No library on this drive",
-				"This drive was built without library files, or the library reader for this computer is missing.", false)
-		})
-	}
-	proxy := httputil.NewSingleHostReverseProxy(backend)
-	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
-		// kiwix-serve needs a moment to open large archives.
-		messagePage(w, http.StatusServiceUnavailable, "The library is starting",
-			"Large archives take a little while to open. This page reloads by itself.", true)
-	}
-	return proxy
 }
 
 func messagePage(w http.ResponseWriter, status int, title, body string, refresh bool) {

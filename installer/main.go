@@ -46,7 +46,7 @@ func main() {
 	noBrowser := flag.Bool("no-browser", false, "do not open the browser")
 	// For the Android app, which knows its storage places and the DNS servers.
 	flag.Var(&fixedVolumes, "volume", "offer only these targets, as label=path (repeatable)")
-	phone := flag.Bool("phone", false, "running inside the Android app: no library reader, no desktop launchers")
+	phone := flag.Bool("phone", false, "running inside the Android app: no desktop launchers")
 	dns := flag.String("dns", "", "comma-separated DNS servers to use instead of the system's")
 	flag.Parse()
 	useDNS(*dns)
@@ -295,13 +295,12 @@ type State struct {
 	Error    string    `json:"error,omitempty"`
 	Volumes  []Volume  `json:"volumes"`
 	Computer string    `json:"computer"` // suggested folder on this computer; "" offers volumes only
-	Library  bool      `json:"library"`  // whether library books can be read here
 	Phone    bool      `json:"phone"`
 	Job      *Progress `json:"job,omitempty"`
 }
 
 func (a *App) state() State {
-	s := State{Version: version, Volumes: allVolumes(), Computer: defaultFolder(), Library: !a.Phone, Phone: a.Phone}
+	s := State{Version: version, Volumes: allVolumes(), Computer: defaultFolder(), Phone: a.Phone}
 	if len(fixedVolumes) > 0 {
 		s.Computer = ""
 	}
@@ -380,9 +379,6 @@ func (a *App) plan(req Request) Plan {
 	index, err := a.loadIndex()
 	if err != nil {
 		return Plan{Problems: []Problem{{Code: "index", Detail: err.Error()}}, Warnings: []Problem{}, Items: []Item{}}
-	}
-	if a.Phone {
-		req.Library = nil
 	}
 	// Phone storage is not a stick to carry to other computers.
 	return makePlan(index, req, isVolumeRoot(req.Target) && !a.Phone, a.archive)

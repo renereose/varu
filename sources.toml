@@ -68,19 +68,6 @@ pause_seconds = 5
 [kiwix_catalog]
 url = "https://library.kiwix.org/catalog/v2/entries"
 
-# kiwix-serve, the reader that the launcher starts for library/*.zim.
-# 3.8.1, not 3.8.2: 3.8.2 has no Windows build. Before upgrading, check that
-# every file below exists for the new version at base_url.
-[kiwix_tools]
-version = "3.8.1"
-base_url = "https://download.kiwix.org/release/kiwix-tools"
-[kiwix_tools.targets]
-"linux-amd64" = "kiwix-tools_linux-x86_64-{version}.tar.gz"
-"linux-arm64" = "kiwix-tools_linux-aarch64-{version}.tar.gz"
-"darwin-amd64" = "kiwix-tools_macos-x86_64-{version}.tar.gz"
-"darwin-arm64" = "kiwix-tools_macos-arm64-{version}.tar.gz"
-"windows-amd64" = "kiwix-tools_win-x86_64-{version}.zip"
-
 # --- Launcher -----------------------------------------------------------------
 # GOOS-GOARCH pairs the launcher is cross-compiled for.
 [launcher]

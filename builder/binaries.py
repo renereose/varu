@@ -1,17 +1,14 @@
-"""The `launcher` and `kiwix` steps: everything that ends up in bin/."""
+"""The `launcher` step: everything that ends up in bin/."""
 
 from __future__ import annotations
 
 import os
 import shutil
 import subprocess
-import tarfile
-import zipfile
 from pathlib import Path
 
 from . import __version__
 from .context import Context, StepError
-from .fetch import FetchError, download
 
 START_WINDOWS = (
     "@echo off\r\n"
@@ -151,61 +148,3 @@ def _copy_prebuilt(ctx: Context, targets: list[str]) -> None:
         shutil.copyfile(source, output)
         output.chmod(0o755)
         ctx.log(f"copied launcher for {target}")
-
-
-def step_kiwix(ctx: Context) -> None:
-    tools = ctx.sources["kiwix_tools"]
-    version = tools["version"]
-    failures = []
-    for target, pattern in tools["targets"].items():
-        filename = pattern.format(version=version)
-        url = f"{tools['base_url'].rstrip('/')}/{filename}"
-        if ctx.dry_run:
-            ctx.log(f"would download {url}")
-            continue
-        try:
-            archive = download(url, ctx.cache / "kiwix-tools" / filename, log=ctx.log)
-            count = extract_kiwix_serve(archive, ctx.out / "bin" / target)
-        except (FetchError, tarfile.TarError, zipfile.BadZipFile, StepError) as err:
-            failures.append(f"{target}: {err}")
-            continue
-        ctx.log(f"installed kiwix-serve for {target} ({count} file{'s' if count != 1 else ''})")
-    if failures:
-        raise StepError("the library reader is missing for some computers "
-                        "(check the file names in sources.toml):\n  " + "\n  ".join(failures))
-
-
-def extract_kiwix_serve(archive: Path, dest: Path) -> int:
-    """Pull kiwix-serve (and any DLLs shipped beside it) out of a release archive."""
-
-    def wanted(name: str) -> bool:
-        base = name.rsplit("/", 1)[-1].lower()
-        return base in ("kiwix-serve", "kiwix-serve.exe") or base.endswith(".dll")
-
-    dest.mkdir(parents=True, exist_ok=True)
-    count = 0
-    if archive.name.endswith(".zip"):
-        with zipfile.ZipFile(archive) as bundle:
-            for info in bundle.infolist():
-                if info.is_dir() or not wanted(info.filename):
-                    continue
-                target = dest / info.filename.rsplit("/", 1)[-1]
-                with bundle.open(info) as source, target.open("wb") as out:
-                    shutil.copyfileobj(source, out)
-                count += 1
-    else:
-        with tarfile.open(archive) as bundle:
-            for member in bundle:
-                if not member.isfile() or not wanted(member.name):
-                    continue
-                source = bundle.extractfile(member)
-                if source is None:
-                    continue
-                target = dest / member.name.rsplit("/", 1)[-1]
-                with source, target.open("wb") as out:
-                    shutil.copyfileobj(source, out)
-                target.chmod(0o755)
-                count += 1
-    if not any((dest / name).is_file() for name in ("kiwix-serve", "kiwix-serve.exe")):
-        raise StepError(f"{archive.name} does not contain kiwix-serve")
-    return count

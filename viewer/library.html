@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+  <!-- Served at /library/, so every address here is absolute. -->
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="home">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow"><a class="back" href="/" data-i18n="back">Back</a></p>
+      <h1 data-i18n="library">Library</h1>
+    </div>
+  </header>
+
+  <main>
+    <form class="search" role="search" id="search">
+      <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search">
+    </form>
+    <p id="preparing" class="meta" hidden></p>
+    <ul id="hits" class="doc-list"></ul>
+    <p id="no-hits" class="meta" hidden data-i18n="noHits">Nothing found.</p>
+
+    <section class="cards" id="books" aria-label="Books"></section>
+    <p id="empty" class="meta" hidden data-i18n="noBooks">There are no books on this drive.</p>
+  </main>
+
+  <script type="module" src="/js/library.js"></script>
+</body>
+</html>

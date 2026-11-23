@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime/debug"
 	"syscall"
 	"time"
 )
@@ -53,16 +54,12 @@ func main() {
 	}
 	actualPort := ln.Addr().(*net.TCPAddr).Port
 
-	kiwix, err := startKiwix(root)
-	if err != nil {
-		log.Printf("Library unavailable: %v", err)
+	// Building a search index is the launcher's biggest job; a soft memory
+	// limit keeps it modest on phones and small boards.
+	if os.Getenv("GOMEMLIMIT") == "" {
+		debug.SetMemoryLimit(128 << 20)
 	}
-	defer kiwix.Stop()
-
-	cfg := Config{Root: root, LAN: *lan, Version: version}
-	if kiwix != nil {
-		cfg.KiwixURL = kiwix.URL
-	}
+	cfg := Config{Root: root, LAN: *lan, Version: version, Search: true}
 
 	srv := &http.Server{
 		Handler:           NewHandler(cfg),
