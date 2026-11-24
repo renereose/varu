@@ -99,10 +99,10 @@ Early. What has been exercised so far:
   the post-disaster library) in about a millisecond to open and 5–15 ms per
   page or title search on a Mac; pages, images, PDFs and title search checked
   in a browser and in the Android app (Android 15 emulator).
-- Library search inside the text: the index is built once per book, in the
-  background (Vikipeedia: 264,000 articles in under 2 minutes on a Mac,
-  183 MB, about 150 MB of memory while building); searches take 15–100 ms.
-  Not yet timed on a phone or a Pi, where building will take longer.
+- Library search inside the text: each book's index is built with the
+  release (Vikipeedia: 264,000 articles in under 2 minutes on a Mac,
+  183 MB, about 150 MB of memory while building) and downloaded with the
+  book, so devices only build one if it is missing; searches take 15–100 ms.
 - Desktop app: built for all three systems on a Mac. On macOS it has run end
   to end: wizard, install, map, library, and opening from a stick's
   `Varu-macOS.dmg` on a computer without Varu. The Linux AppImage has started
@@ -181,7 +181,7 @@ the usual permission prompt; Linux: UDisks, which needs `exfatprogs`).
         ├── pois/*.geojson   hospitals, pharmacies, water …    │
         ├── docs/            PDFs                              │
         └── library/*.zim   read by the launcher itself ──▶ /library/
-            library/*.search  Varu's search index of each book, built on first start
+            library/*.search  Varu's search index of each book, built with the release
 ```
 
 ### Releases
@@ -195,7 +195,10 @@ sh release.sh v0.1.2             # build, tag and publish the release
 ```
 
 It runs the tests, builds each country's drive with a fresh map and places
-(without the library), packages it with `builder/release.py`, builds Varu
+(without the library), packages it with `builder/release.py`, builds each
+library book's search index (the books are downloaded once into
+`~/.cache/varu/zim`, about 5.5 GB for Estonia, and kept for the next
+release), builds Varu
 for macOS, Windows, Linux and Android and publishes them all as one GitHub
 release. Each app downloads from the release with its own tag, so content
 and apps always match. It publishes only a clean, up-to-date `main`.
