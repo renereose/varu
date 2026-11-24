@@ -109,15 +109,21 @@ def index_book(zim: dict, out: Path, cache: Path, repo: Path, log=print) -> None
     go = shutil.which("go")
     if go is None:
         raise FetchError("Go is needed to build the library's search indexes")
-    books = cache / "zim"
+    books = cache.resolve() / "zim"
     integrity = "sha256-" + base64.b64encode(bytes.fromhex(zim["sha256"])).decode() if zim.get("sha256") else None
     archive = download(zim["url"], books / zim["file"], integrity=integrity, log=log)
     for old in older_editions(books, zim["file"]):
         old.unlink()
-    index = out / (zim["file"].removesuffix(".zim") + ".search")
-    if subprocess.run([go, "run", "./cmd/varu-index", "-zim", str(archive), "-out", str(index)],
-                      cwd=repo / "zim").returncode != 0 or not index.is_file():
+        old.with_suffix(".search").unlink(missing_ok=True)
+    # Kept with the book: the next release with the same edition reuses it.
+    built = archive.with_suffix(".search")
+    if built.is_file() and built.stat().st_mtime >= archive.stat().st_mtime:
+        log(f"have {built.name}")
+    elif subprocess.run([go, "run", "./cmd/varu-index", "-zim", str(archive), "-out", str(built)],
+                        cwd=repo / "zim").returncode != 0 or not built.is_file():
         raise FetchError(f"building the search index of {zim['file']} failed")
+    index = out / built.name
+    shutil.copyfile(built, index)
     zim["search"] = asset(index, path=f"library/{index.name}")
     log(f"wrote {index.name} ({index.stat().st_size / 1e6:.0f} MB)")
 
