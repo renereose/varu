@@ -23,10 +23,8 @@ A first build on a normal internet connection will settle these:
 
 ## 2. Content
 
-- [ ] Public shelters: the importer works (`geojson =`, 303 shelters from the
-      Land Board's WFS) but the layer is off in `regions/ee.toml` until the
-      Rescue Board confirms reuse; its own terms are CC BY-NC-ND 4.0, the
-      Land Board's are CC BY 4.0 equivalent.
+- [x] Public shelters: the Rescue Board's 303 shelters from the Land Board's
+      open map service, on by default and first in the layer list.
 - [ ] Official guidance for Estonia in `[[documents]]`, once reuse terms are
       confirmed with the publisher.
 - [ ] Crisis radio frequencies page.

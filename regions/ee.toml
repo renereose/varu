@@ -10,6 +10,7 @@ languages = ["et", "en"]     # interface languages offered, first one is the def
 attribution = [
   "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
   "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
+  "Public shelters: Päästeamet, via Maa- ja Ruumiamet.",
 ]
 
 [name]
@@ -33,6 +34,19 @@ osm_extract = "https://download.geofabrik.de/europe/estonia-latest.osm.pbf"
 # --- Places shown as map layers --------------------------------------------------
 # Each layer is one or more OpenStreetMap tags ("key=value"); an object matching
 # any of them is included.
+
+# Public shelters: the Rescue Board's official list (OpenStreetMap has none),
+# from the Land Board's open map service (its open-data licence, CC BY 4.0
+# equivalent). The Rescue Board's own terms for the same list are
+# CC BY-NC-ND 4.0 (https://www.rescue.ee/et/juhend/avaandmed): Varu is free
+# and shows the list unchanged.
+[[pois]]
+id = "shelter"
+color = "#4e342e"
+default = true
+label = { en = "Public shelters", et = "Avalikud varjumiskohad" }
+geojson = "https://gsavalik.envir.ee/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=huvipunkt:varjumiskoht&outputFormat=application/json&srsName=EPSG:4326"
+properties = { name = "nimi", "addr:street" = "aadress" }
 
 [[pois]]
 id = "hospital"
@@ -95,22 +109,6 @@ id = "border"
 tags = ["barrier=border_control"]
 color = "#37474f"
 label = { en = "Border crossings", et = "Piiripunktid" }
-
-# Public shelters: the Rescue Board's official list (OpenStreetMap has none).
-# OFF until reuse is confirmed: the Land Board's WFS says its data is under
-# its open-data licence (CC BY 4.0 equivalent), but the Rescue Board's own
-# terms for the same list are CC BY-NC-ND 4.0
-# (https://www.rescue.ee/et/juhend/avaandmed). Ask info@paasteamet.ee, then
-# uncomment, and add "Public shelters: Päästeamet, via Maa- ja Ruumiamet"
-# to the attribution above.
-#
-# [[pois]]
-# id = "shelter"
-# color = "#4e342e"
-# default = true
-# label = { en = "Public shelters", et = "Avalikud varjumiskohad" }
-# geojson = "https://gsavalik.envir.ee/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=huvipunkt:varjumiskoht&outputFormat=application/json&srsName=EPSG:4326"
-# properties = { name = "nimi", "addr:street" = "aadress" }
 
 # --- Library ----------------------------------------------------------------------
 # ZIM archives, looked up by name in the Kiwix catalogue (browse it at
