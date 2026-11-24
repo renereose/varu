@@ -377,6 +377,9 @@ func (j *Job) Run() {
 	if err := writeManifest(j.Target, j.Plan.region, j.Plan.req); err != nil {
 		j.fail(err)
 	}
+	if j.Plan.USB {
+		prepareStick(j.Target)
+	}
 }
 
 func (j *Job) resolve(u string) string {

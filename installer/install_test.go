@@ -257,3 +257,31 @@ func TestDownloadSurvivesDriveDropout(t *testing.T) {
 		t.Errorf("file %d bytes, progress %d, want %d", len(got), j.done.Load(), len(body))
 	}
 }
+
+// A stick shows Varu for each system and the README; the rest is hidden.
+func TestPrepareStick(t *testing.T) {
+	root := t.TempDir()
+	for _, name := range []string{"app/", "maps/", "manifest.json", "Start-Windows.bat", "README.txt", "Varu-Windows.exe", "Varu-macOS.dmg"} {
+		if strings.HasSuffix(name, "/") {
+			os.Mkdir(filepath.Join(root, name), 0o755)
+		} else {
+			os.WriteFile(filepath.Join(root, name), []byte("x"), 0o644)
+		}
+	}
+	prepareStick(root)
+	list, _ := os.ReadFile(filepath.Join(root, ".hidden"))
+	hidden := strings.Fields(string(list))
+	for _, want := range []string{"app", "maps", "manifest.json", "Start-Windows.bat", "autorun.inf", "autorun.sh", "varu.ico", ".VolumeIcon.icns", ".hidden"} {
+		if !slices.Contains(hidden, want) {
+			t.Errorf("%s is not hidden: %v", want, hidden)
+		}
+	}
+	for _, shown := range stickShown {
+		if slices.Contains(hidden, shown) {
+			t.Errorf("%s is hidden", shown)
+		}
+	}
+	if inf, _ := os.ReadFile(filepath.Join(root, "autorun.inf")); !strings.Contains(string(inf), "icon=varu.ico") {
+		t.Errorf("autorun.inf: %q", inf)
+	}
+}

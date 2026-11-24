@@ -79,6 +79,11 @@ A first build on a normal internet connection will settle these:
 - [ ] Formatting a stick from the wizard: tried on macOS (an APFS stick to
       exFAT); not yet on Windows (Format-Volume behind the permission
       prompt) or Linux (UDisks).
+- [ ] Stick name, icon and hidden clutter: tried on macOS (a stick made there
+      shows only the three Varu apps and the README); check Windows Explorer
+      (autorun.inf icon, hidden attribute) and GNOME's start prompt
+      (autorun.sh). A stick made on Linux hides its clutter from Linux
+      file managers only.
 - [ ] First tagged release, then a test of every installer on real hardware.
       The Android app has been built but not yet run on a phone.
 - [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and

@@ -55,9 +55,13 @@ After that, Varu opens straight to the start page: map, library and
 documents in one window. *Go → Install or update…* runs the wizard again.
 
 A USB stick also gets Varu for macOS, Windows and Linux (about 470 MB), so it
-opens on any computer without installing anything: double-click
-`Varu-Windows.exe`, `Varu-macOS.dmg` or `Varu-Linux-x86_64.AppImage` on the
-stick.
+opens on any computer without installing anything. Opened, the stick shows
+just that, under Varu's name and icon: `Varu-Windows.exe`, `Varu-macOS.dmg`,
+`Varu-Linux-x86_64.AppImage` and a README; the data and the browser-based
+`Start-*` files are hidden. Windows and macOS never start anything from a
+stick by themselves (USB worms put an end to that), so it is one double-click;
+on a GNOME desktop (Ubuntu, Fedora) the system offers to start Varu as soon as
+the stick is plugged in.
 
 An interrupted install continues where it stopped when you run it again.
 

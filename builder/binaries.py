@@ -51,6 +51,9 @@ EESTI KEELES
   Kui pulgal on Varu rakendus, tee topeltklõps selle süsteemi failil:
   Varu-Windows.exe, Varu-macOS.dmg (ava sealt Varu) või Varu-Linux-x86_64.AppImage.
 
+  Pulgal on ülejäänud failid peidetud. Start-failide nägemiseks näita
+  peidetud faile (Windows: Vaade → Kuva → Peidetud üksused; macOS: Cmd+Shift+.).
+
   Ilma rakenduseta, veebilehitsejas:
   Windows:  topeltklõps failil Start-Windows.bat
   macOS:    topeltklõps failil Start-macOS.command
@@ -62,6 +65,9 @@ EESTI KEELES
 IN ENGLISH
   If the stick has the Varu app, double-click the file for your system:
   Varu-Windows.exe, Varu-macOS.dmg (then open Varu in it) or Varu-Linux-x86_64.AppImage.
+
+  On a stick, the other files are hidden. To see the Start files, show
+  hidden files (Windows: View → Show → Hidden items; macOS: Cmd+Shift+.).
 
   Without the app, in your web browser:
   Windows:  double-click Start-Windows.bat
