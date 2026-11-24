@@ -3,7 +3,7 @@
 // ~/Varu, or any plugged-in drive) it starts the drive's launcher and shows
 // the map; otherwise it starts the bundled installer and shows the wizard.
 
-const { app, BrowserWindow, Menu, ipcMain, session, shell } = require("electron");
+const { app, BrowserWindow, Menu, dialog, ipcMain, session, shell } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
@@ -22,6 +22,7 @@ if (!app.requestSingleInstanceLock()) app.quit();
 let win = null;
 let child = null;
 let mode = ""; // "viewer" or "installer"
+let viewing = null; // the drive the viewer shows
 let quitting = false;
 
 const isLocal = (url) => /^http:\/\/(localhost|127\.0\.0\.1):\d+\//.test(url);
@@ -55,14 +56,40 @@ function findDrive() {
 function startViewer(drive) {
   remember(drive);
   mode = "viewer";
+  viewing = drive;
   run(path.join(drive, "bin", `${GOOS}-${GOARCH}`, `varu${EXE}`), ["-root", drive, "-no-browser"]);
 }
 
-function startInstaller() {
+/** update: a drive whose earlier choices the wizard starts from. */
+function startInstaller(update = null) {
   mode = "installer";
   // VARU_SOURCE: try release files before they are published (a folder or URL).
   const source = process.env.VARU_SOURCE ? ["-source", process.env.VARU_SOURCE] : [];
-  run(path.join(process.resourcesPath, "bin", `varu-installer${EXE}`), ["-no-browser", ...source]);
+  const drive = update ? ["-update", update] : [];
+  run(path.join(process.resourcesPath, "bin", `varu-installer${EXE}`), ["-no-browser", ...source, ...drive]);
+}
+
+// A new app does not change the data a drive was installed with (its map
+// pages, road data, library). Offer to update a drive older than the app;
+// "Later" keeps the map, which matters offline.
+const parseVersion = (v) => /^v?(\d+)\.(\d+)\.(\d+)$/.exec(v ?? "")?.slice(1).map(Number) ?? null;
+function olderThanApp(drive) {
+  const mine = parseVersion(app.getVersion());
+  if (!mine) return false;
+  let release = "";
+  try { release = JSON.parse(fs.readFileSync(path.join(drive, "manifest.json"), "utf8")).release; } catch { /* treat as old */ }
+  const data = parseVersion(release);
+  if (!data) return true; // installed before releases were recorded
+  const i = data.findIndex((n, k) => n !== mine[k]);
+  return i >= 0 && data[i] < mine[i];
+}
+async function offerUpdate(drive) {
+  const l = LABELS[app.getLocale().slice(0, 2)] ?? LABELS.en;
+  const { response } = await dialog.showMessageBox(win, {
+    type: "question", buttons: [l.update, l.later], defaultId: 0, cancelId: 1,
+    message: l.updateTitle, detail: l.updateText.replace("{version}", app.getVersion()),
+  });
+  if (response === 0) startInstaller(drive);
 }
 
 /** Starts a Go program and shows the address it prints. */
@@ -107,14 +134,22 @@ function go(where) {
     if (drive) startViewer(drive);
     return;
   }
-  if (where === "installer") return startInstaller();
+  if (where === "installer") return startInstaller(viewing);
   const url = win.webContents.getURL();
   if (isLocal(url)) win.loadURL(new URL(where, url).href);
 }
 
 const LABELS = {
-  en: { go: "Go", home: "Home", map: "Map", library: "Library", back: "Back", forward: "Forward", install: "Install or update…" },
-  et: { go: "Mine", home: "Avaleht", map: "Kaart", library: "Raamatukogu", back: "Tagasi", forward: "Edasi", install: "Paigalda või uuenda…" },
+  en: {
+    go: "Go", home: "Home", map: "Map", library: "Library", back: "Back", forward: "Forward", install: "Install or update…",
+    update: "Update", later: "Later", updateTitle: "Update the maps and data?",
+    updateText: "This is Varu {version}, but the maps, library and other data here come from an earlier version, so some new features are missing. Updating needs the internet.",
+  },
+  et: {
+    go: "Mine", home: "Avaleht", map: "Kaart", library: "Raamatukogu", back: "Tagasi", forward: "Edasi", install: "Paigalda või uuenda…",
+    update: "Uuenda", later: "Hiljem", updateTitle: "Uuenda kaarte ja andmeid?",
+    updateText: "See on Varu {version}, kuid siinsed kaardid, raamatukogu ja muud andmed on varasemast versioonist, nii et osa uusi võimalusi puudub. Uuendamiseks on vaja internetti.",
+  },
 };
 
 const focused = () => (BrowserWindow.getFocusedWindow() ?? win).webContents;
@@ -173,8 +208,12 @@ app.whenReady().then(() => {
 
   menu();
   const drive = findDrive();
-  if (drive) startViewer(drive);
-  else startInstaller();
+  if (drive) {
+    startViewer(drive);
+    if (olderThanApp(drive)) offerUpdate(drive);
+  } else {
+    startInstaller();
+  }
 });
 
 // Every window: Varu's own pages stay in the app, and a link that asks for a

@@ -2,6 +2,7 @@ package io.github.renereose.varu;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -31,6 +33,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Varu on Android: the same Go installer and launcher as on a computer,
@@ -45,6 +50,7 @@ public class MainActivity extends Activity {
     private Process process;
     private boolean installerMode;
     private File viewerRoot;
+    private File updating; // the drive the installer was opened to update
     private String geoOrigin;
     private GeolocationPermissions.Callback geoCallback;
 
@@ -91,8 +97,12 @@ public class MainActivity extends Activity {
         setContentView(web);
 
         File installed = installedDrive();
-        if (installed != null) startViewer(installed);
-        else startInstaller();
+        if (installed != null) {
+            startViewer(installed);
+            if (olderThanApp(installed)) offerUpdate(installed);
+        } else {
+            startInstaller(null);
+        }
     }
 
     @Override
@@ -109,7 +119,7 @@ public class MainActivity extends Activity {
         // The installer quits when its page goes quiet for a while (as it
         // does in the background); bring it back where the user left off.
         if (process != null && hasExited(process)) {
-            if (installerMode) startInstaller();
+            if (installerMode) startInstaller(updating);
             else if (viewerRoot != null) startViewer(viewerRoot);
         }
     }
@@ -143,7 +153,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == MENU_DOWNLOADS) {
-            startInstaller();
+            startInstaller(installedDrive());
             return true;
         }
         if (item.getItemId() == MENU_MAP) {
@@ -156,11 +166,17 @@ public class MainActivity extends Activity {
 
     // ---------- the Go programs ----------
 
-    private void startInstaller() {
+    /** update: a drive whose earlier choices the wizard starts from, or null. */
+    private void startInstaller(File update) {
         List<String> args = new ArrayList<>();
         args.add(program("libvaruinstaller.so"));
         args.add("-no-browser");
         args.add("-phone"); // no desktop launchers
+        if (update != null) {
+            args.add("-update");
+            args.add(update.getAbsolutePath());
+        }
+        updating = update;
         String dns = dnsServers();
         if (!dns.isEmpty()) {
             args.add("-dns");
@@ -250,6 +266,62 @@ public class MainActivity extends Activity {
             if (known.getAbsolutePath().equals(dir.getAbsolutePath())) return true;
         }
         return false;
+    }
+
+    // ---------- updates ----------
+
+    // A new APK brings new programs, but the map pages, road data and
+    // library on the phone stay as they were downloaded. Offer to update
+    // them; the map keeps working meanwhile, which matters offline.
+    private void offerUpdate(File drive) {
+        boolean et = isEstonian();
+        String version = appVersion();
+        new AlertDialog.Builder(this)
+                .setTitle(et ? "Uuenda kaarte ja andmeid?" : "Update the maps and data?")
+                .setMessage(et
+                        ? "See on Varu " + version + ", kuid selle telefoni kaardid, raamatukogu ja muud andmed on varasemast versioonist, nii et osa uusi võimalusi puudub. Uuendamiseks on vaja internetti."
+                        : "This is Varu " + version + ", but the maps, library and other data on this phone come from an earlier version, so some new features are missing. Updating needs the internet.")
+                .setPositiveButton(et ? "Uuenda" : "Update", (dialog, which) -> startInstaller(drive))
+                .setNegativeButton(et ? "Hiljem" : "Later", null)
+                .show();
+    }
+
+    private String appVersion() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            return "";
+        }
+    }
+
+    /** Whether the drive's data comes from an earlier release than this app (no release: before 0.1.5). */
+    private boolean olderThanApp(File drive) {
+        int[] app = parseVersion(appVersion());
+        if (app == null) return false; // a development build
+        int[] data = parseVersion(dataRelease(drive));
+        if (data == null) return true;
+        for (int i = 0; i < 3; i++) {
+            if (data[i] != app[i]) return data[i] < app[i];
+        }
+        return false;
+    }
+
+    private static String dataRelease(File drive) {
+        try (FileInputStream in = new FileInputStream(new File(drive, "manifest.json"))) {
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            for (int n; (n = in.read(buf)) > 0; ) out.write(buf, 0, n);
+            return new JSONObject(out.toString("UTF-8")).optString("release", "");
+        } catch (IOException | JSONException e) {
+            return "";
+        }
+    }
+
+    /** "v1.2.3" or "1.2.3" as {1, 2, 3}; null for anything else. */
+    private static int[] parseVersion(String v) {
+        Matcher m = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)$").matcher(v == null ? "" : v);
+        if (!m.matches()) return null;
+        return new int[]{Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3))};
     }
 
     // ---------- helpers ----------

@@ -133,6 +133,7 @@ progress { width: 100%; height: 1rem; accent-color: var(--accent); }
 
     <div class="step" data-step="4">
     <h2 data-t="reviewTitle"></h2>
+    <p class="hint" id="update-note" data-t="updateNote" hidden></p>
     <div class="summary" aria-live="polite">
       <p id="recap"></p>
       <p id="sizes"></p>
@@ -203,6 +204,7 @@ const STRINGS = {
     libraryHint: "Readable in Varu without internet. These are large.",
     whereTitle: "Where do you want Varu?",
     reviewTitle: "Ready to install",
+    updateNote: "Your earlier choices are filled in. Install to bring everything up to date, or go back to change them.",
     installTo: "Varu goes to: {where}",
     stepOf: "Step {n} of {total}",
     next: "Next",
@@ -291,6 +293,7 @@ const STRINGS = {
     libraryHint: "Loetav Varus ilma internetita. Need on suured.",
     whereTitle: "Kuhu Varu panna?",
     reviewTitle: "Valmis paigaldama",
+    updateNote: "Varasemad valikud on täidetud. Paigalda, et kõik uuendada, või mine tagasi ja muuda neid.",
     installTo: "Varu läheb: {where}",
     stepOf: "Samm {n}/{total}",
     next: "Edasi",
@@ -651,6 +654,24 @@ $("locate").addEventListener("click", () => {
   );
 });
 
+// Updating a drive (the app found its data older than itself): its earlier
+// choices, straight to the last step.
+function prefill(u) {
+  if (s.state.regions.some((r) => r.id === u.region)) chooseRegion(u.region);
+  s.home = u.home ?? null;
+  s.radius = u.home ? u.radius_km : 0;
+  // Layers new since that install come too: those it was not offered, or
+  // (for installs that did not record it) the ones on by default.
+  const offered = u.offered && new Set(u.offered);
+  const added = (s.region.pois ?? []).filter((p) => (offered ? !offered.has(p.id) : p.default)).map((p) => p.id);
+  s.pois = new Set([...u.pois, ...added]);
+  s.library = new Set(u.library);
+  if (s.state.volumes.some((v) => v.path === u.target)) s.target = u.target;
+  else { s.target = "computer"; s.computerPath = u.target; }
+  $("update-note").hidden = false;
+  goStep(STEPS);
+}
+
 function setHome(place) {
   s.home = { lat: place.lat, lon: place.lon, name: place.name };
   if (!s.radius) s.radius = 50;
@@ -728,6 +749,7 @@ async function poll() {
       if (first || !s.region) {
         s.computerPath = state.computer;
         chooseRegion(state.regions[0].id);
+        if (first && state.update && !state.job) prefill(state.update);
         $("setup").hidden = !!state.job;
         renderAll(); replan();
       } else {

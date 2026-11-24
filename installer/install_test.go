@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
 	"strings"
 	"testing"
@@ -48,7 +49,7 @@ func writeZip(t *testing.T, path string, files map[string]string) {
 // run, and the place layers trimmed to the radius.
 func TestInstall(t *testing.T) {
 	src, target := t.TempDir(), filepath.Join(t.TempDir(), "Varu")
-	manifest := `{"schema":1,"map":{"file":"maps/ee.pmtiles","center":[25,58.6],"zoom":6},"routing":{"file":"maps/ee.graph"},
+	manifest := `{"schema":1,"region":"ee","map":{"file":"maps/ee.pmtiles","center":[25,58.6],"zoom":6},"routing":{"file":"maps/ee.graph"},
 		"pois":[{"id":"water","file":"pois/water.geojson","count":2},{"id":"fuel","file":"pois/fuel.geojson","count":1}]}`
 	water := `{"type":"FeatureCollection","features":[
 		{"type":"Feature","geometry":{"type":"Point","coordinates":[26.73,58.38]},"properties":{}},
@@ -146,6 +147,20 @@ func TestInstall(t *testing.T) {
 	}
 	if center := m["map"].(map[string]any)["center"].([]any); center[0].(float64) != 26.72 {
 		t.Errorf("map should open at home, center = %v", center)
+	}
+	if m["release"] != version {
+		t.Errorf("release = %v, want %q, so the apps can tell old data", m["release"], version)
+	}
+
+	// An update starts from what was chosen.
+	got := installedChoices(target)
+	want := &Earlier{Request{Target: target, Region: "ee", Home: &Home{Lat: 58.38, Lon: 26.72, Name: "Tartu"},
+		RadiusKm: 10, Pois: []string{"water"}, Library: []string{"wp"}}, []string{"water", "fuel"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("earlier choices %+v, want %+v", got, want)
+	}
+	if installedChoices(t.TempDir()) != nil {
+		t.Error("an empty folder has no earlier choices")
 	}
 }
 

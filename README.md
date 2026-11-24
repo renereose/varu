@@ -54,6 +54,12 @@ The first time, Varu opens a setup wizard, one step at a time:
 After that, Varu opens straight to the start page: map, library and
 documents in one window. *Go → Install or update…* runs the wizard again.
 
+Updating the app (a new DMG, installer or APK) does not change the maps,
+pages and books it downloaded. When that data is older than the app, Varu
+opens the map as usual and offers **Update**, which opens the wizard at its
+last step with the earlier choices filled in (plus any place layers that
+are new since); **Later** keeps working offline.
+
 A USB stick also gets Varu for macOS, Windows and Linux (about 470 MB), so it
 opens on any computer without installing anything. Opened, the stick shows
 just that, under Varu's name and icon: `Varu-Windows.exe`, `Varu-macOS.dmg`,

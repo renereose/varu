@@ -601,6 +601,48 @@ func writeEntry(zf *zip.File, dest string) error {
 	return err
 }
 
+// Earlier is what a drive was installed with, and which place layers it
+// was offered (nil before that was recorded).
+type Earlier struct {
+	Request
+	Offered []string `json:"offered"`
+}
+
+// installedChoices reads back what a drive was installed with, from the
+// manifest writeManifest left there, so an update can start from it. Nil
+// when dir holds no Varu.
+func installedChoices(dir string) *Earlier {
+	raw, err := os.ReadFile(filepath.Join(dir, "manifest.json"))
+	if err != nil {
+		return nil
+	}
+	var m struct {
+		Region string `json:"region"`
+		Home   *struct {
+			Home
+			RadiusKm float64 `json:"radius_km"`
+		} `json:"home"`
+		Pois    []struct{ ID string }   `json:"pois"`
+		Library []struct{ Name string } `json:"library"`
+		Offered []string                `json:"pois_offered"`
+	}
+	if json.Unmarshal(raw, &m) != nil || m.Region == "" {
+		return nil
+	}
+	req := &Earlier{Request{Target: dir, Region: m.Region, Pois: []string{}, Library: []string{}}, m.Offered}
+	if m.Home != nil {
+		home := m.Home.Home
+		req.Home, req.RadiusKm = &home, m.Home.RadiusKm
+	}
+	for _, p := range m.Pois {
+		req.Pois = append(req.Pois, p.ID)
+	}
+	for _, b := range m.Library {
+		req.Library = append(req.Library, b.Name)
+	}
+	return req
+}
+
 // writeManifest updates the bundle's manifest.json to list what is really
 // on the drive: the viewer shows only what the manifest lists.
 func writeManifest(target string, region *Region, req Request) error {
@@ -631,6 +673,7 @@ func writeManifest(target string, region *Region, req Request) error {
 		})
 	}
 	manifest["library"] = library
+	manifest["release"] = version // the apps compare it with their own to offer updates
 
 	pois := []any{}
 	list, _ := manifest["pois"].([]any)
@@ -646,6 +689,11 @@ func writeManifest(target string, region *Region, req Request) error {
 		}
 	}
 	manifest["pois"] = pois
+	offered := []string{}
+	for _, p := range region.Pois {
+		offered = append(offered, p.ID)
+	}
+	manifest["pois_offered"] = offered // so an update can add layers that are new since
 
 	if h := req.Home; h != nil {
 		home := map[string]any{"lon": h.Lon, "lat": h.Lat, "name": h.Name}

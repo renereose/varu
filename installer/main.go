@@ -49,6 +49,7 @@ func main() {
 	flag.Var(&fixedVolumes, "volume", "offer only these targets, as label=path (repeatable)")
 	phone := flag.Bool("phone", false, "running inside the Android app: no desktop launchers")
 	dns := flag.String("dns", "", "comma-separated DNS servers to use instead of the system's")
+	update := flag.String("update", "", "a Varu drive to update: the wizard starts from its earlier choices")
 	flag.Parse()
 	useDNS(*dns)
 	log.SetFlags(0)
@@ -57,7 +58,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app := &App{Source: base, Token: newToken(), Client: httpClient(), Phone: *phone}
+	app := &App{Source: base, Token: newToken(), Client: httpClient(), Phone: *phone, Update: *update}
 
 	ln, err := listen(*port)
 	if err != nil {
@@ -125,6 +126,7 @@ type App struct {
 	Token  string
 	Client *http.Client
 	Phone  bool
+	Update string // a drive to update, from -update
 
 	mu       sync.Mutex
 	index    *Index
@@ -306,10 +308,14 @@ type State struct {
 	Computer string    `json:"computer"` // suggested folder on this computer; "" offers volumes only
 	Phone    bool      `json:"phone"`
 	Job      *Progress `json:"job,omitempty"`
+	Update   *Earlier  `json:"update,omitempty"` // the earlier choices of the drive to update
 }
 
 func (a *App) state() State {
 	s := State{Version: version, Volumes: allVolumes(), Computer: defaultFolder(), Phone: a.Phone}
+	if a.Update != "" {
+		s.Update = installedChoices(a.Update)
+	}
 	if len(fixedVolumes) > 0 {
 		s.Computer = ""
 	}
