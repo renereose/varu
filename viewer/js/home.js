@@ -76,7 +76,8 @@ function render() {
     title: pick(lang, doc.title) || doc.file,
   }));
   renderList("library-list", "library-list-panel", status.library ? zims : [], (zim) => ({
-    href: `library/${encodeURIComponent((zim.file ?? "").replace(/\.zim$/, ""))}/`,
+    // The launcher names a book after its file, without folder or .zim.
+    href: `library/${encodeURIComponent((zim.file ?? "").split("/").pop().replace(/\.zim$/, ""))}/`,
     title: zim.title || zim.name || zim.file,
   }));
 
