@@ -12,8 +12,10 @@ const GPS_MAX_AGE = 5 * 60 * 1000;
 const LONG_PRESS_MS = 550;
 const SNAP_NOTE_M = 30;
 const ERRORS = ["startTooFar", "endTooFar", "notConnected", "noGraph"];
+// "Nearest" compares this many places, closest as the crow flies, by road.
+const NEAREST_TRIES = 5;
 
-/** Returns { buttons(lngLat, done) } for popups, or null without road data. */
+/** Returns { buttons(lngLat, done), nearest(places) }, or null without road data. */
 export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   if (!manifest.routing?.file) return null;
 
@@ -26,6 +28,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   let mode = stored(MODE_KEY) === "car" ? "car" : "foot";
   let start = null; // explicit start, [lon, lat]
   let dest = null;
+  let destName = null;
   let gps = null;
   let request = null;
   const startMarker = new maplibregl.Marker({ color: "#5d6963" });
@@ -79,7 +82,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
       if (!res.ok) return say(t(lang, ERRORS.includes(body.error) ? body.error : "noRoute"));
       setLine(body);
       const p = body.properties;
-      const extra = [t(lang, origin.key)];
+      const extra = [destName, t(lang, origin.key)].filter(Boolean);
       if (p.ferry) extra.push(t(lang, "routeFerry"));
       const snapped = Math.max(p.snap_from_m, p.snap_to_m);
       if (snapped > SNAP_NOTE_M) extra.push(t(lang, "snapNote").replace("{n}", formatDistance(snapped, lang)));
@@ -92,8 +95,9 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     }
   }
 
-  function routeTo(lngLat) {
+  function routeTo(lngLat, name = null) {
     dest = lngLat;
+    destName = name;
     destMarker.setLngLat(dest).addTo(map);
     update();
   }
@@ -106,7 +110,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
 
   function clear() {
     request?.abort();
-    start = dest = null;
+    start = dest = destName = null;
     startMarker.remove();
     destMarker.remove();
     setLine(null);
@@ -174,7 +178,29 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     }
   });
 
-  return { buttons };
+  // The closest of places ([{ lngLat, name }]) by road: the few nearest as the
+  // crow flies are routed, and the shortest wins (a river or a bay can make
+  // the nearest-looking one far).
+  async function nearest(places) {
+    const origin = from();
+    if (!origin) return say(t(lang, "needStart"));
+    if (!places.length) return say(t(lang, "noRoute"));
+    say(t(lang, "routing"));
+    const [x, y] = origin.lngLat;
+    const k = Math.cos((y * Math.PI) / 180);
+    // ponytail: flat-earth distance, fine for ranking within a country.
+    const crow = ({ lngLat: [lon, lat] }) => ((lon - x) * k) ** 2 + (lat - y) ** 2;
+    const near = [...places].sort((a, b) => crow(a) - crow(b)).slice(0, NEAREST_TRIES);
+    const point = ([lon, lat]) => `${lat.toFixed(6)},${lon.toFixed(6)}`;
+    const lengths = await Promise.all(near.map((p) =>
+      fetch(`api/route?from=${point(origin.lngLat)}&to=${point(p.lngLat)}&mode=${mode}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((body) => body?.properties?.distance_m ?? Infinity, () => Infinity)));
+    const best = near[lengths.indexOf(Math.min(...lengths))];
+    routeTo(best.lngLat, best.name);
+  }
+
+  return { buttons, nearest };
 }
 
 function formatDistance(metres, lang) {
