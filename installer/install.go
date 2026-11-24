@@ -70,6 +70,7 @@ type Book struct {
 	URL      string `json:"url"`
 	Size     int64  `json:"size"`
 	SHA256   string `json:"sha256"`
+	Search   *Asset `json:"search,omitempty"` // its search index, built with the release
 }
 
 // Item is one download in a plan.
@@ -197,6 +198,12 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 				Kind: "book", Title: b.Title, Size: b.Size, url: b.URL, sha256: b.SHA256,
 				dest: filepath.Join(req.Target, "library", b.File),
 			})
+			// Without it the device builds the index itself, which is slow on a phone.
+			if s := b.Search; s != nil && safeRel(s.Path) && strings.HasPrefix(s.Path, "library/") {
+				it := assetItem("book", s, req.Target)
+				it.Title = b.Title
+				plan.Items = append(plan.Items, it)
+			}
 		}
 	}
 

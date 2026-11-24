@@ -60,7 +60,8 @@ func TestInstall(t *testing.T) {
 	writeArchive(t, filepath.Join(src, "ee.pmtiles"))
 	book := []byte(strings.Repeat("wikipedia ", 5000))
 	roads := []byte("VARUGRPH roads")
-	for name, body := range map[string][]byte{"book.zim": book, "ee.graph": roads} {
+	search := []byte("VARUIDX1 index")
+	for name, body := range map[string][]byte{"book.zim": book, "ee.graph": roads, "wp_2026-11.search": search} {
 		if err := os.WriteFile(filepath.Join(src, name), body, 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -77,7 +78,8 @@ func TestInstall(t *testing.T) {
 		Routing: &Asset{Asset: "ee.graph", Path: "maps/ee.graph", Size: int64(len(roads)), SHA256: sum(roads)},
 		Pois:    []PoiLayer{{ID: "water"}, {ID: "fuel"}},
 		Library: []Book{{Name: "wp", Title: "Wikipedia", File: "wp_2026-11.zim", URL: srv.URL + "/book.zim",
-			Size: int64(len(book)), SHA256: sum(book)}},
+			Size: int64(len(book)), SHA256: sum(book),
+			Search: &Asset{Asset: "wp_2026-11.search", Path: "library/wp_2026-11.search", Size: int64(len(search)), SHA256: sum(search)}}},
 	}}}
 
 	// Half of the book is already there from an interrupted run.
@@ -107,6 +109,9 @@ func TestInstall(t *testing.T) {
 
 	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.zim")); string(got) != string(book) {
 		t.Error("resumed book differs from the original")
+	}
+	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.search")); string(got) != string(search) {
+		t.Error("the book's search index, built with the release, was not installed")
 	}
 	if got, _ := os.ReadFile(filepath.Join(target, "maps", "ee.graph")); string(got) != string(roads) {
 		t.Error("road data missing or different")
