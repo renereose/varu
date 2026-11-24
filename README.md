@@ -1,296 +1,511 @@
-# Varu
+<p align="center">
+  <img src="docs/images/icon.png" width="96" height="96" alt="">
+</p>
 
-An open-source offline kit: maps, directions, Wikipedia, reference works and
-official guidance for one region, on a computer, a phone or a USB stick, that
-works with no internet. Varu is an app for macOS, Windows, Linux and Android,
-and a stick carries it for every computer: plug it in and double-click Varu.
+<h1 align="center">Varu</h1>
 
-*Varu* is Estonian for "reserve" or "supply". The name is a working title.
+<p align="center">
+  <b>Maps, shelters and a library that keep working when the internet doesn't.</b><br>
+  On your computer, your phone, and a USB stick in the drawer.
+</p>
 
-This repository does not contain the content. It contains the pieces that
-turn freely available content into a drive:
+<p align="center">
+  🇪🇪 <a href="README.et.md">Eesti keeles</a> &nbsp;·&nbsp; 🇬🇧 <b>English</b>
+</p>
 
-| Piece | What it is | Folder |
-|---|---|---|
-| **Desktop app** | Varu for macOS, Windows and Linux: one window that installs Varu and then shows it | `desktop/` |
-| **Installer** | The setup wizard inside the apps: puts Varu on a USB stick, a computer or a phone | `installer/`, `android/` |
-| **Builder** | A Python tool that downloads everything for a region and assembles the drive | `builder/`, `regions/`, `sources.toml` |
-| **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
-| **Router** | Varu's own offline directions: builds a road network from OpenStreetMap and finds routes on it | `router/` |
-| **Library reader** | Varu's own reader for the ZIM books (Wikipedia and others): pages, images, files, and search by title and inside the text | `zim/` |
-| **Viewer** | The web pages you see: start page, map and library | `viewer/` |
+<p align="center">
+  <a href="https://github.com/renereose/varu/releases/latest"><b>⬇&nbsp; Download Varu</b></a>
+  &nbsp;·&nbsp; <a href="#-make-a-usb-stick-for-your-family">Make a USB stick</a>
+  &nbsp;·&nbsp; <a href="#-install-on-an-android-phone">Android phone</a>
+  &nbsp;·&nbsp; <a href="#-questions-and-problems">Help</a>
+</p>
 
-## Installing (for everyone)
+<p align="center">
+  <img src="docs/images/en/map.jpg" alt="Varu's map of central Tallinn: public shelters, hospitals and drinking water, with the list of map layers on the left">
+</p>
 
-Download Varu for your system from the
-[latest release](https://github.com/renereose/varu/releases/latest):
+When the power or the mobile network goes down, the apps you rely on stop
+working: online maps, search, the news. **Varu** keeps the essentials on your
+own devices, so they work with no internet at all:
 
-| System | File |
+- 🗺️ **A map of Estonia**: street level around your home, the whole country for travel.
+- 🛡️ **Public shelters**: all 303 of the Rescue Board's shelters, plus hospitals, pharmacies, drinking water, fuel, food stores, police and more.
+- 🧭 **Directions**: walking or driving, and "take me to the nearest shelter, by road".
+- 📍 **Live directions** on a phone: the next turn, the street name, how far is left.
+- 📚 **A library**: Estonian Wikipedia, a medical encyclopedia and a post-disaster handbook collection, searchable.
+
+Varu is free and open source. It doesn't track you, has no ads or accounts,
+and needs the internet only once, to download everything.
+
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="docs/images/en/home.jpg" width="240" alt="Varu's start page"><br><sub>The start page</sub></td>
+    <td align="center" width="33%"><img src="docs/images/en/nearest.jpg" width="240" alt="Route to the nearest shelter"><br><sub>Nearest shelter, by road</sub></td>
+    <td align="center" width="33%"><img src="docs/images/en/navigate.jpg" width="240" alt="Live directions"><br><sub>Live directions</sub></td>
+  </tr>
+</table>
+
+---
+
+## Contents
+
+1. [What you need](#-what-you-need)
+2. [Install on a computer](#-install-on-a-computer) (Mac, Windows, Linux)
+3. [Make a USB stick for your family](#-make-a-usb-stick-for-your-family)
+4. [Install on an Android phone](#-install-on-an-android-phone)
+5. [Using Varu](#-using-varu): the map, shelters, directions, the library
+6. [Opening the stick on another computer](#-opening-the-stick-on-another-computer)
+7. [Keeping Varu up to date](#-keeping-varu-up-to-date)
+8. [Raspberry Pi](#-raspberry-pi)
+9. [In an emergency](#-in-an-emergency)
+10. [Questions and problems](#-questions-and-problems)
+11. [Where the information comes from](#-where-the-information-comes-from)
+
+---
+
+## ✅ What you need
+
+- **A computer** (Mac, Windows or Linux) or **an Android phone** (Android 7 or newer).
+- **An internet connection, once**, to download Varu. After that, none.
+- **For a USB stick:** **16 GB** is a good size. Everything fits on 8 GB, but updating a library book briefly needs room for the old and the new copy.
+- **Time:** downloading takes from a few minutes (map only) to an hour or more (all library books on a slow connection).
+
+| What you choose | Download, roughly |
 |---|---|
-| macOS | `Varu-macOS.dmg`, then drag Varu to Applications |
-| Windows | `Varu-Setup-Windows.exe` |
-| Linux | `varu_<version>_amd64.deb` (Debian, Ubuntu) or `Varu-Linux-x86_64.AppImage`; the `arm64` files are for a Raspberry Pi 4 or 5 |
-| Android | `Varu.apk` |
+| Map of Estonia and all places | 0.4 GB |
+| Varu for Windows, Mac and Linux (put on every stick) | 0.5 GB |
+| Estonian Wikipedia (Vikipeedia) | 3.1 GB |
+| WikiMed medical encyclopedia (English) | 2.0 GB |
+| Post Disaster Resource Library (English) | 0.6 GB |
 
-The first time, Varu opens a setup wizard, one step at a time:
+> 💡 **iPhone?** There's no iPhone app yet. An iPhone can still use Varu
+> from a [Raspberry Pi on your Wi-Fi](#-raspberry-pi), or you can keep a
+> laptop or a stick at hand.
 
-1. **Where you want Varu**: a USB stick (listed as soon as it is plugged in)
-   or a folder on this computer; on a phone, its storage or memory card. A
-   stick must be readable by every computer (exFAT or FAT32): if it is not,
-   the wizard offers to erase it and format it as exFAT, after asking.
-2. **Your country**, **your home** (search for the town, or use your
-   location) and a **radius**: 10, 25, 50 or 100 km, or the whole country.
-   Inside the radius you get street-level map and places; the rest of the
-   country stays on the map at road level, for travel.
-3. **Which places** to show (drinking water, hospitals, pharmacies, clinics,
-   food stores, fuel, police, rescue stations, border crossings, springs) and
-   which **library** books to add (Vikipeedia, WikiMed and a post-disaster
-   library; each is gigabytes, so each is ticked by hand). The library page
-   searches every book, titles first, then the text: all the words must
-   appear, and longer words also match their forms ("tallinn" finds
-   "Tallinnas").
-4. **A last look**: where it goes, how much it downloads, and Install.
+---
 
-After that, Varu opens straight to the start page: map, library and
-documents in one window. *Go → Install or update…* runs the wizard again.
+## 💻 Install on a computer
 
-Updating the app (a new DMG, installer or APK) does not change the maps,
-pages and books it downloaded. When that data is older than the app, Varu
-opens the map as usual and offers **Update**, which opens the wizard at its
-last step with the earlier choices filled in (plus any place layers that
-are new since); **Later** keeps working offline.
+Download the file for your computer from the
+**[latest release](https://github.com/renereose/varu/releases/latest)**:
 
-A USB stick also gets Varu for macOS, Windows and Linux (about 470 MB), so it
-opens on any computer without installing anything. Opened, the stick shows
-just that, under Varu's name and icon: `Varu-Windows.exe`, `Varu-macOS.dmg`,
-`Varu-Linux-x86_64.AppImage` and a README; the data and the browser-based
-`Start-*` files are hidden. Windows and macOS never start anything from a
-stick by themselves (USB worms put an end to that), so it is one double-click;
-on a GNOME desktop (Ubuntu, Fedora) the system offers to start Varu as soon as
-the stick is plugged in.
+| Your computer | File to download |
+|---|---|
+| 🍎 **Mac** | [`Varu-macOS.dmg`](https://github.com/renereose/varu/releases/latest/download/Varu-macOS.dmg) |
+| 🪟 **Windows** | [`Varu-Setup-Windows.exe`](https://github.com/renereose/varu/releases/latest/download/Varu-Setup-Windows.exe) |
+| 🐧 **Linux** | [`Varu-Linux-x86_64.AppImage`](https://github.com/renereose/varu/releases/latest/download/Varu-Linux-x86_64.AppImage), or the `.deb` file from the [release page](https://github.com/renereose/varu/releases/latest) |
 
-An interrupted install continues where it stopped when you run it again.
+<details>
+<summary><b>🍎 Mac, step by step</b></summary>
 
-**Varu is not signed yet**, so the first start needs one extra step:
+1. Open the downloaded **Varu-macOS.dmg**. A window opens with Varu and an Applications folder.
+2. **Drag Varu onto the Applications folder.**
+3. Open **Applications** and double-click **Varu**.
+4. The first time, your Mac may say *"Apple could not verify Varu…"*. That's
+   because Varu is a free project and isn't registered with Apple. To open it anyway:
+   - Click **Done**.
+   - Open **System Settings → Privacy & Security** and scroll down.
+   - Next to *"Varu was blocked…"* click **Open Anyway**, then enter your password.
+   - From then on Varu opens normally.
+5. Varu starts the setup wizard: continue with
+   [Make a USB stick](#-make-a-usb-stick-for-your-family). It's the same
+   wizard whether you choose a stick or this computer.
 
-- **Windows:** "Windows protected your PC" → *More info* → *Run anyway*.
-- **macOS:** open the app once, close the warning, then *System Settings →
-  Privacy & Security → Open Anyway*.
-- **Linux AppImage:** after downloading, allow it to run (file *Properties →
-  Executable as program*, or `chmod +x`). On a stick it already can.
-- **Android:** allow your browser or file manager to *install unknown apps*
-  when asked.
+</details>
 
-Estonia is the first region. Adding a country means adding one file in
-`regions/`.
+<details>
+<summary><b>🪟 Windows, step by step</b></summary>
 
-## Status
+1. Open the downloaded **Varu-Setup-Windows.exe**.
+2. If Windows says *"Windows protected your PC"*, click **More info**, then
+   **Run anyway**. (Varu is a free project without a paid Microsoft certificate.)
+3. Varu installs itself and opens the setup wizard: continue with
+   [Make a USB stick](#-make-a-usb-stick-for-your-family).
 
-Early. What has been exercised so far:
+Prefer not to install anything? `Varu-Windows.exe` from the release page runs as is.
 
-- Launcher: unit-tested, cross-compiles for Windows, macOS, Linux and
-  Android. Run for real on Linux and macOS.
-- Viewer: start page and map load in a headless browser with zero network
-  requests leaving the machine, against a current Protomaps build.
-- Viewer: "show my location" checked in a browser posing as a phone; not yet
-  on a real phone.
-- Directions: built from the full Estonia extract (36 MB with street names,
-  0.15 s to load, Tallinn → Tartu found in under 50 ms on a Mac) and driven
-  in a headless browser with mouse, keyboard and long-press. Live directions
-  (Start) walked in a browser posing as a phone, position by position,
-  including leaving the route. Not yet timed on a Pi or tried on a phone
-  outdoors.
-- Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
-  run end to end for the Kuressaare sample. `library` and `documents` have
-  not run against the real services yet.
-- Library reader: reads the real books (Vikipeedia, 761,588 entries; WikiMed;
-  the post-disaster library) in about a millisecond to open and 5–15 ms per
-  page or title search on a Mac; pages, images, PDFs and title search checked
-  in a browser and in the Android app (Android 15 emulator).
-- Library search inside the text: each book's index is built with the
-  release (Vikipeedia: 264,000 articles in under 2 minutes on a Mac,
-  183 MB, about 150 MB of memory while building) and downloaded with the
-  book, so devices only build one if it is missing; searches take 15–100 ms.
-- Desktop app: built for all three systems on a Mac. On macOS it has run end
-  to end: wizard, install, map, library, and opening from a stick's
-  `Varu-macOS.dmg` on a computer without Varu. The Linux AppImage has started
-  from a stick in Ubuntu 24.04 (in a container). Not yet run on Windows.
-- Installer: unit-tested and run end to end on macOS against a locally
-  built release, including the radius map cut and the Android flow in
-  phone mode. Not yet run on Windows or on a phone.
+</details>
 
-Expect the first real build to need small fixes. The likeliest places are
-listed in [docs/ROADMAP.md](docs/ROADMAP.md).
+<details>
+<summary><b>🐧 Linux, step by step</b></summary>
 
-## Building it yourself
+- **AppImage** (any distribution): right-click the file → **Properties** →
+  **Permissions** → tick **Allow executing file as program**, then double-click it.
+  In a terminal: `chmod +x Varu-Linux-x86_64.AppImage && ./Varu-Linux-x86_64.AppImage`
+- **Debian, Ubuntu, Mint**: download `varu_<version>_amd64.deb` and open it,
+  or run `sudo apt install ./varu_*_amd64.deb`. Varu appears in your applications menu.
+- For a **Raspberry Pi 4 or 5** with a desktop, use the `arm64` files instead.
 
-You need Python 3.11+, Go 1.22+, and the
-[`pmtiles` command](https://github.com/protomaps/go-pmtiles/releases) on your
-PATH. Node 20+ only for the desktop app (`make desktop`). No Docker.
+</details>
 
+---
+
+## 🔑 Make a USB stick for your family
+
+A Varu stick works on **any** Windows, Mac or Linux computer, without
+installing anything. Keep one in the drawer, one in the car, or give one to
+your parents.
+
+1. **Plug in the stick.** Everything on it will stay, unless the wizard has
+   to reformat it (it always asks first).
+2. **Open Varu.** The first time, the wizard starts by itself. Later you'll
+   find it under **Go → Install or update…**.
+3. Follow the four steps:
+
+<table>
+  <tr>
+    <td width="50%" valign="top"><img src="docs/images/en/wizard-1.jpg" alt="Step 1: where Varu goes"><br><b>1. Where Varu goes.</b> Choose your stick. If it isn't in a format every computer can read, Varu offers to erase and format it. It always asks first, because erasing deletes everything on it.</td>
+    <td width="50%" valign="top"><img src="docs/images/en/wizard-2.jpg" alt="Step 2: your home"><br><b>2. Your home.</b> Type your town or village and press <b>Find</b>. Then choose how far around it you want street-level detail: 10, 25, 50 or 100 km, or the whole country.</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/images/en/wizard-3.jpg" alt="Step 3: places and books"><br><b>3. Places and books.</b> All places are ticked: they're small. Tick the library books you want; each one is large.</td>
+    <td valign="top"><img src="docs/images/en/wizard-4.jpg" alt="Step 4: review"><br><b>4. Review.</b> Check the download size and the free space, then press <b>Install</b>.</td>
+  </tr>
+</table>
+
+4. **Wait for "Varu is ready".** If the connection breaks, open Varu again:
+   it continues where it stopped.
+5. **Eject the stick** before unplugging it: on a Mac, the ⏏ button in
+   Finder; on Windows, *Safely Remove Hardware*.
+
+When you open the stick, you'll see only four files: one Varu for each
+system, and a README. The maps and books are there too, just hidden so
+nobody deletes them by accident.
+
+---
+
+## 📱 Install on an Android phone
+
+1. On the phone, open this page and download
+   **[Varu.apk](https://github.com/renereose/varu/releases/latest/download/Varu.apk)**.
+2. Open the downloaded file. Android will ask for permission to install apps
+   from your browser: tap **Settings**, turn on **Allow from this source**,
+   go back and tap **Install**.
+3. If *Play Protect* warns about an unknown app, tap **More details →
+   Install anyway**. Varu isn't in the Play Store yet.
+4. Open **Varu**. The same setup wizard starts. Choose **This phone** (or
+   the memory card, if your phone has one), your home and what you want, then **Install**.
+5. Stay on Wi-Fi while it downloads. Afterwards Varu works in flight mode too.
+
+The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wizard.
+
+---
+
+## 🧭 Using Varu
+
+### The start page
+
+Varu opens to its start page: **Maps**, **Library** and **Documents**. It also
+shows when the data was made, so you know how fresh it is.
+
+### The map
+
+<p align="center"><img src="docs/images/en/map.jpg" width="720" alt="The map with its layer list"></p>
+
+- **Layers** (top left) lists what the map can show: shelters, hospitals,
+  water and more. Tick a box to show it, and tap a dot for its name and address.
+- The **◎ button** (top right) shows where you are. Phones use GPS, which
+  works without internet. Most computers have no GPS.
+- **Nearest**, next to each layer, finds the closest one **by road**, not in
+  a straight line, so a river or the sea doesn't send you the long way round.
+
+### Directions
+
+- **On a phone:** press and hold a spot on the map. **On a computer:** right-click it.
+  Then choose **Route here**, or **Start here** to begin somewhere else.
+- Choose **Walk** or **Drive**. The panel shows the distance and time.
+- **Start** begins **live directions**: the next turn and its street are
+  shown at the top, the map turns with you, and if you take a wrong turn
+  Varu finds a new route. **End** stops it.
+
+<table>
+  <tr>
+    <td align="center" width="50%"><img src="docs/images/en/nearest.jpg" width="260" alt="Nearest shelter"><br><sub><b>Nearest</b> shelter: 430 m, 5 minutes on foot</sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/navigate.jpg" width="260" alt="Live directions"><br><sub><b>Start</b>: "35 m, turn left, Kuninga"</sub></td>
+  </tr>
+</table>
+
+> ⚠️ Directions are an estimate from OpenStreetMap. Varu doesn't know about
+> closed roads or traffic. Always follow road signs and the authorities.
+
+### The library
+
+<table>
+  <tr>
+    <td align="center" width="50%"><img src="docs/images/en/library.jpg" width="260" alt="Library search"><br><sub>Search across every book</sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/article.jpg" width="260" alt="An article with Varu's bar"><br><sub>Reading Vikipeedia: <b>← Back</b>, 🔍 search, <b>Library</b></sub></td>
+  </tr>
+</table>
+
+- Type in the search box: matching **titles** come first, then **articles
+  that mention your words**, with the words highlighted.
+- Inside a book, the green bar at the bottom has **Back**, a **🔍 search**
+  button and **Library**.
+- Longer words also find their other forms: *tallinn* finds *Tallinnas*.
+
+---
+
+## 🔌 Opening the stick on another computer
+
+| Computer | What to do |
+|---|---|
+| 🪟 Windows | Open the stick and double-click **Varu-Windows.exe**. If *"Windows protected your PC"* appears: **More info → Run anyway**. |
+| 🍎 Mac | Open the stick, double-click **Varu-macOS.dmg**, then double-click **Varu** in the window that opens. No need to install it. |
+| 🐧 Linux | Double-click **Varu-Linux-x86_64.AppImage**. On Ubuntu and Fedora, Varu may offer to start as soon as you plug the stick in. |
+
+Varu finds its maps and books on the stick by itself. Nothing is installed or
+left behind on the computer.
+
+---
+
+## 🔄 Keeping Varu up to date
+
+New versions bring new features, fresh maps and newer books. To update:
+
+1. Download and install the new version of the app, as above.
+2. Open Varu. If your maps and data are older than the app, Varu asks
+   **"Update the maps and data?"** Tap **Update**, or **Later**: Varu keeps
+   working meanwhile, also offline.
+3. The wizard opens on its last step with your earlier choices. Press **Install**.
+   Files that haven't changed aren't downloaded again.
+
+To update a stick, plug it in and choose **Go → Install or update…**. On a
+phone, use **⋮ → Downloads**.
+
+> 💡 Update your stick every few months: shops close, roads change, and
+> new shelters are added.
+
+---
+
+## 🍓 Raspberry Pi
+
+### A Varu box for your home Wi-Fi
+
+A small Raspberry Pi can run Varu all the time and share it with every phone,
+tablet and laptop on your Wi-Fi, iPhones included. With a power bank it keeps
+going during a power cut.
+
+> 🧪 This works with the files Varu already ships, but hasn't been tried on a
+> real Raspberry Pi yet. If you try it, please tell us how it went.
+
+**You'll need:**
+- A **Raspberry Pi Zero 2 W**, 3, 4 or 5. The original Pi Zero and Zero W
+  are too old for Varu.
+- A **microSD card** (16 GB+), the Pi's power supply or a power bank.
+- A **Varu USB stick** made with the wizard, and for the Zero 2 W a
+  **micro-USB to USB-A adapter** (OTG).
+
+**Setting it up:**
+
+1. On your computer, install **[Raspberry Pi Imager](https://www.raspberrypi.com/software/)**.
+   Choose your Pi, then **Raspberry Pi OS Lite (64-bit)**, then your card.
+   When asked, **edit the settings**: choose a user name and password, enter
+   your Wi-Fi and turn on **SSH**.
+2. Put the card in the Pi, plug in the Varu stick (on the Zero 2 W, use the
+   port marked **USB**, not PWR) and connect the power. Wait two minutes.
+3. On your computer, open **Terminal** (Mac, Linux) or **PowerShell**
+   (Windows) and connect, using the name and user you chose:
+   ```sh
+   ssh mari@raspberrypi.local
+   ```
+4. Make the stick open at the same place on every start:
+   ```sh
+   sudo mkdir -p /mnt/varu
+   echo "LABEL=VARU /mnt/varu exfat defaults,nofail,uid=$(id -u),gid=$(id -g) 0 0" | sudo tee -a /etc/fstab
+   sudo systemctl daemon-reload && sudo mount -a && ls /mnt/varu
+   ```
+   You should see `Varu-Windows.exe` and the other files. If not, run
+   `lsblk -f` and use your stick's name instead of `VARU` (Varu names the
+   sticks it formats `VARU`).
+5. Start Varu every time the Pi starts:
+   ```sh
+   sudo tee /etc/systemd/system/varu.service >/dev/null <<EOF
+   [Unit]
+   Description=Varu
+   RequiresMountsFor=/mnt/varu
+   Wants=network-online.target
+   After=network-online.target
+   [Service]
+   User=$USER
+   ExecStart=/mnt/varu/bin/linux-arm64/varu -root /mnt/varu -lan -no-browser
+   Restart=on-failure
+   [Install]
+   WantedBy=multi-user.target
+   EOF
+   sudo systemctl enable --now varu
+   journalctl -u varu -n 20
+   ```
+   The last command shows an address such as `Network: http://192.168.1.23:8480/`.
+6. **On any phone or laptop on the same Wi-Fi, open that address.** Add it to
+   your home screen to find it again easily.
+
+**No router?** The Pi can make its own Wi-Fi network, called *Varu*:
 ```sh
-make test      # run all tests
-make sample    # small trial drive in ./drive (one town, a few MB)
-make run       # start it from source and open the browser
+sudo nmcli device wifi hotspot ssid Varu password "choose-a-password"
+sudo nmcli connection modify Hotspot connection.autoconnect yes
 ```
+Join the *Varu* network and open `http://10.42.0.1:8480/`.
 
-A full drive, written straight to a mounted USB stick:
+> ℹ️ Shared over Wi-Fi, the map, places, **Nearest**, directions and the
+> library all work. **Show my location** and **live directions** don't:
+> browsers only share your location with apps on the device itself or with
+> secure (https) sites. On the map, press and hold → **Start here** to say where you are.
 
-```sh
-python3 -m builder --region ee --out /Volumes/VARU      # macOS
-python3 -m builder --region ee --out /media/$USER/VARU  # Linux
-python3 -m builder --region ee --out E:\                # Windows
-```
+**A Pi 4 or 5 with a screen, keyboard and mouse:** install *Raspberry Pi OS
+(64-bit)* with the desktop, then the Linux `arm64` Varu
+(`varu_<version>_arm64.deb`) from the release page, and use it like on any computer.
 
-To try the installer against a locally built release:
+### Coming: a pocket device with an e-ink screen and GPS
 
-```sh
-make sample
-python3 -m builder.release --region ee-sample --drive ./drive --out ./dist
-cd installer && go run . -source ../dist
-```
+We're designing a pocket-sized Varu: a **Raspberry Pi Zero 2 W** with an
+**e-ink screen**, a **GPS module**, a few **buttons** and a **battery**. It
+shows the map, where you are and the nearest water or shelter, for days on
+one charge, with no phone.
 
-or the desktop app around it (`make desktop` first):
+> 🚧 **The device's software isn't written yet.** Nothing yet draws the map
+> on an e-ink screen or reads the GPS and buttons. Follow the plan in
+> [docs/plans/pi-eink-phase1.md](docs/plans/pi-eink-phase1.md).
 
-```sh
-VARU_SOURCE=$PWD/dist build/desktop/mac-universal/Varu.app/Contents/MacOS/Varu
-```
+If you'd like to collect and test the hardware now, this is what we're planning for:
 
-Useful builder options:
-
-```sh
---dry-run               # show what would be downloaded, change nothing
---only maps,pois        # run some steps
---skip library          # leave some out
---refresh               # fetch maps and place layers again
---planet-build 20261120 # pin the map to one Protomaps daily build
-```
-
-The build can be interrupted and re-run. Finished downloads are kept and
-partial ones resume. If a step fails, the others still run and the drive
-works with whatever was built.
-
-**Format the stick as exFAT.** It is the only file system that Windows, macOS
-and Linux all read and write and that holds files larger than 4 GB. The
-wizard does this for you (macOS: `diskutil`; Windows: `Format-Volume`, after
-the usual permission prompt; Linux: UDisks, which needs `exfatprogs`).
-
-## How it works
-
-```
- Varu app (desktop or Android), or Start-* in a browser
-        │
-        ▼
- bin/<os>-<arch>/varu  ── serves http://localhost:8480 ──▶  the app's window
-        │                                                      │
-        ├── app/         viewer + MapLibre + fonts             ├── start page
-        ├── maps/*.pmtiles   read with HTTP Range requests     ├── map
-        ├── maps/*.graph     road network ─▶ /api/route        ├── directions
-        ├── pois/*.geojson   hospitals, pharmacies, water …    │
-        ├── docs/            PDFs                              │
-        └── library/*.zim   read by the launcher itself ──▶ /library/
-            library/*.search  Varu's search index of each book, built with the release
-```
-
-### Releases
-
-Releases are built on a Mac and published with one command, without
-GitHub Actions:
-
-```sh
-sh release.sh v0.1.2 --dry-run   # build everything into dist/ and stop
-sh release.sh v0.1.2             # build, tag and publish the release
-```
-
-It runs the tests, builds each country's drive with a fresh map and places
-(without the library), packages it with `builder/release.py`, builds each
-library book's search index (the books are downloaded once into
-`~/.cache/varu/zim`, about 5.5 GB for Estonia, and kept for the next
-release), builds Varu
-for macOS, Windows, Linux and Android and publishes them all as one GitHub
-release. Each app downloads from the release with its own tag, so content
-and apps always match. It publishes only a clean, up-to-date `main`.
-
-- `regions.json` lists the countries, place layers and library books.
-- `Varu-macOS.dmg`, `Varu-Windows.exe` (portable) and
-  `Varu-Linux-x86_64.AppImage` are also what the wizard puts on USB sticks.
-- `varu-<id>.zip` is the drive without its map and library.
-- `<id>.pmtiles` is the country's map. For a radius install the installer
-  cuts a smaller map out of it with HTTP range requests
-  (`installer/pmtiles.go`), so only that part is downloaded.
-- `<id>.graph` is the road network for directions (about 36 MB), always
-  for the whole country.
-- Library books come straight from the Kiwix mirrors, pinned to the edition
-  that was newest at release time, and are checked against Kiwix's SHA-256.
-
-The Android APK must be signed with the same key in every release, or
-phones refuse the update. The release key lives in
-`~/.android/varu-release.keystore` with its password in the macOS Keychain
-under "Varu Android release keystore". **Back up both**: without them no
-future version can update the app on people's phones.
-
-A browser cannot read a multi-gigabyte map straight off a disk, which is why
-there is a launcher at all. It binds to `127.0.0.1` only, rejects requests
-for other host names, hides dotfiles and never lists directories. Started
-with `-lan`, it also serves phones and other computers on the same Wi-Fi.
-
-`manifest.json` on the drive lists what is actually there. The viewer shows
-only what the manifest lists, so a drive without a library simply has a
-greyed-out Library card.
-
-### Where the content comes from
-
-| Content | Source | Build step |
+| Part | Planned | Notes |
 |---|---|---|
-| Map tiles | [Protomaps](https://protomaps.com) daily build of OpenStreetMap, cut to the region with `pmtiles extract` | `maps` |
-| Road network | The [Geofabrik](https://download.geofabrik.de) OpenStreetMap extract (`[routing]` in the region file, about 125 MB to download), turned into `maps/<id>.graph` by `router/cmd/varu-graph` | `routing` |
-| Places | OpenStreetMap via the Overpass API, one query per layer, or an official list published as GeoJSON (`geojson =` in the region file) | `pois` |
-| Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
-| Documents | URLs listed in the region file | `documents` |
-| Map renderer, fonts, icons | MapLibre GL JS, PMTiles, Protomaps basemaps, pinned and checksummed in `sources.toml` | `app` |
+| Computer | Raspberry Pi Zero 2 W | with a soldered 40-pin header |
+| Screen | 4.2" e-paper HAT (400×300), e.g. Waveshare | 5.83" (648×480) is also being considered |
+| GPS | u-blox NEO-6M or NEO-M8N module | any u-blox that sends NMEA at 9600 baud; a USB u-blox stick works too |
+| Power | LiPo battery with charger, e.g. PiSugar | |
+| Buttons | 5–6 push buttons | wiring comes with the software |
 
-## Adding a region
+<details>
+<summary><b>Connecting and checking a u-blox GPS</b></summary>
 
-Copy `regions/ee.toml`, then change the id, country code, bounding box, place
-layers, library list and documents. Run it with `--dry-run` first, then
-`--only maps,pois` to check the map before the long downloads.
+1. **Wiring** (pin numbers are the Pi's physical pins). Most u-blox breakout
+   boards take 3.3 V; check yours.
 
-Interface text lives in `viewer/js/common.js`. To add a language, add a block
-there and list its code under `languages` in the region file.
+   | GPS module | Raspberry Pi |
+   |---|---|
+   | VCC | pin 1 (3.3 V) |
+   | GND | pin 6 (GND) |
+   | TX | pin 10 (GPIO 15, RXD) |
+   | RX | pin 8 (GPIO 14, TXD) |
 
-## Licensing
+   With the e-paper HAT on the header, use a stacking header or solder the
+   wires under the Pi. The HAT uses SPI and a few other pins, but not 8 and 10.
+2. Turn on the serial port: `sudo raspi-config` → **Interface Options** →
+   **Serial Port**: login shell **No**, serial hardware **Yes**. For the
+   screen, also turn on **SPI**. Reboot.
+3. Check the GPS talks:
+   ```sh
+   stty -F /dev/serial0 9600 && cat /dev/serial0
+   ```
+   Lines starting with `$GP` or `$GN` should scroll by. Take it outside:
+   the first fix can take a few minutes, and lines with your position appear
+   once it has one. Press Ctrl+C to stop.
+4. A USB u-blox appears as `/dev/ttyACM0` instead: `cat /dev/ttyACM0`.
 
-- **This repository's code** is MIT licensed. See `LICENSE`.
-- **klauspost/compress** (BSD-3-Clause) unpacks the library's zstd
-  compression inside the launcher.
-- **Map data** is © OpenStreetMap contributors under the ODbL. Attribution
-  is shown on the map and start page and must stay. The road network is a
-  derived database under the same licence.
-- **Library content** keeps the licence of each source, mostly CC BY-SA for
-  Wikimedia projects.
-- **Documents** are only as redistributable as their publishers allow. Check
-  before adding one to a region file, and prefer the publisher's own URL.
-- Third-party notices are written to `licenses/` on every drive.
+</details>
 
-## A note on crisis information
+---
 
-Directions are an estimate from OpenStreetMap: no traffic, no closures, no
-turn restrictions or barriers yet, and ferries without timetables. The route
-panel says so every time. Follow road signs.
+## 🆘 In an emergency
 
-A drive is a snapshot. Maps, opening hours and official guidance go out of
-date, and place data from OpenStreetMap is volunteer-maintained and can be
-wrong or incomplete. The start page shows the build date. Rebuild drives
-regularly, and treat official channels as the authority whenever they are
-reachable.
+- **In danger, call 112.** Varu is a reserve, not a rescue service.
+- Phones find their position by **GPS without internet or mobile network**.
+  Charge your phone and a power bank in good time, and keep the phone on
+  low power mode.
+- Varu's information is a **snapshot**: the start page shows its date.
+  Places may have closed or moved. Check on site.
+- **Follow the authorities.** When they can be reached, their instructions
+  come first: on the radio (ERR), and at [kriis.ee](https://www.kriis.ee)
+  when the internet works.
+- Put a stick where the whole family knows to look, and tell them how to
+  open it ([see above](#-opening-the-stick-on-another-computer)).
 
-## Contributing
+---
 
-Run `make test` before sending a change. The router, launcher and installer
-use only the Go standard library, except for one zstd decoder
-(klauspost/compress) in the library reader; the builder uses only the Python
-standard library
-and the Android app only the Android framework (it builds without Gradle:
-`make android`). The desktop app is Electron with one `main.js` and no other
-runtime dependencies; electron-builder packages it. Please keep it that way
-unless there is a strong reason.
+## ❓ Questions and problems
+
+<details>
+<summary><b>My Mac says Varu can't be opened.</b></summary>
+
+Varu isn't registered with Apple. Open **System Settings → Privacy &
+Security**, scroll down and click **Open Anyway** next to Varu. You only need
+to do this once. When you open Varu from a stick, this usually doesn't appear.
+
+</details>
+
+<details>
+<summary><b>Windows says "Windows protected your PC".</b></summary>
+
+Click **More info**, then **Run anyway**. Windows shows this for programs
+without a paid certificate.
+
+</details>
+
+<details>
+<summary><b>The stick shows only four files. Where are the maps?</b></summary>
+
+They're there, but hidden on purpose, so nobody deletes them by accident.
+Don't delete hidden files from the stick. To see them anyway: on a Mac press
+<kbd>⌘</kbd><kbd>⇧</kbd><kbd>.</kbd> in Finder; on Windows choose
+**View → Show → Hidden items**.
+
+</details>
+
+<details>
+<summary><b>"Not enough space".</b></summary>
+
+Choose fewer library books or a smaller area around your home, or use a
+bigger stick. If the stick holds other files, the wizard can erase it for
+you, after asking.
+
+</details>
+
+<details>
+<summary><b>"Show my location" doesn't work on my computer.</b></summary>
+
+Most computers have no GPS. Use Varu on a phone, or on the map
+right-click → **Start here** to say where you are.
+
+</details>
+
+<details>
+<summary><b>Live directions or library search are missing after updating the phone app.</b></summary>
+
+These live in the downloaded data, not in the app. Open Varu and choose
+**Update** when asked, or use **⋮ → Downloads** → **Install**.
+
+</details>
+
+<details>
+<summary><b>The phone says "App not installed" when updating.</b></summary>
+
+Download `Varu.apk` only from this project's
+[releases page](https://github.com/renereose/varu/releases). A copy from
+anywhere else can't replace the app.
+
+</details>
+
+---
+
+## 📖 Where the information comes from
+
+| What | From | Licence |
+|---|---|---|
+| Map, places, roads | © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, basemap by [Protomaps](https://protomaps.com) | ODbL |
+| Public shelters | Päästeamet (Estonian Rescue Board), via Maa- ja Ruumiamet | Land Board open data |
+| Vikipeedia, WikiMed | Wikipedia, packaged by [Kiwix](https://kiwix.org) | CC BY-SA |
+| Post Disaster Resource Library | [Kiwix](https://library.kiwix.org) | each document's own |
+| Varu itself | this repository | [MIT](LICENSE) |
+
+Place data is kept up by volunteers and can be wrong or incomplete. If
+something on the map is missing or wrong, you can fix it for everyone at
+[openstreetmap.org](https://www.openstreetmap.org).
+
+---
+
+<p align="center">
+  <b>For developers:</b> how Varu is built, tested and released is in
+  <a href="docs/DEVELOPMENT.md">docs/DEVELOPMENT.md</a>, and what's next in
+  <a href="docs/ROADMAP.md">docs/ROADMAP.md</a>.
+</p>
