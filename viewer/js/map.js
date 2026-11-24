@@ -168,6 +168,27 @@ function setUpPois(map) {
     item.append(label);
     list.append(item);
 
+    if (routing) {
+      const near = Object.assign(document.createElement("button"), {
+        type: "button", className: "nearest", textContent: t(lang, "nearest"),
+      });
+      near.setAttribute("aria-label", `${t(lang, "nearest")}: ${name.textContent}`);
+      near.addEventListener("click", async () => {
+        if (!checkbox.checked) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event("change"));
+        }
+        // On a phone the list would hide the route.
+        if (window.matchMedia("(max-width: 640px)").matches) document.getElementById("panel-toggle").click();
+        const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
+        routing.nearest((data?.features ?? []).map((f) => ({
+          lngLat: f.geometry.coordinates,
+          name: f.properties?.[`name:${lang}`] || f.properties?.name || name.textContent,
+        })));
+      });
+      item.append(near);
+    }
+
     checkbox.addEventListener("change", () => {
       setPoiVisible(map, poi, checkbox.checked);
       if (checkbox.checked) enabled.add(poi.id); else enabled.delete(poi.id);
