@@ -35,7 +35,9 @@ Download Varu for your system from the
 The first time, Varu opens a setup wizard, one step at a time:
 
 1. **Where you want Varu**: a USB stick (listed as soon as it is plugged in)
-   or a folder on this computer; on a phone, its storage or memory card.
+   or a folder on this computer; on a phone, its storage or memory card. A
+   stick must be readable by every computer (exFAT or FAT32): if it is not,
+   the wizard offers to erase it and format it as exFAT, after asking.
 2. **Your country**, **your home** (search for the town, or use your
    location) and a **radius**: 10, 25, 50 or 100 km, or the whole country.
    Inside the radius you get street-level map and places; the rest of the
@@ -53,9 +55,13 @@ After that, Varu opens straight to the start page: map, library and
 documents in one window. *Go → Install or update…* runs the wizard again.
 
 A USB stick also gets Varu for macOS, Windows and Linux (about 470 MB), so it
-opens on any computer without installing anything: double-click
-`Varu-Windows.exe`, `Varu-macOS.dmg` or `Varu-Linux-x86_64.AppImage` on the
-stick.
+opens on any computer without installing anything. Opened, the stick shows
+just that, under Varu's name and icon: `Varu-Windows.exe`, `Varu-macOS.dmg`,
+`Varu-Linux-x86_64.AppImage` and a README; the data and the browser-based
+`Start-*` files are hidden. Windows and macOS never start anything from a
+stick by themselves (USB worms put an end to that), so it is one double-click;
+on a GNOME desktop (Ubuntu, Fedora) the system offers to start Varu as soon as
+the stick is plugged in.
 
 An interrupted install continues where it stopped when you run it again.
 
@@ -157,7 +163,9 @@ partial ones resume. If a step fails, the others still run and the drive
 works with whatever was built.
 
 **Format the stick as exFAT.** It is the only file system that Windows, macOS
-and Linux all read and write and that holds files larger than 4 GB.
+and Linux all read and write and that holds files larger than 4 GB. The
+wizard does this for you (macOS: `diskutil`; Windows: `Format-Volume`, after
+the usual permission prompt; Linux: UDisks, which needs `exfatprogs`).
 
 ## How it works
 

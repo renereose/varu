@@ -27,9 +27,10 @@ func volumes() []Volume {
 		if st.Flags&(mntRdonly|mntDontBrowse) != 0 || st.Flags&mntLocal == 0 {
 			continue
 		}
+		total := int64(st.Blocks) * int64(st.Bsize)
 		out = append(out, Volume{
 			Path: path, Label: e.Name(), FS: cstr(st.Fstypename[:]),
-			Free: int64(st.Bavail) * int64(st.Bsize), Total: int64(st.Blocks) * int64(st.Bsize),
+			Free: int64(st.Bavail) * int64(st.Bsize), Total: total, Disk: diskSize(path, total),
 		})
 	}
 	return out
