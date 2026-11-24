@@ -6,6 +6,7 @@
 
 import * as maplibregl from "../vendor/maplibre-gl.mjs";
 import { store, stored, t } from "./common.js";
+import { setUpNavigation } from "./nav.js";
 
 const MODE_KEY = "varu.routeMode";
 const GPS_MAX_AGE = 5 * 60 * 1000;
@@ -31,6 +32,8 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   let destName = null;
   let gps = null;
   let request = null;
+  let current = null; // the route on the map, a GeoJSON Feature
+  const startButton = document.getElementById("route-start");
   const startMarker = new maplibregl.Marker({ color: "#5d6963" });
   const destMarker = new maplibregl.Marker({ color: "#1565c0" });
 
@@ -69,6 +72,8 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   async function update() {
     request?.abort();
     setLine(null);
+    current = null;
+    startButton.hidden = true;
     const origin = from();
     if (!dest) return say(t(lang, "needDestination"), origin ? [t(lang, origin.key)] : []);
     if (!origin) return say(t(lang, "needStart"));
@@ -81,6 +86,9 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
       const body = await res.json();
       if (!res.ok) return say(t(lang, ERRORS.includes(body.error) ? body.error : "noRoute"));
       setLine(body);
+      current = body;
+      if (nav.active()) return; // it says what is left itself
+      startButton.hidden = false;
       const p = body.properties;
       const extra = [destName, t(lang, origin.key)].filter(Boolean);
       if (p.ferry) extra.push(t(lang, "routeFerry"));
@@ -109,7 +117,9 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   }
 
   function clear() {
+    if (nav.active()) nav.stop();
     request?.abort();
+    current = null;
     start = dest = destName = null;
     startMarker.remove();
     destMarker.remove();
@@ -126,6 +136,26 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     if (dest) update();
   }));
   document.getElementById("route-clear").addEventListener("click", clear);
+
+  const nav = setUpNavigation(map, {
+    lang,
+    mode: () => mode,
+    route: () => current,
+    destName: () => destName,
+    here: () => (gps && Date.now() - gps.at < GPS_MAX_AGE ? gps.lngLat : null),
+    reroute(lngLat) {
+      gps = { at: Date.now(), lngLat };
+      start = null;
+      startMarker.remove();
+      return update();
+    },
+    stopped: () => update(),
+    formatDistance: (m) => formatDistance(m, lang),
+    formatDuration,
+    say,
+  });
+  startButton.addEventListener("click", () => nav.start());
+  document.getElementById("route-end").addEventListener("click", () => nav.stop());
 
   function buttons(lngLat, done) {
     const point = maplibregl.LngLat.convert(lngLat).toArray();

@@ -25,7 +25,7 @@ func TestWayRules(t *testing.T) {
 		{map[string]string{"highway": "residential", "maxspeed": "EE:urban"}, true, 50, both, 0},
 		{map[string]string{"highway": "primary", "maxspeed": "60 mph"}, true, 75, both, 0},
 		{map[string]string{"highway": "residential", "oneway": "-1"}, true, 25, bwd, 0},
-		{map[string]string{"highway": "tertiary", "junction": "roundabout"}, true, 55, fwd, 0},
+		{map[string]string{"highway": "tertiary", "junction": "roundabout"}, true, 55, fwd | roundabout, 0},
 		{map[string]string{"highway": "motorway", "oneway": "no"}, true, 100, carFwd | carBwd, 0},
 		{map[string]string{"highway": "service", "oneway": "reversible"}, true, 0, footOK, 0},
 		{map[string]string{"highway": "footway"}, true, 0, footOK, 0},
@@ -59,9 +59,13 @@ func road(id int64, kind string, nodes ...int64) Way {
 func TestBuildGraph(t *testing.T) {
 	nodes := map[int64][2]float64{1: near(0, 0), 2: near(1, 0), 3: near(2, 0), 4: near(3, 0), 5: near(2, 2),
 		6: near(5, 0), 8: near(5, 2), 9: near(5, 4)} // 7 is missing from the extract
+	named := road(1, "residential", 1, 2, 3, 4)
+	named.Tags["name"] = "Rüütli"
+	numbered := road(2, "residential", 3, 5)
+	numbered.Tags["ref"] = "92"
 	g, err := Build([]Way{
-		road(1, "residential", 1, 2, 3, 4),
-		road(2, "residential", 3, 5),
+		named,
+		numbered,
 		road(3, "residential", 6, 7, 8, 9),
 		road(4, "building_passage", 1, 5), // not routable: ignored
 	}, nodes, Meta{Source: "test"})
@@ -88,14 +92,29 @@ func TestBuildGraph(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(back.arrays(), g.arrays()) || back.Meta() != g.Meta() {
+	if !reflect.DeepEqual(back.arrays(), g.arrays()) || back.Meta() != g.Meta() || !reflect.DeepEqual(back.names, g.names) {
 		t.Error("graph changed on the way through a file")
+	}
+	if got := []string{back.names[back.sname[0]], back.names[back.sname[2]], back.names[back.sname[3]]}; !reflect.DeepEqual(got, []string{"Rüütli", "92", ""}) {
+		t.Errorf("names %q, want Rüütli, 92 and none", got)
+	}
+
+	// A format 1 file (no names) still loads.
+	head := binary.Size(fileHead{})
+	meta := int(binary.LittleEndian.Uint32(buf.Bytes()[head-4:]))
+	names := int(binary.LittleEndian.Uint32(buf.Bytes()[head+meta:]))
+	v1 := append([]byte{}, buf.Bytes()[:head+meta]...)
+	binary.LittleEndian.PutUint32(v1[8:], 1)
+	v1 = append(v1, buf.Bytes()[head+meta+4+names:buf.Len()-4*s]...)
+	os.WriteFile(path, v1, 0o644)
+	if old, err := Load(path); err != nil || !reflect.DeepEqual(old.arrays()[:10], g.arrays()[:10]) || old.names[old.sname[0]] != "" {
+		t.Errorf("format 1 file: %v", err)
 	}
 
 	bad := map[string][]byte{
 		"magic":     append([]byte("NOTAVARU"), buf.Bytes()[8:]...),
 		"truncated": buf.Bytes()[:buf.Len()-1],
-		"version":   binary.LittleEndian.AppendUint32(append([]byte{}, buf.Bytes()[:8]...), 2),
+		"version":   binary.LittleEndian.AppendUint32(append([]byte{}, buf.Bytes()[:8]...), 3),
 	}
 	bad["version"] = append(bad["version"], buf.Bytes()[12:]...)
 	for name, b := range bad {

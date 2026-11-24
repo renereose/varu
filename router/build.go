@@ -36,6 +36,7 @@ const (
 	carBwd
 	footOK
 	ferry
+	roundabout
 )
 
 const footKmh = 5
@@ -45,6 +46,7 @@ type rule struct {
 	kmh      uint8 // car speed, or the crossing speed of a ferry; 0 = no cars
 	flags    uint8
 	ferrySec uint32 // crossing time from the duration tag; 0 = unknown
+	name     string // for directions: the street's name, else its road number
 }
 
 var carKmh = map[string]uint8{
@@ -110,8 +112,12 @@ func wayRule(tag func(string) string) (rule, bool) {
 		r.flags |= footOK
 	}
 
+	r.name = firstTag(tag, "name", "ref")
 	if r.flags&ferry == 0 {
 		oneway, junction := tag("oneway"), tag("junction")
+		if junction == "roundabout" || junction == "circular" {
+			r.flags |= roundabout
+		}
 		implied := highway == "motorway" || highway == "motorway_link" || junction == "roundabout" || junction == "circular"
 		switch {
 		case oneway == "-1" || oneway == "reverse":
@@ -287,7 +293,8 @@ func (k *keptWays) assemble(meta Meta, locate func(ids []int64, lat, lon []int32
 		return nil, err
 	}
 
-	g := &Graph{meta: meta, sshape: []uint32{0}}
+	g := &Graph{meta: meta, sshape: []uint32{0}, names: []string{""}}
+	nameOf := map[string]uint32{"": 0}
 	if g.meta.Built == "" {
 		g.meta.Built = time.Now().UTC().Format(time.RFC3339)
 	}
@@ -306,6 +313,12 @@ func (k *keptWays) assemble(meta Meta, locate func(ids []int64, lat, lon []int32
 
 	for w, r := range k.rules {
 		refs := k.refs[k.starts[w]:k.starts[w+1]]
+		name, ok := nameOf[r.name]
+		if !ok {
+			name = uint32(len(g.names))
+			nameOf[r.name] = name
+			g.names = append(g.names, r.name)
+		}
 		kmh := r.kmh
 		if r.flags&ferry != 0 {
 			kmh = ferryKmh(r.ferrySec, refs, index, have, step)
@@ -338,6 +351,7 @@ func (k *keptWays) assemble(meta Meta, locate func(ids []int64, lat, lon []int32
 			}
 			g.sfrom, g.sto = append(g.sfrom, vertex(start)), append(g.sto, vertex(i))
 			g.slen, g.skmh, g.sflags = append(g.slen, float32(length)), append(g.skmh, kmh), append(g.sflags, r.flags)
+			g.sname = append(g.sname, name)
 			g.sshape = append(g.sshape, uint32(len(g.plat)))
 			start, length = i, 0
 		}
