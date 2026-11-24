@@ -225,8 +225,9 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 	if err == nil && plan.Needed > plan.Free {
 		problem("space", "")
 	}
-	if volumeRoot && !isFAT(fs) && !strings.EqualFold(fs, "exfat") {
-		plan.Warnings = append(plan.Warnings, Problem{"portable", fs})
+	// A stick must work on every computer, whichever made it.
+	if volumeRoot && !portable(fs) {
+		problem("portable", fs)
 	}
 	return plan
 }
@@ -268,6 +269,9 @@ func hasForeignFiles(dir string) bool {
 
 var varuNames = []string{"app", "bin", "maps", "pois", "docs", "library", "licenses",
 	"manifest.json", "build-info.json", "README.txt", ".DS_Store"}
+
+// portable says whether Windows, macOS and Linux all read and write fs.
+func portable(fs string) bool { return isFAT(fs) || strings.EqualFold(fs, "exfat") }
 
 func isFAT(fs string) bool {
 	switch strings.ToLower(fs) {
@@ -351,7 +355,14 @@ func (j *Job) Run() {
 			err = j.fetch(it)
 		}
 		if err == nil && it.Kind == "app" {
-			err = extract(it.dest, j.Target, j.Phone)
+			// Unpacking writes hundreds of files: give a drive that drops out a
+			// moment to come back, as downloads do.
+			for tries := 1; ; tries++ {
+				if err = extract(it.dest, j.Target, j.Phone); err == nil || tries == 3 {
+					break
+				}
+				time.Sleep(diskPause)
+			}
 		}
 		if err != nil {
 			j.fail(fmt.Errorf("%s: %w", it.Title, err))
@@ -382,13 +393,59 @@ func (j *Job) fetch(it *Item) error {
 		j.done.Add(it.Size)
 		return nil
 	}
+	for tries := 1; ; tries++ {
+		mark := j.done.Load()
+		err := j.download(it)
+		var disk diskError
+		if !errors.As(err, &disk) {
+			return err
+		}
+		if tries == 4 {
+			return stickTrouble
+		}
+		// The drive went away for a moment (a loose plug, a tired stick) and
+		// took the open file with it: start again from what reached it.
+		j.done.Store(mark)
+		time.Sleep(diskPause)
+	}
+}
+
+// stickTrouble is what a drive that keeps failing writes looks like to people.
+var stickTrouble = errors.New("the drive stopped responding while Varu was writing to it. " +
+	"Check that the stick is plugged in firmly (or try another port), then run the installer again: it continues where it stopped")
+
+// diskPause is how long a drive that failed a write gets to come back.
+var diskPause = 5 * time.Second
+
+// diskError marks a failure of the drive being written, as opposed to the network.
+type diskError struct{ err error }
+
+func (e diskError) Error() string { return e.err.Error() }
+func (e diskError) Unwrap() error { return e.err }
+
+func onDisk(err error) error {
+	if err == nil {
+		return nil
+	}
+	return diskError{err}
+}
+
+type diskWriter struct{ f *os.File }
+
+func (d diskWriter) Write(p []byte) (int, error) {
+	n, err := d.f.Write(p)
+	return n, onDisk(err)
+}
+
+// download is one go at fetch, with a freshly opened partial file.
+func (j *Job) download(it *Item) error {
 	if err := os.MkdirAll(filepath.Dir(it.dest), 0o755); err != nil {
-		return err
+		return onDisk(err)
 	}
 	part := it.dest + ".part"
 	f, err := os.OpenFile(part, os.O_CREATE|os.O_RDWR, 0o644)
 	if err != nil {
-		return err
+		return onDisk(err)
 	}
 	defer f.Close()
 
@@ -396,7 +453,7 @@ func (j *Job) fetch(it *Item) error {
 	sum := sha256.New()
 	have, err := io.Copy(io.MultiWriter(sum, counter{&j.done}), f)
 	if err != nil {
-		return err
+		return onDisk(err)
 	}
 	for attempt := 1; it.Size == 0 || have < it.Size; attempt++ {
 		err = j.get(j.resolve(it.url), f, sum, &have)
@@ -404,7 +461,8 @@ func (j *Job) fetch(it *Item) error {
 			break
 		}
 		var final permanent
-		if errors.As(err, &final) || attempt == 5 {
+		var disk diskError
+		if errors.As(err, &final) || errors.As(err, &disk) || attempt == 5 {
 			return err
 		}
 		time.Sleep(time.Duration(attempt) * 3 * time.Second)
@@ -419,9 +477,9 @@ func (j *Job) fetch(it *Item) error {
 		return errors.New("download is damaged (checksum mismatch); run the installer again")
 	}
 	if err := f.Close(); err != nil {
-		return err
+		return onDisk(err)
 	}
-	return os.Rename(part, it.dest)
+	return onDisk(os.Rename(part, it.dest))
 }
 
 type permanent struct{ error }
@@ -446,10 +504,10 @@ func (j *Job) get(u string, f *os.File, sum hash.Hash, have *int64) error {
 	case resp.StatusCode == http.StatusOK:
 		if *have > 0 { // the server ignored Range: start over
 			if err := f.Truncate(0); err != nil {
-				return err
+				return onDisk(err)
 			}
 			if _, err := f.Seek(0, io.SeekStart); err != nil {
-				return err
+				return onDisk(err)
 			}
 			sum.Reset()
 			j.done.Add(-*have)
@@ -462,7 +520,7 @@ func (j *Job) get(u string, f *os.File, sum hash.Hash, have *int64) error {
 	default:
 		return permanent{fmt.Errorf("%s: %s", u, resp.Status)}
 	}
-	n, err := io.Copy(io.MultiWriter(f, sum, counter{&j.done}), resp.Body)
+	n, err := io.Copy(io.MultiWriter(diskWriter{f}, sum, counter{&j.done}), resp.Body)
 	*have += n
 	return err
 }

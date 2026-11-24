@@ -13,6 +13,7 @@ type Volume struct {
 	FS    string `json:"fs"`
 	Free  int64  `json:"free"`
 	Total int64  `json:"total"`
+	Disk  int64  `json:"disk,omitempty"` // the whole stick, when known: it may hold other partitions
 }
 
 // existingParent walks up to the nearest folder that exists, so free space

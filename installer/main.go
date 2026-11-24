@@ -19,6 +19,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -272,6 +273,14 @@ func (a *App) Handler(addr string) http.Handler {
 		}
 		return nil, openPath(job.Target)
 	})
+	api("POST", "/api/format", func(r *http.Request) (any, error) {
+		var body struct{ Path string }
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			return nil, err
+		}
+		path, err := a.format(body.Path)
+		return map[string]string{"path": path}, err
+	})
 	api("POST", "/api/quit", func(r *http.Request) (any, error) {
 		go func() { time.Sleep(200 * time.Millisecond); os.Exit(0) }()
 		return nil, nil
@@ -397,6 +406,28 @@ func (a *App) start(req Request) error {
 	a.job = &Job{Target: req.Target, Plan: plan, Source: a.Source, Client: a.Client, Phone: a.Phone}
 	go a.job.Run()
 	return nil
+}
+
+// format erases a USB stick and formats it as exFAT, named VARU, so that
+// every computer reads it. Only a stick the page offers, never on a phone
+// or while installing, and never the stick this program runs from.
+func (a *App) format(path string) (string, error) {
+	if a.Phone || len(fixedVolumes) > 0 {
+		return "", errors.New("phones are not formatted")
+	}
+	a.mu.Lock()
+	busy := a.job != nil && !a.job.snapshot().Finished
+	a.mu.Unlock()
+	if busy {
+		return "", errors.New("an installation is running")
+	}
+	if !slices.ContainsFunc(volumes(), func(v Volume) bool { return v.Path == path }) {
+		return "", errors.New("not a USB stick this installer offers")
+	}
+	if exe, err := os.Executable(); err == nil && strings.HasPrefix(exe, strings.TrimSuffix(path, string(filepath.Separator))+string(filepath.Separator)) {
+		return "", errors.New("Varu is running from this stick")
+	}
+	return formatVolume(path, "VARU")
 }
 
 // fixedVolumes, when given, replace the system's list (the Android app

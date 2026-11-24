@@ -76,6 +76,9 @@ A first build on a normal internet connection will settle these:
       for all three systems.
 - [ ] Desktop app: run on Windows and on a real Linux desktop (so far: macOS,
       and Ubuntu 24.04 in a container).
+- [ ] Formatting a stick from the wizard: tried on macOS (an APFS stick to
+      exFAT); not yet on Windows (Format-Volume behind the permission
+      prompt) or Linux (UDisks).
 - [ ] First tagged release, then a test of every installer on real hardware.
       The Android app has been built but not yet run on a phone.
 - [ ] Code signing: Windows (Authenticode) and macOS (Developer ID and

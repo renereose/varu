@@ -30,6 +30,11 @@ h1 { margin: .2rem 0 .4rem; font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 
 h2 { margin: 2.2rem 0 .3rem; font-size: 1.15rem; }
 /* Counters skip hidden steps, so the numbers stay 1, 2, 3 ... */
 .choice.waiting { opacity: .6; }
+.format { margin: .5rem 0 0 2.6rem; }
+.format p { margin: 0 0 .5rem; }
+.format .warn-text { color: var(--warn); }
+.format .bad-text { color: var(--bad); }
+button.danger { background: var(--bad); border-color: var(--bad); color: #fff; font-weight: 700; }
 .lead, .hint { color: var(--muted); margin: 0 0 .8rem; }
 .hint { font-size: .9rem; }
 .lang { display: flex; gap: .3rem; }
@@ -239,7 +244,20 @@ const STRINGS = {
     p_tooOld: "This installer is too old for the current downloads. Download the newest installer.",
     p_bad: "The download list looks damaged ({detail}).",
     p_noTarget: "Choose where to put Varu.",
-    w_portable: "This drive is formatted as {detail}, which not every computer can read. exFAT works on Windows, macOS and Linux.",
+    p_portable: "This stick is formatted as {detail}, which not every computer can read. In step 1, format it for all computers.",
+    notPortable: "{fs}: not every computer can read this stick.",
+    formatButton: "Erase and format for all computers",
+    freeOfStick: "{free} free ({disk} stick)",
+    partOfStick: "Only {total} of this {disk} stick is in use.",
+    stickFull: "There is not enough room on this stick for what you chose.",
+    eraseWhole: "Erase the stick and use all of it",
+    spaceStick: "Go back to step 1 to erase the stick and use all of it.",
+    formatConfirm: "Everything on {name} ({size}) will be erased. It is then formatted as exFAT, which Windows, macOS and Linux all read. Your computer may ask for permission.",
+    formatYes: "Erase and format",
+    cancel: "Cancel",
+    formatting: "Formatting… Do not unplug the stick.",
+    formatted: "Done: the stick now works on every computer.",
+    formatFailed: "Could not format the stick: {error}",
     w_outside: "Your home is outside this country's map.",
   },
   et: {
@@ -314,7 +332,20 @@ const STRINGS = {
     p_tooOld: "See paigaldaja on praeguste allalaadimiste jaoks liiga vana. Laadi alla uusim paigaldaja.",
     p_bad: "Allalaadimiste nimekiri tundub vigane ({detail}).",
     p_noTarget: "Vali, kuhu Varu panna.",
-    w_portable: "See pulk on vormingus {detail}, mida kõik arvutid ei loe. exFAT töötab Windowsis, macOSis ja Linuxis.",
+    p_portable: "See pulk on vormingus {detail}, mida kõik arvutid ei loe. Vorminda see 1. sammus kõigile arvutitele sobivaks.",
+    notPortable: "{fs}: kõik arvutid seda pulka ei loe.",
+    formatButton: "Kustuta ja vorminda kõigile arvutitele sobivaks",
+    freeOfStick: "{free} vaba ({disk} pulk)",
+    partOfStick: "Sellest {disk} pulgast on kasutusel vaid {total}.",
+    stickFull: "Sellel pulgal pole valitud asjade jaoks piisavalt ruumi.",
+    eraseWhole: "Kustuta pulk ja kasuta seda tervenisti",
+    spaceStick: "Mine tagasi 1. sammu, et pulk kustutada ja seda tervenisti kasutada.",
+    formatConfirm: "Kõik andmed pulgal {name} ({size}) kustutatakse. Seejärel vormindatakse see exFAT-vormingusse, mida loevad Windows, macOS ja Linux. Arvuti võib küsida luba.",
+    formatYes: "Kustuta ja vorminda",
+    cancel: "Loobu",
+    formatting: "Vormindan… Ära pulka eemalda.",
+    formatted: "Valmis: pulk töötab nüüd igas arvutis.",
+    formatFailed: "Pulka ei õnnestunud vormindada: {error}",
     w_outside: "Sinu kodu on selle riigi kaardist väljas.",
   },
 };
@@ -437,6 +468,7 @@ function renderLibrary() {
 }
 
 function renderTargets(force) {
+  if (s.formatting) return;
   const volumes = s.state.volumes;
   const key = JSON.stringify(volumes.map((v) => [v.path, v.free]));
   if (!force && key === s.volumesKey) return;
@@ -451,7 +483,8 @@ function renderTargets(force) {
   };
   const items = volumes.map((v) => el("li", {}, el("label", { className: "choice" }, radio(v.path),
     el("span", { className: "grow" }, el("strong", { textContent: v.label }), " ", el("small", { textContent: v.fs })),
-    el("span", { className: "size", textContent: t("free", { free: size(v.free) }) }))));
+    el("span", { className: "size", textContent: partOfStick(v) ? t("freeOfStick", { free: size(v.free), disk: size(v.disk) })
+      : t("free", { free: size(v.free) }) })), formatBox(v)));
 
   if (!s.state.computer) { $("targets").replaceChildren(...items); return; }
   // On a computer, a stick is always one of the two choices, even before it is plugged in.
@@ -466,6 +499,54 @@ function renderTargets(force) {
     el("span", { className: "grow" }, el("strong", { textContent: t("computer") }), folder))));
   $("targets").replaceChildren(...items);
 }
+// ---------- formatting a stick that not every computer reads ----------
+
+const portableFS = (fs) => /^(msdos|fat|fat16|fat32|vfat|exfat)$/i.test(fs ?? "");
+// A partition much smaller than its stick: a boot stick, say, made by Rufus.
+const partOfStick = (v) => v.disk > v.total * 1.1;
+const tooFull = (v) => s.target === v.path && !!s.plan?.problems?.some((p) => p.code === "space");
+const offerErase = (v) => !s.state.phone && (!portableFS(v.fs) || partOfStick(v) || tooFull(v));
+const notPortable = (path) => {
+  const v = s.state && !s.state.phone && s.state.volumes.find((x) => x.path === path);
+  return !!v && !portableFS(v.fs);
+};
+
+function formatBox(v) {
+  if (!offerErase(v)) return s.formatted === v.path ? el("p", { className: "format hint", textContent: t("formatted") }) : null;
+  const box = el("div", { className: "format" });
+  const ask = () => {
+    const why = !portableFS(v.fs) ? t("notPortable", { fs: v.fs })
+      : partOfStick(v) ? t("partOfStick", { total: size(v.total), disk: size(v.disk) }) : t("stickFull");
+    const button = el("button", { type: "button", textContent: t(portableFS(v.fs) ? "eraseWhole" : "formatButton") });
+    button.addEventListener("click", areYouSure);
+    box.replaceChildren(el("p", { className: "warn-text", textContent: why }), button);
+  };
+  const areYouSure = () => {
+    const yes = el("button", { type: "button", className: "danger", textContent: t("formatYes") });
+    const no = el("button", { type: "button", textContent: t("cancel") });
+    yes.addEventListener("click", run);
+    no.addEventListener("click", ask);
+    box.replaceChildren(el("p", { textContent: t("formatConfirm", { name: v.label, size: size(v.disk || v.total) }) }), el("div", { className: "row" }, yes, no));
+  };
+  const run = async () => {
+    s.formatting = true;
+    box.replaceChildren(el("p", { textContent: t("formatting") }));
+    try {
+      const done = await api("/api/format", { path: v.path });
+      s.formatted = s.target = done.path;
+      s.state = await api("/api/state");
+    } catch (err) {
+      box.replaceChildren(el("p", { className: "bad-text", textContent: t("formatFailed", { error: err.message }) }));
+      setTimeout(ask, 6000);
+    }
+    s.formatting = false;
+    renderTargets(true);
+    replan();
+  };
+  ask();
+  return box;
+}
+
 function renderTargetChecks() {
   document.querySelectorAll("input[name=target]").forEach((r) => { r.checked = r.value === s.target; });
 }
@@ -481,6 +562,9 @@ function renderSummary() {
     plan.problems.forEach((p) => problems.push(STRINGS.en[`p_${p.code}`] ? t(`p_${p.code}`, vars(p)) : p.detail || p.code));
     plan.warnings.forEach((p) => warnings.push(t(`w_${p.code}`, vars(p))));
   }
+  if (plan?.problems.some((p) => p.code === "space") && s.target !== "computer" && !s.state.phone) problems.push(t("spaceStick"));
+  const offers = s.state.volumes.filter(offerErase).map((v) => v.path).join("|");
+  if (offers !== s.offers) { s.offers = offers; renderTargets(true); }
   const download = plan ? plan.items.reduce((sum, it) => sum + it.size - it.have, 0) : 0;
   $("sizes").textContent = s.planning ? t("calculating")
     : plan && targetPath() ? t("sizes", { download: size(download), needed: size(plan.needed), free: size(plan.free) }) : "";
@@ -503,7 +587,7 @@ function renderStep() {
   $("back").hidden = s.step === 1;
   $("next").hidden = s.step === STEPS;
   // A place to put it first; a home whenever the map is cut around one.
-  $("next").disabled = s.step === 1 ? !targetPath() : s.step === 2 && s.radius > 0 && !s.home;
+  $("next").disabled = s.step === 1 ? !targetPath() || notPortable(s.target) || !!s.formatting : s.step === 2 && s.radius > 0 && !s.home;
 }
 function goStep(n) {
   s.step = Math.min(Math.max(n, 1), STEPS);

@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -10,8 +11,10 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 func sum(b []byte) string { h := sha256.Sum256(b); return hex.EncodeToString(h[:]) }
@@ -199,6 +202,10 @@ func TestStickGetsDesktopApps(t *testing.T) {
 	if len(stick.Items) != 2 || stick.Items[1].Kind != "desktop" || stick.Items[1].dest != filepath.Join(req.Target, "Varu-macOS.dmg") {
 		t.Errorf("a stick got %+v", stick.Items)
 	}
+	// The temp folder is APFS, ext4 or NTFS: as a stick, not every computer could read it.
+	if !slices.ContainsFunc(stick.Problems, func(p Problem) bool { return p.Code == "portable" }) {
+		t.Errorf("a stick only some computers read was accepted: %+v", stick.Problems)
+	}
 }
 
 // Updating must not rewrite a program in place (macOS then kills it).
@@ -219,5 +226,34 @@ func TestExtractReplacesFiles(t *testing.T) {
 	after, _ := os.Stat(filepath.Join(out, "bin/varu"))
 	if got, _ := os.ReadFile(filepath.Join(out, "bin/varu")); string(got) != "new" || os.SameFile(before, after) {
 		t.Errorf("want a new file with the new content, got %q (same file: %v)", got, os.SameFile(before, after))
+	}
+}
+
+// A drive that drops out for a moment (writes fail) must not fail the
+// download when it comes back.
+func TestDownloadSurvivesDriveDropout(t *testing.T) {
+	body := []byte(strings.Repeat("road data ", 1000))
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeContent(w, r, "ee.graph", time.Time{}, bytes.NewReader(body))
+	}))
+	defer srv.Close()
+	stick := filepath.Join(t.TempDir(), "stick")
+	if err := os.Mkdir(stick, 0o500); err != nil { // "gone": nothing can be written
+		t.Fatal(err)
+	}
+	defer os.Chmod(stick, 0o755)
+	saved := diskPause
+	diskPause = 50 * time.Millisecond
+	defer func() { diskPause = saved }()
+	go func() { time.Sleep(20 * time.Millisecond); os.Chmod(stick, 0o755) }() // back again
+
+	j := &Job{Client: srv.Client()}
+	it := &Item{Kind: "routing", Title: "ee.graph", Size: int64(len(body)), url: srv.URL + "/ee.graph",
+		sha256: sum(body), dest: filepath.Join(stick, "maps", "ee.graph")}
+	if err := j.fetch(it); err != nil {
+		t.Fatalf("after the drive came back: %v", err)
+	}
+	if got, _ := os.ReadFile(it.dest); !bytes.Equal(got, body) || j.done.Load() != int64(len(body)) {
+		t.Errorf("file %d bytes, progress %d, want %d", len(got), j.done.Load(), len(body))
 	}
 }

@@ -35,7 +35,9 @@ Download Varu for your system from the
 The first time, Varu opens a setup wizard, one step at a time:
 
 1. **Where you want Varu**: a USB stick (listed as soon as it is plugged in)
-   or a folder on this computer; on a phone, its storage or memory card.
+   or a folder on this computer; on a phone, its storage or memory card. A
+   stick must be readable by every computer (exFAT or FAT32): if it is not,
+   the wizard offers to erase it and format it as exFAT, after asking.
 2. **Your country**, **your home** (search for the town, or use your
    location) and a **radius**: 10, 25, 50 or 100 km, or the whole country.
    Inside the radius you get street-level map and places; the rest of the
@@ -157,7 +159,9 @@ partial ones resume. If a step fails, the others still run and the drive
 works with whatever was built.
 
 **Format the stick as exFAT.** It is the only file system that Windows, macOS
-and Linux all read and write and that holds files larger than 4 GB.
+and Linux all read and write and that holds files larger than 4 GB. The
+wizard does this for you (macOS: `diskutil`; Windows: `Format-Volume`, after
+the usual permission prompt; Linux: UDisks, which needs `exfatprogs`).
 
 ## How it works
 
