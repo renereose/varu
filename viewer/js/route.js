@@ -40,6 +40,10 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   geolocate.on("geolocate", (pos) => {
     gps = { at: Date.now(), lngLat: [pos.coords.longitude, pos.coords.latitude] };
   });
+  // The location button, while it follows you, moves the map itself.
+  let tracking = false;
+  geolocate.on("trackuserlocationstart", () => { tracking = true; });
+  geolocate.on("trackuserlocationend", () => { tracking = false; });
 
   // Under the basemap's labels, so street names stay readable.
   const beforeId = map.getStyle().layers.find((layer) => layer.type === "symbol")?.id;
@@ -143,6 +147,8 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     route: () => current,
     destName: () => destName,
     here: () => (gps && Date.now() - gps.at < GPS_MAX_AGE ? gps.lngLat : null),
+    // Live directions steer the map; the location button would undo it.
+    stopFollowing: () => { if (tracking) geolocate.trigger(); },
     reroute(lngLat) {
       gps = { at: Date.now(), lngLat };
       start = null;
