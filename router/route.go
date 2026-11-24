@@ -16,6 +16,7 @@ type Route struct {
 	Ferry     bool    // the route crosses water by ferry
 	SnapFromM float64 // how far the start was from the road it was moved to
 	SnapToM   float64
+	Steps     []Step // turn-by-turn directions
 }
 
 var (
@@ -134,12 +135,15 @@ func (g *Graph) Route(from, to Point, m Mode) (Route, error) {
 	if how == viaNone {
 		return Route{}, ErrNoRoute
 	}
-	return g.path(a, b, best, how, end), nil
+	return g.path(a, b, best, how, end, m), nil
 }
 
 // path rebuilds the route's geometry and length from the search.
-func (g *Graph) path(a, b snapResult, cost float64, how int, end uint32) Route {
-	r := Route{DurationS: cost, SnapFromM: a.off, SnapToM: b.off}
+func (g *Graph) path(a, b snapResult, cost float64, how int, end uint32, m Mode) (r Route) {
+	r = Route{DurationS: cost, SnapFromM: a.off, SnapToM: b.off}
+	legs := []leg{{seg: a.seg}}
+	enter := func(s, v uint32) { legs = append(legs, leg{seg: s, v: v, at: len(r.Line) - 1, along: r.DistanceM}) }
+	defer func() { r.Steps = g.steps(legs, r.Line, r.DistanceM, m) }()
 	add := func(pts []Point) {
 		for _, p := range pts {
 			if n := len(r.Line); n == 0 || r.Line[n-1] != p {
@@ -180,6 +184,11 @@ func (g *Graph) path(a, b snapResult, cost float64, how int, end uint32) Route {
 		s := hes[i] >> 1
 		l := float64(g.slen[s])
 		if hes[i]&1 == 0 {
+			enter(s, g.sfrom[s])
+		} else {
+			enter(s, g.sto[s])
+		}
+		if hes[i]&1 == 0 {
 			add(g.cut(s, 0, l))
 		} else {
 			add(g.cut(s, l, 0))
@@ -188,9 +197,11 @@ func (g *Graph) path(a, b snapResult, cost float64, how int, end uint32) Route {
 		r.Ferry = r.Ferry || g.sflags[s]&ferry != 0
 	}
 	if lb := float64(g.slen[b.seg]); how == viaEndFwd {
+		enter(b.seg, g.sfrom[b.seg])
 		add(g.cut(b.seg, 0, b.along))
 		r.DistanceM += b.along
 	} else {
+		enter(b.seg, g.sto[b.seg])
 		add(g.cut(b.seg, lb, b.along))
 		r.DistanceM += lb - b.along
 	}

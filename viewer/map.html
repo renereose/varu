@@ -19,13 +19,24 @@
     <ul id="layer-list" class="layer-list"></ul>
   </aside>
 
+  <section id="nav-banner" class="nav-banner" hidden aria-live="polite">
+    <div id="nav-arrow" class="nav-arrow"></div>
+    <div>
+      <p id="nav-distance" class="nav-distance"></p>
+      <p id="nav-text" class="nav-text"></p>
+      <p id="nav-name" class="nav-name"></p>
+    </div>
+  </section>
+
   <section id="route-panel" class="route-panel" hidden aria-live="polite">
     <div class="route-head">
       <div class="route-modes" role="group">
         <button type="button" data-mode="foot" data-i18n="walk">Walk</button>
         <button type="button" data-mode="car" data-i18n="drive">Drive</button>
       </div>
+      <button type="button" id="route-start" class="route-start" hidden data-i18n="navStart">Start</button>
       <button type="button" id="route-clear" data-i18n="clearRoute">Clear</button>
+      <button type="button" id="route-end" class="route-end" data-i18n="navEnd">End</button>
     </div>
     <p id="route-summary" class="route-summary"></p>
     <div id="route-notes" class="route-notes"></div>

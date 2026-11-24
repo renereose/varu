@@ -96,6 +96,10 @@ func (rt *routes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if len(line) == 1 {
 		line = append(line, line[0]) // a LineString needs two positions
 	}
+	steps := route.Steps
+	for i := range steps {
+		steps[i].AlongM = math.Round(steps[i].AlongM)
+	}
 	w.Header().Set("Content-Type", "application/geo+json")
 	_ = json.NewEncoder(w).Encode(map[string]any{
 		"type":     "Feature",
@@ -104,6 +108,7 @@ func (rt *routes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"mode": q.Get("mode"), "distance_m": math.Round(route.DistanceM),
 			"duration_s": math.Round(route.DurationS), "ferry": route.Ferry,
 			"snap_from_m": math.Round(route.SnapFromM), "snap_to_m": math.Round(route.SnapToM),
+			"steps": steps,
 		},
 	})
 }

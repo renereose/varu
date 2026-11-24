@@ -88,10 +88,12 @@ Early. What has been exercised so far:
   requests leaving the machine, against a current Protomaps build.
 - Viewer: "show my location" checked in a browser posing as a phone; not yet
   on a real phone.
-- Directions: built from the full Estonia extract (33 MB, 0.15 s to load,
-  Tallinn → Tartu found in under 50 ms on a Mac) and driven in a headless
-  browser with mouse, keyboard and long-press. Not yet timed on a Pi or a
-  phone.
+- Directions: built from the full Estonia extract (36 MB with street names,
+  0.15 s to load, Tallinn → Tartu found in under 50 ms on a Mac) and driven
+  in a headless browser with mouse, keyboard and long-press. Live directions
+  (Start) walked in a browser posing as a phone, position by position,
+  including leaving the route. Not yet timed on a Pi or tried on a phone
+  outdoors.
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.
@@ -207,7 +209,7 @@ and apps always match. It publishes only a clean, up-to-date `main`.
 - `<id>.pmtiles` is the country's map. For a radius install the installer
   cuts a smaller map out of it with HTTP range requests
   (`installer/pmtiles.go`), so only that part is downloaded.
-- `<id>.graph` is the road network for directions (about 35 MB), always
+- `<id>.graph` is the road network for directions (about 36 MB), always
   for the whole country.
 - Library books come straight from the Kiwix mirrors, pinned to the edition
   that was newest at release time, and are checked against Kiwix's SHA-256.
