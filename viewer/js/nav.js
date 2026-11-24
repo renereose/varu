@@ -27,7 +27,8 @@ const FLAG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3h2v1h1
 /**
  * hooks: lang, mode() ("foot"/"car"), route() (the GeoJSON Feature shown),
  * destName(), here() (a recent position, [lon, lat], or null),
- * reroute(lngLat) (route again from there), stopped(),
+ * reroute(lngLat) (route again from there), stopFollowing() (the location
+ * button lets go of the map), stopped(),
  * formatDistance(m), formatDuration(s), say(summary, notes).
  */
 export function setUpNavigation(map, hooks) {
@@ -132,6 +133,7 @@ export function setUpNavigation(map, hooks) {
 
   function start() {
     if (!navigator.geolocation) return onError();
+    hooks.stopFollowing?.();
     document.body.classList.add("navigating");
     show(ARROW, 0, "", t(lang, "navWaiting"));
     shape = null;
