@@ -66,6 +66,7 @@ class Region:
     documents: tuple[DocumentSpec, ...] = ()
     attribution: tuple[str, ...] = field(default_factory=tuple)
     osm_extract: str | None = None  # [routing]: the OpenStreetMap extract the road network is built from
+    places_ads: str | None = None  # [places]: the Estonian address register's extract list, for search
 
 
 def _require(table: dict, key: str, where: str):
@@ -178,6 +179,12 @@ def parse_region(data: dict) -> Region:
         if not (isinstance(osm_extract, str) and osm_extract.startswith("https://") and osm_extract.endswith(".osm.pbf")):
             raise ConfigError("[routing] osm_extract must be an https:// link to an .osm.pbf file")
 
+    places_ads = None
+    if "places" in data:
+        places_ads = _require(data["places"], "ads", "[places]")
+        if not (isinstance(places_ads, str) and places_ads.startswith("https://")):
+            raise ConfigError("[places] ads must be an https:// link to the address register's extract list")
+
     library = []
     for i, item in enumerate(data.get("library", [])):
         name = _require(item, "name", f"[[library]] #{i + 1}")
@@ -194,6 +201,7 @@ def parse_region(data: dict) -> Region:
         documents=_parse_documents(data.get("documents", [])),
         attribution=tuple(data.get("attribution", [])),
         osm_extract=osm_extract,
+        places_ads=places_ads,
     )
 
 

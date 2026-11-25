@@ -38,9 +38,13 @@ A first build on a normal internet connection will settle these:
 - [x] Show my location (GPS on phones works offline; most laptops need the
       internet to locate themselves, and browsers refuse location on a drive
       opened over `-lan`).
-- [ ] Place and address search that works offline. Addresses: an index built
-      at release time from the Land Board's address register (ADS; check its
-      open-data licence) or from OpenStreetMap.
+- [x] Place and address search that works offline: every town, street and
+      house address from the Land Board's address register (ADS, open data
+      with no licence agreement), built at release time, plus the names in
+      the drive's place layers.
+- [ ] Search follow-ups: timing on a phone and a Pi; place names that are
+      not addresses (lakes, hills, nature areas) from the place-name
+      register; other countries' address sources.
 - [x] Varu's own offline router: a road network built from OpenStreetMap at
       release time and a Go router in the launcher (`router/`), so routes work
       on computers and in the Android app with no other app and no internet.

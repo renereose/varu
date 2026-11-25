@@ -30,6 +30,7 @@ seadmetes, nii et see töötab täiesti ilma internetita:
 
 - 🗺️ **Eesti kaart**: kodu ümber tänavate täpsusega, ülejäänud riik reisimiseks.
 - 🛡️ **Avalikud varjumiskohad**: kõik Päästeameti 303 varjumiskohta, lisaks haiglad, apteegid, joogivesi, tanklad, toidupoed, politsei ja muu.
+- 🔎 **Otsing**: iga Eesti linn, küla, tänav ja majaaadress.
 - 🧭 **Teejuhised**: jalgsi või autoga, ka „vii mind lähimasse varjumiskohta, mööda teid”.
 - 📍 **Juhised teel** telefonis: järgmine pööre, tänava nimi ja kui palju on jäänud.
 - 📚 **Raamatukogu**: eestikeelne Vikipeedia, meditsiinientsüklopeedia ja katastroofijärgse toimetuleku käsiraamatud, kõik otsitavad.
@@ -211,6 +212,20 @@ on ka näha, millal andmed koostati, et teaksid, kui värsked need on.
   töötab ilma internetita. Enamikus arvutites GPS-i pole.
 - **Lähim**, iga kihi kõrval, leiab lähima koha **mööda teid**, mitte
   linnulennult, nii et jõgi või meri ei saada sind pikka ringi tegema.
+
+### Otsing
+
+<img src="docs/images/et/search.jpg" width="240" align="right" alt="Kaardilt Tartu otsimine">
+
+Kirjuta kihtide kohal olevasse kasti: linn või küla (**Otepää**), tänav,
+majaaadress (**Rüütli 12 Pärnu**) või koht kaardikihtidelt, näiteks haigla või
+varjumiskoht (**Tartu Ülikooli Kliinikum**).
+
+- Tähed õ, ä, ö ja ü võib kirjutada ilma täppideta: **otepaa** leiab Otepää.
+- Puuduta tulemust ja kaart liigub sinna. Selle nööpnõela juures on **Tee siia** ja **Alusta siit**.
+- Mälupulgal on kõik Eesti aadressid, ka väljaspool sinu kodukanti.
+
+<br clear="right">
 
 ### Teejuhised
 
@@ -482,7 +497,7 @@ paremklõps → **Alusta siit**, et öelda, kus oled.
 </details>
 
 <details>
-<summary><b>Pärast telefoni äpi uuendamist puuduvad juhised teel või raamatukogu otsing.</b></summary>
+<summary><b>Pärast telefoni äpi uuendamist puudub kaardiotsing, juhised teel või raamatukogu otsing.</b></summary>
 
 Need on allalaaditud andmetes, mitte äpis. Ava Varu ja vali küsimise peale
 **Uuenda** või kasuta **⋮ → Allalaadimised** → **Paigalda**.
@@ -506,6 +521,7 @@ pärit koopia ei saa äppi asendada.
 |---|---|---|
 | Kaart, kohad, teed | © [OpenStreetMapi](https://www.openstreetmap.org/copyright) kaastöötajad, aluskaart [Protomaps](https://protomaps.com) | ODbL |
 | Avalikud varjumiskohad | Päästeamet, Maa- ja Ruumiameti kaudu | Maa- ja Ruumiameti avaandmed |
+| Aadressid, tänavad, asulad | Maa- ja Ruumiamet, [aadressiandmete süsteem (ADS)](https://geoportaal.maaamet.ee/est/ruumiandmed/aadressiandmed-p112.html) | avaandmed |
 | Vikipeedia, WikiMed | Vikipeedia, pakendanud [Kiwix](https://kiwix.org) | CC BY-SA |
 | Post Disaster Resource Library | [Kiwix](https://library.kiwix.org) | iga dokumendi enda oma |
 | Varu ise | see repositoorium | [MIT](LICENSE) |

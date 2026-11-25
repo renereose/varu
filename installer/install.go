@@ -38,6 +38,7 @@ type Region struct {
 	Bundle      Asset             `json:"bundle"`
 	Map         *Asset            `json:"map,omitempty"`
 	Routing     *Asset            `json:"routing,omitempty"` // road network for directions, whole country
+	Places      *Asset            `json:"places,omitempty"`  // towns, streets and addresses for the map's search
 	Pois        []PoiLayer        `json:"pois"`
 	Library     []Book            `json:"library"`
 }
@@ -75,7 +76,7 @@ type Book struct {
 
 // Item is one download in a plan.
 type Item struct {
-	Kind   string `json:"kind"` // app, map, routing or book
+	Kind   string `json:"kind"` // app, map, routing, places, desktop or book
 	Title  string `json:"title"`
 	Size   int64  `json:"size"`
 	Have   int64  `json:"have"` // bytes already on disk from an earlier run
@@ -174,6 +175,12 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 			problem("bad", r.Path)
 		}
 		plan.Items = append(plan.Items, assetItem("routing", r, req.Target))
+	}
+	if p := region.Places; p != nil {
+		if !safeRel(p.Path) {
+			problem("bad", p.Path)
+		}
+		plan.Items = append(plan.Items, assetItem("places", p, req.Target))
 	}
 	// A stick carries the Varu app for every system, so it opens on any computer.
 	if volumeRoot {
@@ -660,6 +667,9 @@ func writeManifest(target string, region *Region, req Request) error {
 	}
 	if region.Routing == nil || !isFile(filepath.Join(target, filepath.FromSlash(region.Routing.Path))) {
 		delete(manifest, "routing")
+	}
+	if region.Places == nil || !isFile(filepath.Join(target, filepath.FromSlash(region.Places.Path))) {
+		delete(manifest, "places")
 	}
 	library := []map[string]any{}
 	for _, b := range region.Library {

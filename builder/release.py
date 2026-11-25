@@ -7,6 +7,7 @@ Writes to dist/:
   varu-<id>.zip    everything on the drive except the map and the library
   <id>.pmtiles     the map, downloaded on its own so it can resume
   <id>.graph       the road network for directions, likewise
+  <id>.places      towns, streets and addresses for the map's search, likewise
   regions.json     what the installer offers; one entry per packaged region,
                    plus the desktop apps already in dist/ for USB sticks
 
@@ -151,7 +152,7 @@ def package(region: Region, drive: Path, out: Path, catalog: str, log=print,
     }
     log(f"wrote {bundle.name} ({bundle.stat().st_size / 1e6:.0f} MB)")
 
-    for key, suffix in (("map", "pmtiles"), ("routing", "graph")):
+    for key, suffix in (("map", "pmtiles"), ("routing", "graph"), ("places", "places")):
         file = drive / "maps" / f"{region.id}.{suffix}"
         if file.is_file():
             copy = out / file.name

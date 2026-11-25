@@ -33,6 +33,11 @@ Early. What has been exercised so far:
   (Start) walked in a browser posing as a phone, position by position,
   including leaving the route. Not yet timed on a Pi or tried on a phone
   outdoors.
+- Map search: the address register's whole-country extract (1.38 million
+  addresses, 30 MB) becomes 775,000 towns, streets and house addresses in a
+  10 MB file in about 15 s. The launcher loads it in under a second at the
+  first search and answers in 20–60 ms on a Mac (a full scan). Searched,
+  picked and routed in a headless browser. Not yet timed on a phone.
 - Builder: the `app`, `launcher`, `maps`, `pois` and `manifest` steps have
   run end to end for the Kuressaare sample. `library` and `documents` have
   not run against the real services yet.
@@ -125,6 +130,7 @@ the usual permission prompt; Linux: UDisks, which needs `exfatprogs`).
         ├── app/         viewer + MapLibre + fonts             ├── start page
         ├── maps/*.pmtiles   read with HTTP Range requests     ├── map
         ├── maps/*.graph     road network ─▶ /api/route        ├── directions
+        ├── maps/*.places    addresses ─▶ /api/places          ├── map search
         ├── pois/*.geojson   hospitals, pharmacies, water …    │
         ├── docs/            PDFs                              │
         └── library/*.zim   read by the launcher itself ──▶ /library/
@@ -160,6 +166,8 @@ and apps always match. It publishes only a clean, up-to-date `main`.
   that part is downloaded.
 - `<id>.graph` is the road network for directions (about 36 MB), always
   for the whole country.
+- `<id>.places` holds the towns, streets and addresses the map's search box
+  finds (about 10 MB), also for the whole country.
 - Library books come straight from the Kiwix mirrors, pinned to the edition
   that was newest at release time, and are checked against Kiwix's SHA-256.
 
@@ -185,6 +193,7 @@ greyed-out Library card.
 | Map tiles | [Protomaps](https://protomaps.com) daily build of OpenStreetMap, cut to the region with `pmtiles extract` | `maps` |
 | Road network | The [Geofabrik](https://download.geofabrik.de) OpenStreetMap extract (`[routing]` in the region file, about 125 MB to download), turned into `maps/<id>.graph` by `router/cmd/varu-graph` | `routing` |
 | Places | OpenStreetMap via the Overpass API, one query per layer, or an official list published as GeoJSON (`geojson =` in the region file) | `pois` |
+| Addresses for search | The Estonian address register's (ADS) monthly extract of valid addresses (`[places]` in the region file, about 30 MB to download), turned into `maps/<id>.places` by `builder/places.py`; streets, settlements and municipalities are derived from the addresses | `places` |
 | Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
 | Documents | URLs listed in the region file | `documents` |
 | Map renderer, fonts, icons | MapLibre GL JS, PMTiles, Protomaps basemaps, pinned and checksummed in `sources.toml` | `app` |

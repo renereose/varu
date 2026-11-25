@@ -30,12 +30,13 @@ def _request(url: str, *, headers: dict | None = None, data: bytes | None = None
     return urllib.request.Request(url, headers=merged, data=data, method=method)
 
 
-def fetch_bytes(url: str, *, data: bytes | None = None, timeout: int = 120, tries: int = 3) -> bytes:
+def fetch_bytes(url: str, *, data: bytes | None = None, timeout: int = 120, tries: int = 3,
+                headers: dict | None = None) -> bytes:
     """Small API responses, with a few patient retries."""
     last: Exception | None = None
     for attempt in range(tries):
         try:
-            with urllib.request.urlopen(_request(url, data=data), timeout=timeout) as response:
+            with urllib.request.urlopen(_request(url, data=data, headers=headers), timeout=timeout) as response:
                 return response.read()
         except urllib.error.HTTPError as err:
             # 4xx will not get better by asking again, except rate limiting.

@@ -14,6 +14,7 @@ from .config import ConfigError, load_region, load_sources
 from .context import Context, StepError
 from .data import step_documents, step_library, step_maps, step_pois, step_routing
 from .manifest import step_manifest
+from .places import step_places
 
 # Order matters only for manifest, which describes what the others produced.
 STEPS = {
@@ -22,6 +23,7 @@ STEPS = {
     "maps": "the region's map, cut from the Protomaps planet build",
     "pois": "hospitals, pharmacies and other place layers from OpenStreetMap",
     "routing": "the road network for offline directions, built from an OpenStreetMap extract",
+    "places": "towns, streets and addresses for the map's search, from the region's address register",
     "library": "Wikipedia and other ZIM archives from the Kiwix catalogue",
     "documents": "documents listed in the region file",
     "manifest": "manifest.json, the list of what is on the drive",
@@ -53,7 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
                         help="where to assemble the drive: the mounted USB drive, or any folder")
     parser.add_argument("--only", type=parse_steps, metavar="STEPS", help="run only these steps (comma-separated)")
     parser.add_argument("--skip", type=parse_steps, metavar="STEPS", default=[], help="leave these steps out")
-    parser.add_argument("--refresh", action="store_true", help="fetch maps, place layers and road data again even if present")
+    parser.add_argument("--refresh", action="store_true", help="fetch maps, place layers, road data and addresses again even if present")
     parser.add_argument("--dry-run", action="store_true", help="show what would be done without downloading anything")
     parser.add_argument("--planet-build", metavar="YYYYMMDD", help="use this Protomaps daily build instead of the newest")
     parser.add_argument("--launcher-dir", type=Path, metavar="DIR",
@@ -87,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
         "maps": lambda c: step_maps(c, refresh=args.refresh),
         "pois": lambda c: step_pois(c, refresh=args.refresh),
         "routing": lambda c: step_routing(c, refresh=args.refresh),
+        "places": lambda c: step_places(c, refresh=args.refresh),
         "library": step_library,
         "documents": step_documents,
         "manifest": step_manifest,

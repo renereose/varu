@@ -67,6 +67,9 @@ const STRINGS = {
     noHits: "Nothing found.",
     searchPreparing: "Preparing search inside {book}: {n}%. Titles can be searched already.",
     noBooks: "There are no books on this drive.",
+    searchMap: "Search the map",
+    searchMapHint: "Town, street, address or place",
+    searching: "Searching…",
   },
   et: {
     offline: "Töötab ilma internetita",
@@ -131,6 +134,9 @@ const STRINGS = {
     noHits: "Midagi ei leitud.",
     searchPreparing: "Valmistan ette otsingut raamatus {book}: {n}%. Pealkirju saab juba otsida.",
     noBooks: "Sellel mälupulgal pole raamatuid.",
+    searchMap: "Otsi kaardilt",
+    searchMapHint: "Asula, tänav, aadress või koht",
+    searching: "Otsin…",
   },
 };
 

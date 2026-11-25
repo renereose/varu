@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import contextlib
+import gzip
 import hashlib
 import io
 import json
@@ -28,6 +29,7 @@ from builder.data import (  # noqa: E402
 )
 from builder.fetch import FetchError, download, sri_matches  # noqa: E402
 from builder.manifest import build_manifest  # noqa: E402
+from builder.places import build_places, lest97_to_wgs84, write_places  # noqa: E402
 from builder.release import package  # noqa: E402
 
 
@@ -307,6 +309,7 @@ class ArchiveTests(unittest.TestCase):
             (out / "maps").mkdir()
             (out / "maps" / "ee.pmtiles").write_bytes(b"x" * 10)
             (out / "maps" / "ee.graph").write_bytes(b"g" * 7)
+            (out / "maps" / "ee.places").write_bytes(b"p" * 3)
             (out / "pois").mkdir()
             (out / "pois" / "hospital.geojson").write_text(
                 json.dumps({"type": "FeatureCollection", "features": [{}, {}]}), encoding="utf-8")
@@ -323,12 +326,61 @@ class ArchiveTests(unittest.TestCase):
             self.assertEqual(manifest["map"]["build"], "20261120")
             self.assertEqual(manifest["routing"], {"file": "maps/ee.graph", "size": 7,
                                                    "source": "https://example.org/ee-261122.osm.pbf"})
+            self.assertEqual(manifest["places"], {"file": "maps/ee.places", "size": 3})
             self.assertEqual([p["id"] for p in manifest["pois"]], ["hospital"])
             self.assertEqual(manifest["pois"][0]["count"], 2)
             self.assertEqual(manifest["pois"][0]["label"]["et"], "Haiglad")
             self.assertEqual(len(manifest["library"]), 1)
             self.assertEqual(manifest["library"][0]["title"], "Vikipeedia")
             json.dumps(manifest)
+
+
+class PlacesTests(unittest.TestCase):
+    def test_lest97(self):
+        # A public shelter as the Land Board's map service gives it in both systems.
+        lon, lat = lest97_to_wgs84(503206.64, 6579397.51)
+        self.assertAlmostEqual(lon, 24.05636882, places=7)
+        self.assertAlmostEqual(lat, 59.35262298, places=7)
+
+    def test_build(self):
+        def row(short, areas, east, north):
+            # Extract 17 gives the northing as x, as geodesists do.
+            return {"lahiaadress": short, "taisaadress": ", ".join(areas + [short]),
+                    "viitepunkt_x": f"{north}", "viitepunkt_y": f"{east}"}
+
+        tartu = ["Tartu maakond", "Tartu linn", "Tartu linn"]
+        rows = [
+            row("Rüütli tn 1", tartu, 659000, 6474000),
+            row("Rüütli tn 3", tartu, 659100, 6474000),
+            row("Rüütli tn 5", tartu, 659900, 6474000),
+            row("Rüütli tn 3-7", tartu, 659100, 6474000),  # a flat
+            row("Mesika", ["Tartu maakond", "Luunja vald", "Kabina küla"], 670000, 6475000),
+            # A short address with commas of its own must not become an area.
+            row("Tartu maakond, Elva linn, Tartu-Valga 449,8-451,8 km", ["Tartu maakond", "Elva vald", "Elva linn"],
+                643658, 6457734),
+        ]
+        contexts, records = build_places(rows)
+        names = [(kind, name, contexts[ctx], count) for kind, ctx, _, _, count, name in records]
+        self.assertEqual(names, [
+            ("p", "Tartu linn", "Tartu maakond", 3),
+            ("p", "Luunja vald", "Tartu maakond", 1), ("p", "Kabina küla", "Luunja vald, Tartu maakond", 1),
+            ("p", "Elva vald", "Tartu maakond", 1), ("p", "Elva linn", "Elva vald, Tartu maakond", 1),
+            ("s", "Rüütli tn", "Tartu linn, Tartu maakond", 3),
+            ("a", "Rüütli tn 1", "Tartu linn, Tartu maakond", 1), ("a", "Rüütli tn 3", "Tartu linn, Tartu maakond", 1),
+            ("a", "Rüütli tn 5", "Tartu linn, Tartu maakond", 1),
+            ("a", "Mesika", "Kabina küla, Luunja vald, Tartu maakond", 1),
+            ("a", "Tartu maakond, Elva linn, Tartu-Valga 449,8-451,8 km", "Elva linn, Elva vald, Tartu maakond", 1),
+        ])
+        street = records[5]
+        self.assertEqual(street[2:4], lest97_to_wgs84(659100, 6474000))  # the address nearest its middle
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp, "ee.places")
+            write_places(contexts, records, path)
+            lines = gzip.decompress(path.read_bytes()).decode().splitlines()
+            self.assertEqual(lines[0], "varu-places\t1")
+            self.assertEqual(lines[1 + len(contexts)].split("\t")[0::4], ["p", "3"])
+            self.assertEqual(lines[-1].split("\t")[-1], "Tartu maakond, Elva linn, Tartu-Valga 449,8-451,8 km")
 
 
 class CliTests(unittest.TestCase):
@@ -372,7 +424,8 @@ class ReleaseTests(unittest.TestCase):
             drive, out = Path(tmp, "drive"), Path(tmp, "dist")
             for rel, body in {
                 "manifest.json": "{}", "app/index.html": "x", "bin/darwin-arm64/varu": "#!",
-                "maps/ee-sample.pmtiles": "tiles", "maps/ee-sample.graph": "roads", "library/a.zim": "z", "build-info.json": "{}", "._junk": "",
+                "maps/ee-sample.pmtiles": "tiles", "maps/ee-sample.graph": "roads",
+                "maps/ee-sample.places": "addresses", "library/a.zim": "z", "build-info.json": "{}", "._junk": "",
             }.items():
                 Path(drive, rel).parent.mkdir(parents=True, exist_ok=True)
                 Path(drive, rel).write_text(body)
@@ -393,6 +446,7 @@ class ReleaseTests(unittest.TestCase):
             self.assertEqual(entry["map"]["path"], "maps/ee-sample.pmtiles")
             self.assertEqual(entry["map"]["sha256"], hashlib.sha256(b"tiles").hexdigest())
             self.assertEqual(entry["routing"]["path"], "maps/ee-sample.graph")
+            self.assertEqual(entry["places"]["path"], "maps/ee-sample.places")
             self.assertEqual(entry["library"], [])
             self.assertEqual([(d["asset"], d["path"]) for d in index["desktop"]], [("Varu-macOS.dmg", "Varu-macOS.dmg")])
 

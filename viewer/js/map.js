@@ -4,6 +4,7 @@ import {
   applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
 } from "./common.js";
 import { setUpRouting } from "./route.js";
+import { setUpSearch } from "./search.js";
 
 const SOURCE = "basemap";
 const POI_STATE_KEY = "varu.pois";
@@ -108,6 +109,7 @@ function startMap(mapInfo) {
   }
   map.on("load", () => {
     routing = setUpRouting(map, { manifest, lang, geolocate, dark });
+    setUpSearch(map, { manifest, lang, base, routing });
     setUpPois(map);
   });
   setUpPanel();
@@ -259,7 +261,8 @@ function showPopup(map, poi, feature) {
 
   const kind = pick(lang, poi.label);
   line("p", kind, "kind");
-  line("h3", props[`name:${lang}`] || props.name || kind);
+  const name = props[`name:${lang}`] || props.name;
+  line("h3", name || kind);
 
   const street = [props["addr:street"], props["addr:housenumber"]].filter(Boolean).join(" ");
   line("p", [street, props["addr:city"]].filter(Boolean).join(", "));
@@ -269,7 +272,7 @@ function showPopup(map, poi, feature) {
   if (props.operator) line("p", `${t(lang, "operator")}: ${props.operator}`);
 
   const popup = new maplibregl.Popup({ offset: 10 }).setLngLat(feature.geometry.coordinates);
-  const buttons = routing?.buttons(feature.geometry.coordinates, () => popup.remove());
+  const buttons = routing?.buttons(feature.geometry.coordinates, () => popup.remove(), name);
   if (buttons) root.append(buttons);
   popup.setDOMContent(root).addTo(map);
 }

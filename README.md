@@ -30,6 +30,7 @@ own devices, so they work with no internet at all:
 
 - 🗺️ **A map of Estonia**: street level around your home, the whole country for travel.
 - 🛡️ **Public shelters**: all 303 of the Rescue Board's shelters, plus hospitals, pharmacies, drinking water, fuel, food stores, police and more.
+- 🔎 **Search**: every town, village, street and house address in Estonia.
 - 🧭 **Directions**: walking or driving, and "take me to the nearest shelter, by road".
 - 📍 **Live directions** on a phone: the next turn, the street name, how far is left.
 - 📚 **A library**: Estonian Wikipedia, a medical encyclopedia and a post-disaster handbook collection, searchable.
@@ -210,6 +211,20 @@ shows when the data was made, so you know how fresh it is.
   works without internet. Most computers have no GPS.
 - **Nearest**, next to each layer, finds the closest one **by road**, not in
   a straight line, so a river or the sea doesn't send you the long way round.
+
+### Search
+
+<img src="docs/images/en/search.jpg" width="240" align="right" alt="Searching the map for Tartu">
+
+Type in the box above the layers: a town or village (**Otepää**), a street,
+a house address (**Rüütli 12 Pärnu**), or a place from the map layers, such as
+a hospital or shelter (**Tartu Ülikooli Kliinikum**).
+
+- Letters like õ, ä, ö and ü can be typed without their marks: **otepaa** finds Otepää.
+- Tap a result and the map goes there. Its pin offers **Route here** and **Start here**.
+- Every address in Estonia is on the drive, even outside your home area.
+
+<br clear="right">
 
 ### Directions
 
@@ -484,7 +499,7 @@ right-click → **Start here** to say where you are.
 </details>
 
 <details>
-<summary><b>Live directions or library search are missing after updating the phone app.</b></summary>
+<summary><b>Map search, live directions or library search are missing after updating the phone app.</b></summary>
 
 These live in the downloaded data, not in the app. Open Varu and choose
 **Update** when asked, or use **⋮ → Downloads** → **Install**.
@@ -508,6 +523,7 @@ anywhere else can't replace the app.
 |---|---|---|
 | Map, places, roads | © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, basemap by [Protomaps](https://protomaps.com) | ODbL |
 | Public shelters | Päästeamet (Estonian Rescue Board), via Maa- ja Ruumiamet | Land Board open data |
+| Addresses, streets, towns | Maa- ja Ruumiamet (Land and Spatial Development Board), [address data system](https://geoportaal.maaamet.ee/eng/spatial-data/address-data-p313.html) | open data |
 | Vikipeedia, WikiMed | Wikipedia, packaged by [Kiwix](https://kiwix.org) | CC BY-SA |
 | Post Disaster Resource Library | [Kiwix](https://library.kiwix.org) | each document's own |
 | Varu itself | this repository | [MIT](LICENSE) |
