@@ -9,52 +9,9 @@ import (
 	"path/filepath"
 	"slices"
 	"testing"
+
+	"github.com/renereose/varu/pmtiles"
 )
-
-func TestTileIDs(t *testing.T) {
-	// Fixed points from the PMTiles spec's reference implementation.
-	for _, c := range []struct {
-		z    uint8
-		x, y uint32
-		id   uint64
-	}{{0, 0, 0, 0}, {1, 0, 0, 1}, {1, 0, 1, 2}, {1, 1, 1, 3}, {1, 1, 0, 4}, {2, 0, 0, 5}} {
-		if got := zxyToID(c.z, c.x, c.y); got != c.id {
-			t.Errorf("zxyToID(%d,%d,%d) = %d, want %d", c.z, c.x, c.y, got, c.id)
-		}
-	}
-	for _, id := range []uint64{0, 7, 1000, 123456789, zxyToID(15, 18432, 9472)} {
-		z, x, y := idToZxy(id)
-		if back := zxyToID(z, x, y); back != id {
-			t.Errorf("round trip %d -> %d/%d/%d -> %d", id, z, x, y, back)
-		}
-	}
-}
-
-func TestLeafDirectories(t *testing.T) {
-	var entries []entry
-	for i := uint64(0); i < 60000; i++ {
-		entries = append(entries, entry{TileID: i * 3, Offset: i * 977 % 1000003, Length: uint32(i%500 + 1), RunLength: 1})
-	}
-	root, leaves := buildDirs(entries)
-	if len(root) > rootMax-headerLen || len(leaves) == 0 {
-		t.Fatalf("root %d bytes, leaves %d bytes", len(root), len(leaves))
-	}
-	pointers, err := decodeDir(root)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var got []entry
-	for _, p := range pointers {
-		leaf, err := decodeDir(leaves[p.Offset : p.Offset+uint64(p.Length)])
-		if err != nil {
-			t.Fatal(err)
-		}
-		got = append(got, leaf...)
-	}
-	if fmt.Sprint(got) != fmt.Sprint(entries) {
-		t.Fatal("entries changed on the way through leaf directories")
-	}
-}
 
 // writeArchive makes a small source map: every tile of zooms 0-2, plus a
 // 6x6 block of street-level tiles around Tartu. Each tile's data is its zxy.
@@ -62,7 +19,7 @@ func writeArchive(t *testing.T, path string) map[uint64]string {
 	tiles := map[uint64]string{}
 	var ids []uint64
 	add := func(z uint8, x, y uint32) {
-		id := zxyToID(z, x, y)
+		id := pmtiles.ZxyToID(z, x, y)
 		tiles[id] = fmt.Sprintf("%d/%d/%d", z, x, y)
 	}
 	for z := uint8(0); z <= 2; z++ {
@@ -83,19 +40,19 @@ func writeArchive(t *testing.T, path string) map[uint64]string {
 	}
 	slices.Sort(ids)
 	var data bytes.Buffer
-	var entries []entry
+	var entries []pmtiles.Entry
 	for _, id := range ids {
-		entries = append(entries, entry{TileID: id, Offset: uint64(data.Len()), Length: uint32(len(tiles[id])), RunLength: 1})
+		entries = append(entries, pmtiles.Entry{TileID: id, Offset: uint64(data.Len()), Length: uint32(len(tiles[id])), RunLength: 1})
 		data.WriteString(tiles[id])
 	}
-	root, leaves := buildDirs(entries)
-	meta := encodeDir(nil) // any gzip blob will do
-	h := pmHeader{InternalComp: gzipComp, TileComp: 1, TileType: 1, MaxZoom: 14}
-	h.RootOffset, h.RootLength = headerLen, uint64(len(root))
+	root, leaves := pmtiles.BuildDirs(entries)
+	meta := pmtiles.EncodeDir(nil) // any gzip blob will do
+	h := pmtiles.Header{InternalComp: pmtiles.Gzip, TileComp: 1, TileType: 1, MaxZoom: 14}
+	h.RootOffset, h.RootLength = pmtiles.HeaderLen, uint64(len(root))
 	h.MetaOffset, h.MetaLength = h.RootOffset+h.RootLength, uint64(len(meta))
 	h.LeafOffset, h.LeafLength = h.MetaOffset+h.MetaLength, uint64(len(leaves))
 	h.DataOffset, h.DataLength = h.LeafOffset+h.LeafLength, uint64(data.Len())
-	out := append(append(append(append(h.bytes(), root...), meta...), leaves...), data.Bytes()...)
+	out := append(append(append(append(h.Bytes(), root...), meta...), leaves...), data.Bytes()...)
 	if err := os.WriteFile(path, out, 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -132,7 +89,7 @@ func TestCut(t *testing.T) {
 	raw, _ := os.ReadFile(filepath.Join(dir, "out.pmtiles"))
 	street := 0
 	for _, e := range out.Entries {
-		z, _, _ := idToZxy(e.TileID)
+		z, _, _ := pmtiles.IDToZxy(e.TileID)
 		got := string(raw[out.Header.DataOffset+e.Offset:][:e.Length])
 		if got != tiles[e.TileID] {
 			t.Errorf("tile %d holds %q, want %q", e.TileID, got, tiles[e.TileID])
@@ -167,7 +124,7 @@ func TestRealArchive(t *testing.T) {
 	var addressed uint64
 	for _, e := range a.Entries {
 		addressed += uint64(e.RunLength)
-		tz, x, y := idToZxy(e.TileID)
+		tz, x, y := pmtiles.IDToZxy(e.TileID)
 		if tz == z && (x < x0-1 || x > x1+1 || y < y0-1 || y > y1+1) {
 			t.Fatalf("tile %d/%d/%d is outside the file's bounds", tz, x, y)
 		}

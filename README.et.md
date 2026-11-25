@@ -362,9 +362,21 @@ ekraani**, **GPS-mooduli**, mõne **nupu** ja **akuga**. See näitab kaarti,
 sinu asukohta ning lähimat joogivett või varjumiskohta päevade kaupa ühe
 laadimisega ja ilma telefonita.
 
-> 🚧 **Seadme tarkvara pole veel kirjutatud.** Praegu ei joonista miski kaarti
-> e-tindi ekraanile ega loe GPS-i ja nuppe. Plaani saad jälgida failis
+> 🚧 **Seade veel ei tööta.** Tarkvara esimene osa on kirjutatud: see
+> joonistab Varu andmetest e-tindi ekraani kaardivaateid, praegu ainult
+> piltidena arvutis (vt allpool). Päris e-tindi ekraanile need veel ei jõua
+> ning GPS-i ja nuppe miski ei loe. Plaani saad jälgida failis
 > [docs/plans/pi-eink-phase1.md](docs/plans/pi-eink-phase1.md).
+
+Nii võiks ekraan välja näha, joonistatud Eesti kaardist (400×300 pikslit,
+tegelikus suuruses umbes 85 mm lai):
+
+| Rõuge, must-valge | Tallinna vanalinn, 4 halli tooni | Tartu ja ümbrus, must-valge |
+|---|---|---|
+| ![Rõuge must-valgel e-tindi ekraanil](docs/images/pocket-rouge-14.png) | ![Tallinna vanalinn 4 halli tooniga e-tindi ekraanil](docs/images/pocket-tallinn-14-grey.png) | ![Tartu must-valgel e-tindi ekraanil](docs/images/pocket-tartu-10.png) |
+
+Arendajad saavad ise pilte joonistada käsuga `make mockups DRIVE=/Volumes/VARU`
+(vt [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
 
 Kui tahad riistvara juba koguda ja proovida, siis selle peale me plaanime:
 

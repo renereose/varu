@@ -362,9 +362,21 @@ We're designing a pocket-sized Varu: a **Raspberry Pi Zero 2 W** with an
 shows the map, where you are and the nearest water or shelter, for days on
 one charge, with no phone.
 
-> 🚧 **The device's software isn't written yet.** Nothing yet draws the map
-> on an e-ink screen or reads the GPS and buttons. Follow the plan in
+> 🚧 **The device doesn't work yet.** The first part of its software is
+> written: it draws e-ink map screens from a Varu drive, so far only as
+> pictures on a computer (below). Nothing yet shows them on a real e-ink
+> screen or reads the GPS and buttons. Follow the plan in
 > [docs/plans/pi-eink-phase1.md](docs/plans/pi-eink-phase1.md).
+
+What the screen could look like, drawn from the Estonia map (400×300 pixels,
+real size about 85 mm wide):
+
+| Rõuge, black and white | Tallinn Old Town, 4 greys | Tartu and around, black and white |
+|---|---|---|
+| ![Rõuge on a black and white e-ink screen](docs/images/pocket-rouge-14.png) | ![Tallinn Old Town on a 4-grey e-ink screen](docs/images/pocket-tallinn-14-grey.png) | ![Tartu on a black and white e-ink screen](docs/images/pocket-tartu-10.png) |
+
+Developers can draw their own with `make mockups DRIVE=/Volumes/VARU`
+(see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
 
 If you'd like to collect and test the hardware now, this is what we're planning for:
 

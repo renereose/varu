@@ -1,8 +1,23 @@
 # Plan: Pi Zero e-ink pocket device, phase 1 (map renderer on the Mac, no hardware)
 
-Status: proposed 2026-11-23, waiting for decisions (section 1) and the folder name
-(`device/` or e.g. `pocket/`). Comes after the offline router
-(`docs/plans/offline-router.md`), by the user's priority.
+Status: built 2026-11-26 with option A for all seven decisions, in `pocket/` with
+the command `varu-pocket` (read those for `device/` and `varu-device` below). Where
+this plan and the code differ, the code is right. Found while building:
+
+- The tiles are Protomaps v4: railways are `roads` with kind `rail`, pedestrian
+  streets are `path` with kind_detail `pedestrian` (drawn as streets), forests are
+  `landuse` forest/wood (there is no `landcover` layer), and places carry `min_zoom`.
+- Drives also have a `shelter` layer: drawn with the ring-and-dot symbol, second in
+  priority after hospitals, from zoom 11.
+- Tuned from the mock-ups: villages show one zoom before the tiles' `min_zoom` (else
+  the countryside has no names at zoom 10, though small villages are still missing
+  there because the zoom 10 tiles leave them out); town and city names are placed
+  before the symbols; 1-bit buildings are a diagonal hatch (the 50% checker buried
+  the streets), 1-bit forest is one dot in 16, and 1-bit rivers are dashed so they
+  differ from roads.
+- The drive's books are read by Varu's own `zim/` reader now, not kiwix-serve.
+- Not made: the Tartu-home and Otepää-beyond-the-radius mock-ups. The parent-tile
+  fallback is covered by `TestParentTile` and was checked on a 1 km cut map.
 
 Goal of the device: Raspberry Pi Zero 2 W + ~4.2" e-ink (400×300, 1-bit or 4-grey) +
 5–6 buttons + GPS + battery: an offline map, your position and "nearest water /

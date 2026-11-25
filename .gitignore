@@ -12,6 +12,7 @@ __pycache__/
 # Go
 /launcher/varu
 /launcher/varu.exe
+/pocket/pocket
 
 # Editors and operating systems
 .DS_Store

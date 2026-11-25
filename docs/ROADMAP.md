@@ -103,6 +103,24 @@ A first build on a normal internet connection will settle these:
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.
 
+## 6. Pocket device
+
+A Raspberry Pi Zero 2 W with an e-ink panel, GPS, buttons and a battery:
+the map, your position and the nearest water or shelter, with no phone.
+Plan: [plans/pi-eink-phase1.md](plans/pi-eink-phase1.md).
+
+- [x] Phase 1: a renderer (`pocket/`, `varu-pocket`) that draws 1-bit and
+      4-grey screens from a drive, with the drive's own font, and PNG
+      mock-ups (`make mockups`) to choose the panel and the style. The
+      PMTiles code is shared with the installer (`pmtiles/`).
+- [ ] Choose the panel (4.2" 400×300 or 5.83" 648×480) and 1-bit or
+      4-grey from the mock-ups; tune `pocket/style.go`.
+- [ ] Phase 1b: the launcher serves rendered map images to a light page,
+      for Pis whose browser cannot run the normal map (no WebGL 2).
+- [ ] Panel driver (SPI), buttons, GPS (u-blox NMEA over the serial port),
+      a nearest-places screen, menus and panning.
+- [ ] Battery life, boot time, an SD card image and an enclosure.
+
 ## Decisions to make
 
 - **Name.** "Varu" is a placeholder.
