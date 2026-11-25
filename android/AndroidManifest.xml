@@ -10,6 +10,11 @@
     <!-- Only for "Use my location" in the wizard, asked for when tapped. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Installs carry on with the screen off: DownloadService. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- extractNativeLibs: the Go programs ship as lib*.so and must be
          unpacked to run. Cleartext: the WebView talks to them over
@@ -29,5 +34,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- ponytail: target 34 has no time limit on dataSync; 35 stops it after
+             6 h a day and needs onTimeout. -->
+        <service
+            android:name=".DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>

@@ -185,7 +185,9 @@ nobody deletes them by accident.
    Install anyway**. Varu isn't in the Play Store yet.
 4. Open **Varu**. The same setup wizard starts. Choose **This phone** (or
    the memory card, if your phone has one), your home and what you want, then **Install**.
-5. Stay on Wi-Fi while it downloads. Afterwards Varu works in flight mode too.
+5. Stay on Wi-Fi while it downloads. Varu asks to show notifications: allow
+   it to see the progress there. You can lock the phone or use other apps
+   meanwhile; the download carries on. Afterwards Varu works in flight mode too.
 
 The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wizard.
 

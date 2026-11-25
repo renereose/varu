@@ -185,7 +185,9 @@ kogemata ära ei kustutaks.
    Installi ikkagi**. Varu ei ole veel Play poes.
 4. Ava **Varu**. Käivitub sama paigaldusviisard. Vali **See telefon** (või
    mälukaart, kui telefonis see on), oma kodu ja mida soovid, siis **Paigalda**.
-5. Hoia allalaadimise ajal telefon WiFi-võrgus. Pärast seda töötab Varu ka lennukirežiimis.
+5. Hoia allalaadimise ajal telefon WiFi-võrgus. Varu küsib luba teavitusi näidata:
+   luba see, et edenemist seal näha. Vahepeal võid telefoni lukustada või teisi
+   rakendusi kasutada, allalaadimine jätkub. Pärast seda töötab Varu ka lennukirežiimis.
 
 Ülal olevas menüüs **⋮** on **Kaart** ja **Allalaadimised**, mis avab viisardi uuesti.
 
