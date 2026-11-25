@@ -16,6 +16,11 @@
       <a class="back" href="./" data-i18n="back">Back</a>
       <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="layer-list" data-i18n="layers">Layers</button>
     </div>
+    <form id="search" class="map-search" role="search" hidden>
+      <input id="search-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
+        aria-controls="search-results" aria-expanded="false">
+      <ul id="search-results" class="search-results" hidden></ul>
+    </form>
     <ul id="layer-list" class="layer-list"></ul>
   </aside>
 

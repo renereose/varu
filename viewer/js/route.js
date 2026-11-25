@@ -163,12 +163,13 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   startButton.addEventListener("click", () => nav.start());
   document.getElementById("route-end").addEventListener("click", () => nav.stop());
 
-  function buttons(lngLat, done) {
+  // name, when given, is shown with a route there.
+  function buttons(lngLat, done, name = null) {
     const point = maplibregl.LngLat.convert(lngLat).toArray();
     const box = Object.assign(document.createElement("div"), { className: "route-buttons" });
-    for (const [key, act] of [["routeHere", routeTo], ["startHere", startFrom]]) {
+    for (const [key, act] of [["routeHere", () => routeTo(point, name)], ["startHere", () => startFrom(point)]]) {
       const button = Object.assign(document.createElement("button"), { type: "button", textContent: t(lang, key) });
-      button.addEventListener("click", () => { done?.(); act(point); });
+      button.addEventListener("click", () => { done?.(); act(); });
       box.append(button);
     }
     return box;

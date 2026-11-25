@@ -11,6 +11,7 @@ attribution = [
   "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
   "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
   "Public shelters: Päästeamet, via Maa- ja Ruumiamet.",
+  "Addresses: Maa- ja Ruumiamet, address data system (ADS).",
 ]
 
 [name]
@@ -30,6 +31,15 @@ zoom = 6.5
 # (about 125 MB to download at build time; the drive gets a ~35 MB file).
 [routing]
 osm_extract = "https://download.geofabrik.de/europe/estonia-latest.osm.pbf"
+
+# --- Search ----------------------------------------------------------------------
+# Towns, villages, streets and house addresses for the map's search box, from
+# the Land and Spatial Development Board's address register (ADS). Its data
+# is open with no licence agreement; the Board asks to be credited
+# (https://geoportaal.maaamet.ee/eng/spatial-data/address-data-p313.html).
+# About 30 MB to download at build time; the drive gets a ~15 MB file.
+[places]
+ads = "https://aks.geoportaal.ee/aks-open-api/public/valjav6te"
 
 # --- Places shown as map layers --------------------------------------------------
 # Each layer is one or more OpenStreetMap tags ("key=value"); an object matching

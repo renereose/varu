@@ -50,6 +50,7 @@ var dataDirs = []string{"maps", "pois", "docs"}
 //	/manifest.json    what the build put on the drive
 //	/api/status       launcher status for the viewer
 //	/api/route        directions on the drive's road network
+//	/api/places       search for towns, streets and addresses (places.go)
 //	/library/  /api/library   the books in library/ (library.go)
 func NewHandler(cfg Config) http.Handler {
 	mux := http.NewServeMux()
@@ -80,6 +81,7 @@ func NewHandler(cfg Config) http.Handler {
 	})
 
 	mux.Handle("/api/route", &routes{root: cfg.Root})
+	mux.Handle("/api/places", &places{root: cfg.Root})
 
 	lib := &library{root: cfg.Root, prepare: cfg.Search}
 	lib.register(mux)

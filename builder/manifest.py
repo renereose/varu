@@ -46,6 +46,12 @@ def build_manifest(ctx: Context) -> dict:
         if info.get("routing_source"):
             manifest["routing"]["source"] = info["routing_source"]
 
+    places = ctx.out / "maps" / f"{region.id}.places"
+    if places.is_file():
+        manifest["places"] = {"file": f"maps/{places.name}", "size": places.stat().st_size}
+        if info.get("places_source"):
+            manifest["places"]["source"] = info["places_source"]
+
     pois = []
     for poi in region.pois:
         path = ctx.out / "pois" / f"{poi.id}.geojson"
@@ -104,6 +110,7 @@ def step_manifest(ctx: Context) -> None:
     parts = [
         "map" if "map" in manifest else "no map",
         "road data" if "routing" in manifest else "no road data",
+        "addresses" if "places" in manifest else "no addresses",
         f"{len(manifest['pois'])} place layers",
         f"{len(manifest['library'])} library files",
         f"{len(manifest['documents'])} documents",
