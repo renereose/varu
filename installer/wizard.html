@@ -220,6 +220,7 @@ const STRINGS = {
     install: "Install",
     installing: "Installing…",
     keepOpen: "Keep this page open. If the connection breaks, start the installer again: it continues where it stopped.",
+    keepOpenPhone: "You can lock the phone or use other apps meanwhile. If the connection breaks, open Varu again: it continues where it stopped.",
     step_app: "Downloading the Varu app and places",
     step_map: "Downloading the map",
     step_routing: "Downloading road data for directions",
@@ -309,6 +310,7 @@ const STRINGS = {
     install: "Paigalda",
     installing: "Paigaldan…",
     keepOpen: "Hoia see leht avatuna. Kui ühendus katkeb, käivita paigaldaja uuesti – see jätkab sealt, kus pooleli jäi.",
+    keepOpenPhone: "Vahepeal võid telefoni lukustada või teisi rakendusi kasutada. Kui ühendus katkeb, ava Varu uuesti – see jätkab sealt, kus pooleli jäi.",
     step_app: "Laadin alla Varu rakendust ja kohti",
     step_map: "Laadin alla kaarti",
     step_routing: "Laadin alla teekonnaandmeid",
@@ -703,6 +705,7 @@ function renderJob(job) {
   if (!job.finished) {
     if ($("progress").hidden) showProgress();
     s.installing = true;
+    window.VaruAndroid?.downloading?.(); // keeps going with the screen off
     $("bar").max = job.total || 1; $("bar").value = job.done;
     const c = job.current;
     const what = !c ? "" : c.kind === "book" ? t("step_book", { title: c.title }) : t(c.cut ? "step_cut" : `step_${c.kind}`);
@@ -722,6 +725,7 @@ function renderJob(job) {
 // Inside the Android or desktop app, the app itself switches to the viewer.
 const host = window.VaruAndroid ?? window.VaruDesktop;
 $("open-files").hidden = !!window.VaruAndroid;
+if (window.VaruAndroid) document.querySelector("[data-t=keepOpen]").dataset.t = "keepOpenPhone";
 $("open-varu").addEventListener("click", () => {
   if (host) { host.openVaru(s.state?.job?.target ?? ""); return; }
   api("/api/open", { What: "varu" }).catch((err) => alert(err.message));

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,8 +47,13 @@ public class MainActivity extends Activity {
     private static final Pattern URL = Pattern.compile("http://\\S+");
     private static final int MENU_MAP = 1, MENU_DOWNLOADS = 2;
 
+    // Static: a download keeps the installer running while the app has no
+    // screen (DownloadService), and a new screen finds it again.
+    private static Process process;
+    private static volatile String page; // the address the program printed
+    private static boolean askedNotifications;
+
     private WebView web;
-    private Process process;
     private boolean installerMode;
     private File viewerRoot;
     private File updating; // the drive the installer was opened to update
@@ -57,7 +63,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        // Downloads stop if the phone sleeps with the app closed; keep it awake while open.
+        // The screen stays on while Varu is open, for following directions.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         web = new WebView(this);
@@ -97,7 +103,10 @@ public class MainActivity extends Activity {
         setContentView(web);
 
         File installed = installedDrive();
-        if (installed != null) {
+        if (downloading()) {
+            installerMode = true; // back to the download under way
+            web.loadUrl(page);
+        } else if (installed != null) {
             startViewer(installed);
             if (olderThanApp(installed)) offerUpdate(installed);
         } else {
@@ -107,7 +116,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
-        if (geoCallback == null) return;
+        if (code != 1 || geoCallback == null) return;
         boolean granted = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
         geoCallback.invoke(geoOrigin, granted, false);
         geoCallback = null;
@@ -126,7 +135,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        stop();
+        if (!downloading()) stop();
         super.onDestroy();
     }
 
@@ -146,14 +155,15 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(MENU_MAP).setVisible(installedDrive() != null);
+        menu.findItem(MENU_MAP).setVisible(installedDrive() != null && !downloading());
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == MENU_DOWNLOADS) {
-            startInstaller(installedDrive());
+            if (downloading()) web.loadUrl(page);
+            else startInstaller(installedDrive());
             return true;
         }
         if (item.getItemId() == MENU_MAP) {
@@ -220,6 +230,7 @@ public class MainActivity extends Activity {
                         if (!opened && m.find()) {
                             opened = true;
                             String url = m.group();
+                            page = url;
                             runOnUiThread(() -> web.loadUrl(url));
                         }
                     }
@@ -236,6 +247,10 @@ public class MainActivity extends Activity {
     private void stop() {
         if (process != null) process.destroy();
         process = null;
+    }
+
+    private static boolean downloading() {
+        return DownloadService.running && process != null && !hasExited(process);
     }
 
     private String program(String name) {
@@ -355,12 +370,26 @@ public class MainActivity extends Activity {
         return "http".equals(uri.getScheme()) && ("127.0.0.1".equals(host) || "localhost".equals(host));
     }
 
-    private static boolean isEstonian() {
+    static boolean isEstonian() {
         return "et".equals(Locale.getDefault().getLanguage());
     }
 
     /** Called by the wizard page (installer/wizard.html) when it runs inside this app. */
     private class Bridge {
+        /** The wizard calls this while a job runs, so it carries on with the screen off. */
+        @JavascriptInterface
+        public void downloading() {
+            runOnUiThread(() -> {
+                if (!installerMode || DownloadService.running) return;
+                if (Build.VERSION.SDK_INT >= 33 && !askedNotifications
+                        && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    askedNotifications = true; // without it the download still runs, just without its notification
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 2);
+                }
+                DownloadService.start(MainActivity.this, page);
+            });
+        }
+
         @JavascriptInterface
         public void openVaru(String target) {
             runOnUiThread(() -> {

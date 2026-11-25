@@ -97,8 +97,12 @@ A first build on a normal internet connection will settle these:
       the launcher builds one itself only if it is missing.
 - [ ] Library: delete indexes of removed books; random article;
       xz-compressed archives (editions from before about 2021).
-- [ ] Android: an app icon, dark mode, and downloads that continue in the
-      background.
+- [x] Android: downloads carry on with the screen locked, in other apps or
+      with Varu swiped away (a foreground service with a progress
+      notification, a wake lock and a Wi-Fi lock). Tried on the Android 15
+      emulator with Doze forced; not yet on a real phone, where some makers
+      add battery savers of their own.
+- [ ] Android: an app icon and dark mode.
 - [ ] Installer: remove older ZIM editions when a newer one is installed.
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.
