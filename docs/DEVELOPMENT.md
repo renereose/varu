@@ -13,6 +13,8 @@ turn freely available content into a drive:
 | **Launcher** | A small Go program on the drive that serves it to the browser | `launcher/` |
 | **Router** | Varu's own offline directions: builds a road network from OpenStreetMap and finds routes on it | `router/` |
 | **Library reader** | Varu's own reader for the ZIM books (Wikipedia and others): pages, images, files, and search by title and inside the text | `zim/` |
+| **Map files** | The PMTiles format, shared by the installer (which cuts maps) and the pocket renderer (which reads them) | `pmtiles/` |
+| **Pocket renderer** | Draws e-ink map screens from a drive, for a planned Raspberry Pi pocket device; for now it writes PNG mock-ups | `pocket/` |
 | **Viewer** | The web pages you see: start page, map and library | `viewer/` |
 
 ## Status
@@ -49,6 +51,12 @@ Early. What has been exercised so far:
 - Installer: unit-tested and run end to end on macOS against a locally
   built release, including the radius map cut and the Android flow in
   phone mode. Not yet run on Windows or on a phone.
+- Pocket renderer: draws 1-bit and 4-grey screens from the release drive,
+  under 0.1 s each on a Mac (the busiest: central Tallinn at 648×480);
+  mock-ups of Tallinn, Tartu and Rõuge at zooms 10, 12 and 14 with
+  `make mockups DRIVE=…`. Cross-compiles for the
+  Pi (64-bit, and 32-bit ARMv6 for a Pi Zero W) but has not run on a Pi or
+  drawn on a real e-ink panel; there is no panel driver, GPS or buttons yet.
 
 Expect the first real build to need small fixes. The likeliest places are
 listed in [ROADMAP.md](ROADMAP.md).
@@ -148,7 +156,8 @@ and apps always match. It publishes only a clean, up-to-date `main`.
 - `varu-<id>.zip` is the drive without its map and library.
 - `<id>.pmtiles` is the country's map. For a radius install the installer
   cuts a smaller map out of it with HTTP range requests
-  (`installer/pmtiles.go`), so only that part is downloaded.
+  (`installer/pmtiles.go`, with the file format in `pmtiles/`), so only
+  that part is downloaded.
 - `<id>.graph` is the road network for directions (about 36 MB), always
   for the whole country.
 - Library books come straight from the Kiwix mirrors, pinned to the edition
@@ -217,8 +226,8 @@ reachable.
 
 ## Contributing
 
-Run `make test` before sending a change. The router, launcher and installer
-use only the Go standard library, except for one zstd decoder
+Run `make test` before sending a change. The router, launcher, installer,
+map files and pocket renderer use only the Go standard library, except for one zstd decoder
 (klauspost/compress) in the library reader; the builder uses only the Python
 standard library
 and the Android app only the Android framework (it builds without Gradle:

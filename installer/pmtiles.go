@@ -1,14 +1,10 @@
 package main
 
-// A minimal PMTiles v3 reader and writer: enough to cut a map that has the
-// whole country at overview zooms and full street detail around home out
-// of the release's country map, with HTTP range requests.
-// Spec: https://github.com/protomaps/PMTiles/blob/main/spec/v3/spec.md
+// Cutting a map that has the whole country at overview zooms and full
+// street detail around home out of the release's country map, with HTTP
+// range requests. The file format itself is in ../pmtiles.
 
 import (
-	"bytes"
-	"compress/gzip"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -18,219 +14,15 @@ import (
 	"path/filepath"
 	"sort"
 	"time"
+
+	"github.com/renereose/varu/pmtiles"
 )
 
 const (
-	headerLen    = 127
-	rootMax      = 16384 // header and root directory always fit in the first 16 KiB
-	gzipComp     = 2
 	maxChunk     = 8 << 20   // bytes per range request
 	maxGap       = 512 << 10 // fetch across gaps smaller than this rather than make another request
 	overviewZoom = 12        // whole country down to here: every road and village, ~50 MB for Estonia
 )
-
-type pmHeader struct {
-	RootOffset, RootLength, MetaOffset, MetaLength uint64
-	LeafOffset, LeafLength, DataOffset, DataLength uint64
-	Addressed, Entries, Contents                   uint64
-	Clustered                                      bool
-	InternalComp, TileComp, TileType               uint8
-	MinZoom, MaxZoom                               uint8
-	MinLonE7, MinLatE7, MaxLonE7, MaxLatE7         int32
-	CenterZoom                                     uint8
-	CenterLonE7, CenterLatE7                       int32
-}
-
-func parseHeader(b []byte) (pmHeader, error) {
-	var h pmHeader
-	if len(b) < headerLen || string(b[:7]) != "PMTiles" || b[7] != 3 {
-		return h, errors.New("not a PMTiles v3 file")
-	}
-	u := func(i int) uint64 { return binary.LittleEndian.Uint64(b[i:]) }
-	s := func(i int) int32 { return int32(binary.LittleEndian.Uint32(b[i:])) }
-	h = pmHeader{
-		RootOffset: u(8), RootLength: u(16), MetaOffset: u(24), MetaLength: u(32),
-		LeafOffset: u(40), LeafLength: u(48), DataOffset: u(56), DataLength: u(64),
-		Addressed: u(72), Entries: u(80), Contents: u(88),
-		Clustered: b[96] == 1, InternalComp: b[97], TileComp: b[98], TileType: b[99],
-		MinZoom: b[100], MaxZoom: b[101],
-		MinLonE7: s(102), MinLatE7: s(106), MaxLonE7: s(110), MaxLatE7: s(114),
-		CenterZoom: b[118], CenterLonE7: s(119), CenterLatE7: s(123),
-	}
-	return h, nil
-}
-
-func (h pmHeader) bytes() []byte {
-	b := make([]byte, headerLen)
-	copy(b, "PMTiles")
-	b[7] = 3
-	for i, v := range []uint64{h.RootOffset, h.RootLength, h.MetaOffset, h.MetaLength, h.LeafOffset,
-		h.LeafLength, h.DataOffset, h.DataLength, h.Addressed, h.Entries, h.Contents} {
-		binary.LittleEndian.PutUint64(b[8+8*i:], v)
-	}
-	if h.Clustered {
-		b[96] = 1
-	}
-	b[97], b[98], b[99], b[100], b[101] = h.InternalComp, h.TileComp, h.TileType, h.MinZoom, h.MaxZoom
-	for i, v := range []int32{h.MinLonE7, h.MinLatE7, h.MaxLonE7, h.MaxLatE7} {
-		binary.LittleEndian.PutUint32(b[102+4*i:], uint32(v))
-	}
-	b[118] = h.CenterZoom
-	binary.LittleEndian.PutUint32(b[119:], uint32(h.CenterLonE7))
-	binary.LittleEndian.PutUint32(b[123:], uint32(h.CenterLatE7))
-	return b
-}
-
-type entry struct {
-	TileID    uint64
-	Offset    uint64
-	Length    uint32
-	RunLength uint32 // 0 marks a pointer to a leaf directory
-}
-
-func decodeDir(compressed []byte) ([]entry, error) {
-	zr, err := gzip.NewReader(bytes.NewReader(compressed))
-	if err != nil {
-		return nil, err
-	}
-	raw, err := io.ReadAll(zr)
-	if err != nil {
-		return nil, err
-	}
-	r := bytes.NewReader(raw)
-	next := func() uint64 {
-		v, e := binary.ReadUvarint(r)
-		if e != nil && err == nil {
-			err = e
-		}
-		return v
-	}
-	n := next()
-	if err != nil || n > uint64(len(raw)) {
-		return nil, errors.New("damaged directory")
-	}
-	entries := make([]entry, n)
-	var id uint64
-	for i := range entries {
-		id += next()
-		entries[i].TileID = id
-	}
-	for i := range entries {
-		entries[i].RunLength = uint32(next())
-	}
-	for i := range entries {
-		entries[i].Length = uint32(next())
-	}
-	for i := range entries {
-		v := next()
-		if v == 0 && i > 0 {
-			entries[i].Offset = entries[i-1].Offset + uint64(entries[i-1].Length)
-		} else {
-			entries[i].Offset = v - 1
-		}
-	}
-	return entries, err
-}
-
-func encodeDir(entries []entry) []byte {
-	var raw []byte
-	raw = binary.AppendUvarint(raw, uint64(len(entries)))
-	var last uint64
-	for _, e := range entries {
-		raw = binary.AppendUvarint(raw, e.TileID-last)
-		last = e.TileID
-	}
-	for _, e := range entries {
-		raw = binary.AppendUvarint(raw, uint64(e.RunLength))
-	}
-	for _, e := range entries {
-		raw = binary.AppendUvarint(raw, uint64(e.Length))
-	}
-	for i, e := range entries {
-		if i > 0 && e.Offset == entries[i-1].Offset+uint64(entries[i-1].Length) {
-			raw = binary.AppendUvarint(raw, 0)
-		} else {
-			raw = binary.AppendUvarint(raw, e.Offset+1)
-		}
-	}
-	var buf bytes.Buffer
-	zw := gzip.NewWriter(&buf)
-	_, _ = zw.Write(raw)
-	_ = zw.Close()
-	return buf.Bytes()
-}
-
-// buildDirs makes the root directory, splitting entries into leaf
-// directories when they do not fit in the first 16 KiB.
-func buildDirs(entries []entry) (root, leaves []byte) {
-	if root = encodeDir(entries); len(root) <= rootMax-headerLen {
-		return root, nil
-	}
-	for size := 4096; ; size *= 2 {
-		var pointers []entry
-		leaves = leaves[:0]
-		for i := 0; i < len(entries); i += size {
-			leaf := encodeDir(entries[i:min(i+size, len(entries))])
-			pointers = append(pointers, entry{TileID: entries[i].TileID, Offset: uint64(len(leaves)), Length: uint32(len(leaf))})
-			leaves = append(leaves, leaf...)
-		}
-		if root = encodeDir(pointers); len(root) <= rootMax-headerLen {
-			return root, leaves
-		}
-	}
-}
-
-// Tile IDs number tiles zoom by zoom along a Hilbert curve.
-
-func zxyToID(z uint8, x, y uint32) uint64 {
-	acc := (uint64(1)<<(2*uint64(z)) - 1) / 3
-	var d uint64
-	for s := uint32(1) << z >> 1; s > 0; s >>= 1 {
-		var rx, ry uint32
-		if x&s != 0 {
-			rx = 1
-		}
-		if y&s != 0 {
-			ry = 1
-		}
-		d += uint64(s) * uint64(s) * uint64((3*rx)^ry)
-		x, y = rotate(s, x, y, rx, ry)
-	}
-	return acc + d
-}
-
-func idToZxy(id uint64) (uint8, uint32, uint32) {
-	var z uint8
-	var acc uint64
-	for ; ; z++ {
-		count := uint64(1) << (2 * uint64(z))
-		if id < acc+count {
-			break
-		}
-		acc += count
-	}
-	t := id - acc
-	var x, y uint32
-	for s := uint32(1); s < uint32(1)<<z; s <<= 1 {
-		rx := uint32(1 & (t / 2))
-		ry := uint32(1 & (t ^ uint64(rx)))
-		x, y = rotate(s, x, y, rx, ry)
-		x += s * rx
-		y += s * ry
-		t /= 4
-	}
-	return z, x, y
-}
-
-func rotate(n, x, y, rx, ry uint32) (uint32, uint32) {
-	if ry == 0 {
-		if rx == 1 {
-			x, y = n-1-x, n-1-y
-		}
-		return y, x
-	}
-	return x, y
-}
 
 // Area is the part of the map kept at full detail.
 type Area struct{ West, South, East, North float64 }
@@ -241,38 +33,35 @@ func areaAround(lat, lon, km float64) Area {
 	return Area{lon - dLon, lat - dLat, lon + dLon, lat + dLat}
 }
 
-func lonToX(lon float64, z uint8) uint32 {
-	n := float64(uint32(1) << z)
-	return uint32(math.Max(0, math.Min(n-1, math.Floor((lon+180)/360*n))))
-}
+func lonToX(lon float64, z uint8) uint32 { return tileIndex(pmtiles.MercatorX(lon), z) }
 
-func latToY(lat float64, z uint8) uint32 {
+func latToY(lat float64, z uint8) uint32 { return tileIndex(pmtiles.MercatorY(lat), z) }
+
+func tileIndex(f float64, z uint8) uint32 {
 	n := float64(uint32(1) << z)
-	r := lat * math.Pi / 180
-	y := (1 - math.Log(math.Tan(r)+1/math.Cos(r))/math.Pi) / 2 * n
-	return uint32(math.Max(0, math.Min(n-1, math.Floor(y))))
+	return uint32(math.Max(0, math.Min(n-1, math.Floor(f*n))))
 }
 
 // Archive is a remote PMTiles file whose directories have been read.
 type Archive struct {
 	URL     string
-	Header  pmHeader
+	Header  pmtiles.Header
 	Meta    []byte
-	Entries []entry // tile entries in TileID order
+	Entries []pmtiles.Entry // tile entries in TileID order
 	client  *http.Client
 }
 
 func openArchive(client *http.Client, url string) (*Archive, error) {
 	a := &Archive{URL: url, client: client}
-	head, err := a.read(0, rootMax)
+	head, err := a.read(0, pmtiles.RootMax)
 	if err != nil {
 		return nil, err
 	}
-	if a.Header, err = parseHeader(head); err != nil {
+	if a.Header, err = pmtiles.ParseHeader(head); err != nil {
 		return nil, err
 	}
 	h := a.Header
-	if h.InternalComp != gzipComp || h.RootOffset+h.RootLength > uint64(len(head)) {
+	if h.InternalComp != pmtiles.Gzip || h.RootOffset+h.RootLength > uint64(len(head)) {
 		return nil, errors.New("unsupported map file layout")
 	}
 	if a.Meta, err = a.read(h.MetaOffset, h.MetaLength); err != nil {
@@ -286,7 +75,7 @@ func openArchive(client *http.Client, url string) (*Archive, error) {
 	}
 	var walk func(dir []byte, depth int) error
 	walk = func(dir []byte, depth int) error {
-		entries, err := decodeDir(dir)
+		entries, err := pmtiles.DecodeDir(dir)
 		if err != nil || depth > 3 {
 			return errors.Join(err, errors.New("damaged map directory"))
 		}
@@ -344,8 +133,8 @@ func (a *Archive) read(offset, length uint64) ([]byte, error) {
 // ranges of the source to fetch for them.
 type Cut struct {
 	src      *Archive
-	entries  []entry  // output entries, offsets already rewritten
-	contents []uint64 // source offsets of the tile data to copy, in order
+	entries  []pmtiles.Entry // output entries, offsets already rewritten
+	contents []uint64        // source offsets of the tile data to copy, in order
 	lengths  map[uint64]uint32
 	chunks   [][2]uint64 // source data ranges to request: offset, length
 	Download uint64      // bytes to fetch
@@ -375,7 +164,7 @@ func (a *Archive) planCut(area Area) *Cut {
 	for _, e := range a.Entries {
 		for i := uint64(0); i < uint64(e.RunLength); i++ {
 			id := e.TileID + i
-			z, x, y := idToZxy(id)
+			z, x, y := pmtiles.IDToZxy(id)
 			if !inside(z, x, y) {
 				continue
 			}
@@ -387,7 +176,7 @@ func (a *Archive) planCut(area Area) *Cut {
 					continue
 				}
 			}
-			c.entries = append(c.entries, entry{TileID: id, Offset: e.Offset, Length: e.Length, RunLength: 1})
+			c.entries = append(c.entries, pmtiles.Entry{TileID: id, Offset: e.Offset, Length: e.Length, RunLength: 1})
 			c.lengths[e.Offset] = e.Length
 		}
 	}
@@ -417,14 +206,14 @@ func (a *Archive) planCut(area Area) *Cut {
 	for _, ch := range c.chunks {
 		c.Download += ch[1]
 	}
-	c.Size = size + rootMax + uint64(len(a.Meta)) + uint64(len(c.entries))*4 // directories: a rough upper bound
+	c.Size = size + pmtiles.RootMax + uint64(len(a.Meta)) + uint64(len(c.entries))*4 // directories: a rough upper bound
 	return c
 }
 
 // write fetches the planned tiles and writes the new archive to dest,
 // via dest.part. progress is told about every byte fetched.
 func (c *Cut) write(dest string, centerLat, centerLon float64, progress func(int64)) error {
-	root, leaves := buildDirs(c.entries)
+	root, leaves := pmtiles.BuildDirs(c.entries)
 	h := c.src.Header
 	var dataLen, addressed uint64
 	for _, off := range c.contents {
@@ -433,12 +222,12 @@ func (c *Cut) write(dest string, centerLat, centerLon float64, progress func(int
 	for _, e := range c.entries {
 		addressed += uint64(e.RunLength)
 	}
-	h.RootOffset, h.RootLength = headerLen, uint64(len(root))
+	h.RootOffset, h.RootLength = pmtiles.HeaderLen, uint64(len(root))
 	h.MetaOffset, h.MetaLength = h.RootOffset+h.RootLength, uint64(len(c.src.Meta))
 	h.LeafOffset, h.LeafLength = h.MetaOffset+h.MetaLength, uint64(len(leaves))
 	h.DataOffset, h.DataLength = h.LeafOffset+h.LeafLength, dataLen
 	h.Addressed, h.Entries, h.Contents = addressed, uint64(len(c.entries)), uint64(len(c.contents))
-	h.Clustered, h.InternalComp = true, gzipComp
+	h.Clustered, h.InternalComp = true, pmtiles.Gzip
 	h.MinZoom, h.MaxZoom = c.minZoom, c.maxZoom
 	h.CenterZoom = 11
 	h.CenterLonE7, h.CenterLatE7 = int32(centerLon*1e7), int32(centerLat*1e7)
@@ -452,7 +241,7 @@ func (c *Cut) write(dest string, centerLat, centerLon float64, progress func(int
 		return err
 	}
 	defer f.Close()
-	for _, b := range [][]byte{h.bytes(), root, c.src.Meta, leaves} {
+	for _, b := range [][]byte{h.Bytes(), root, c.src.Meta, leaves} {
 		if _, err := f.Write(b); err != nil {
 			return err
 		}
