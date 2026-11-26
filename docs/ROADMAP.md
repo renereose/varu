@@ -106,7 +106,10 @@ A first build on a normal internet connection will settle these:
       notification, a wake lock and a Wi-Fi lock). Tried on the Android 15
       emulator with Doze forced; not yet on a real phone, where some makers
       add battery savers of their own.
-- [ ] Android: an app icon and dark mode.
+- [x] Android: an app icon, and dark mode that follows the system (tried on
+      the emulator, not yet on a phone).
+- [ ] Android: an adaptive icon (API 26+), so launchers that shape icons don't
+      put it on a white plate.
 - [ ] Installer: remove older ZIM editions when a newer one is installed.
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.

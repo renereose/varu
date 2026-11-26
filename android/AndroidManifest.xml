@@ -18,13 +18,19 @@
 
     <!-- extractNativeLibs: the Go programs ship as lib*.so and must be
          unpacked to run. Cleartext: the WebView talks to them over
-         http://127.0.0.1; every other address opens in the browser. -->
+         http://127.0.0.1; every other address opens in the browser.
+         Icon: one 192 px legacy icon that Android scales; there is no
+         adaptive (API 26+) icon, so some launchers put it on a white plate.
+         Theme: Varu follows the system dark mode; a switch while the app is
+         open applies on the next start (uiMode is in configChanges so
+         navigation isn't restarted). -->
     <application
         android:label="Varu"
+        android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
         android:extractNativeLibs="true"
         android:usesCleartextTraffic="true"
-        android:theme="@android:style/Theme.Material.Light.DarkActionBar">
+        android:theme="@style/Varu">
         <activity
             android:name=".MainActivity"
             android:exported="true"
