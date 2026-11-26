@@ -285,7 +285,9 @@ New versions bring new features, fresh maps and newer books. To update:
    **"Update the maps and data?"** Tap **Update**, or **Later**: Varu keeps
    working meanwhile, also offline.
 3. The wizard opens on its last step with your earlier choices. Press **Install**.
-   Files that haven't changed aren't downloaded again.
+   Files that haven't changed aren't downloaded again. When a book has a newer
+   edition, the old one is deleted once the new one has fully downloaded, so old
+   copies don't take up space.
 
 To update a stick, plug it in and choose **Go → Install or update…**. On a
 phone, use **⋮ → Downloads**.

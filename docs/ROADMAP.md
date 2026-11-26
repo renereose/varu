@@ -110,7 +110,7 @@ A first build on a normal internet connection will settle these:
       the emulator, not yet on a phone).
 - [ ] Android: an adaptive icon (API 26+), so launchers that shape icons don't
       put it on a white plate.
-- [ ] Installer: remove older ZIM editions when a newer one is installed.
+- [x] Installer: remove older ZIM editions when a newer one is installed, with their search indexes; the old one stays until the new one is complete.
 - [ ] A start script for network sharing (`-lan`), with a QR code for phones.
 - [ ] A guide for groups that want to produce drives in bulk.
 

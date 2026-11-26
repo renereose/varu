@@ -93,6 +93,13 @@ func TestInstall(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// An earlier edition from a previous update.
+	for _, old := range []string{"wp_2026-05.zim", "wp_2026-05.search"} {
+		if err := os.WriteFile(filepath.Join(target, "library", old), []byte("old"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
 	base, _ := url.Parse(srv.URL + "/")
 	app := &App{Source: base, Client: srv.Client(), index: index}
 	req := Request{Target: target, Region: "ee", Home: &Home{Lat: 58.38, Lon: 26.72, Name: "Tartu"},
@@ -115,6 +122,11 @@ func TestInstall(t *testing.T) {
 	}
 	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.search")); string(got) != string(search) {
 		t.Error("the book's search index, built with the release, was not installed")
+	}
+	for _, old := range []string{"wp_2026-05.zim", "wp_2026-05.search"} {
+		if _, err := os.Stat(filepath.Join(target, "library", old)); !os.IsNotExist(err) {
+			t.Errorf("%s survived the newer edition", old)
+		}
 	}
 	if got, _ := os.ReadFile(filepath.Join(target, "maps", "ee.graph")); string(got) != string(roads) {
 		t.Error("road data missing or different")
@@ -309,5 +321,34 @@ func TestPrepareStick(t *testing.T) {
 	}
 	if inf, _ := os.ReadFile(filepath.Join(root, "autorun.inf")); !strings.Contains(string(inf), "icon=varu.ico") {
 		t.Errorf("autorun.inf: %q", inf)
+	}
+}
+
+func TestRemoveOlderEditions(t *testing.T) {
+	dir := t.TempDir()
+	gone := []string{"wp_2026-03.zim", "wp_2026-03.search", "wp_2025-11.zim.part", "wp_2026-03.search.part"}
+	kept := []string{"wp_2026-11.zim", "wp_2026-11.search", "wp_2026-11.search.part", "wp_2027-01.zim",
+		"wp_extra_2026-03.zim", "undated.zim", "notes.txt"}
+	for _, name := range append(slices.Clone(gone), kept...) {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	removeOlderEditions(dir, "undated.zim")
+	for _, name := range gone {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Errorf("an undated book removed %s", name)
+		}
+	}
+	removeOlderEditions(dir, "wp_2026-11.zim")
+	for _, name := range gone {
+		if _, err := os.Stat(filepath.Join(dir, name)); !os.IsNotExist(err) {
+			t.Errorf("%s should be removed", name)
+		}
+	}
+	for _, name := range kept {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Errorf("%s should stay: %v", name, err)
+		}
 	}
 }

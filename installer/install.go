@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"sync"
@@ -268,6 +269,24 @@ func existing(dest string, size int64) int64 {
 	return 0
 }
 
+// datedBook is one edition's file in library/: book, month, and the archive, its index or an unfinished download of either.
+var datedBook = regexp.MustCompile(`^(.+)_(\d{4}-\d{2})\.(?:zim|search)(?:\.part)?$`)
+
+// removeOlderEditions deletes earlier editions of file's book from dir (archive, index, partial downloads); newer ones stay.
+func removeOlderEditions(dir, file string) {
+	m := datedBook.FindStringSubmatch(file)
+	if m == nil {
+		return
+	}
+	entries, _ := os.ReadDir(dir)
+	for _, e := range entries {
+		if o := datedBook.FindStringSubmatch(e.Name()); o != nil && o[1] == m[1] && o[2] < m[2] {
+			// A copy another program holds open (Windows) stays, as before.
+			_ = os.Remove(filepath.Join(dir, e.Name()))
+		}
+	}
+}
+
 // hasForeignFiles reports whether dir holds anything a Varu drive (or an
 // interrupted install of one) would not.
 func hasForeignFiles(dir string) bool {
@@ -377,6 +396,10 @@ func (j *Job) Run() {
 				}
 				time.Sleep(diskPause)
 			}
+		}
+		if err == nil && it.Kind == "book" && strings.HasSuffix(it.dest, ".zim") {
+			// A refresh needs room for both editions until the new one is complete.
+			removeOlderEditions(filepath.Dir(it.dest), filepath.Base(it.dest))
 		}
 		if err != nil {
 			j.fail(fmt.Errorf("%s: %w", it.Title, err))
