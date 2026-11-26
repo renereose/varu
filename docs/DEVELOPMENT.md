@@ -143,9 +143,16 @@ Releases are built on a Mac and published with one command, without
 GitHub Actions:
 
 ```sh
-sh release.sh v0.1.2 --dry-run   # build everything into dist/ and stop
-sh release.sh v0.1.2             # build, tag and publish the release
+sh release.sh v0.1.2 --dry-run    # build everything into dist/ and stop
+sh release.sh v0.1.2              # build, tag and publish the release
+sh release.sh v0.1.2 --keep-data  # the same, reusing the last map and places
 ```
+
+`--keep-data` is for a release that changes the apps, not the data: the map,
+roads, addresses and place layers from the last build in `build/` are used
+again instead of being downloaded and built anew. Anything missing there is
+still built. They are uploaded with the release all the same, because each
+app downloads from its own release.
 
 It runs the tests, builds each country's drive with a fresh map and places
 (without the library), packages it with `builder/release.py`, builds each
