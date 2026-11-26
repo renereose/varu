@@ -31,7 +31,7 @@ from pathlib import Path
 
 from .cli import default_cache
 from .config import ConfigError, Region, ZimSpec, load_region, load_sources
-from .data import choose_zim, older_editions, parse_catalog
+from .data import choose_zim, parse_catalog, remove_older_editions
 from .fetch import CHUNK, USER_AGENT, FetchError, download, fetch_bytes
 
 INDEX_SCHEMA = 1
@@ -113,9 +113,7 @@ def index_book(zim: dict, out: Path, cache: Path, repo: Path, log=print) -> None
     books = cache.resolve() / "zim"
     integrity = "sha256-" + base64.b64encode(bytes.fromhex(zim["sha256"])).decode() if zim.get("sha256") else None
     archive = download(zim["url"], books / zim["file"], integrity=integrity, log=log)
-    for old in older_editions(books, zim["file"]):
-        old.unlink()
-        old.with_suffix(".search").unlink(missing_ok=True)
+    remove_older_editions(books, zim["file"])
     # Kept with the book: the next release with the same edition reuses it.
     built = archive.with_suffix(".search")
     if built.is_file() and built.stat().st_mtime >= archive.stat().st_mtime:

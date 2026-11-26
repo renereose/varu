@@ -26,6 +26,7 @@ from builder.config import ConfigError, ZimSpec, load_region, load_sources, pars
 from builder.context import Context, StepError  # noqa: E402
 from builder.data import (  # noqa: E402
     choose_zim, official_to_geojson, older_editions, overpass_query, overpass_to_geojson, parse_catalog,
+    remove_older_editions,
 )
 from builder.fetch import FetchError, download, sri_matches  # noqa: E402
 from builder.manifest import build_manifest  # noqa: E402
@@ -199,6 +200,17 @@ class CatalogTests(unittest.TestCase):
             stale = older_editions(library, "wikipedia_et_all_maxi_2026-09.zim")
             self.assertEqual([p.name for p in stale], ["wikipedia_et_all_maxi_2026-03.zim"])
             self.assertEqual(older_editions(library, "undated.zim"), [])
+
+    def test_remove_older_editions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            library = Path(tmp)
+            keep = ("wikipedia_et_all_maxi_2026-09.zim", "wikipedia_et_all_maxi_2026-09.search",
+                    "wikipedia_et_all_maxi_extra_2026-03.zim")
+            for name in ("wikipedia_et_all_maxi_2026-03.zim", "wikipedia_et_all_maxi_2026-03.search", *keep):
+                (library / name).touch()
+            removed = remove_older_editions(library, "wikipedia_et_all_maxi_2026-09.zim")
+            self.assertEqual(removed, ["wikipedia_et_all_maxi_2026-03.zim"])
+            self.assertEqual(sorted(p.name for p in library.iterdir()), sorted(keep))
 
 
 class RangeHandler(BaseHTTPRequestHandler):

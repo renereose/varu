@@ -279,6 +279,16 @@ def older_editions(library: Path, filename: str) -> list[Path]:
             if path.name != filename and (m := _DATED.match(path.name)) and m.group("stem") == stem]
 
 
+def remove_older_editions(library: Path, filename: str) -> list[str]:
+    """Delete other dated copies of the book and their search indexes; return the removed .zim names."""
+    removed = []
+    for old in older_editions(library, filename):
+        old.unlink()
+        old.with_suffix(".search").unlink(missing_ok=True)
+        removed.append(old.name)
+    return removed
+
+
 def step_library(ctx: Context) -> None:
     catalog = ctx.sources["kiwix_catalog"]["url"]
     library = ctx.out / "library"
@@ -308,10 +318,9 @@ def step_library(ctx: Context) -> None:
             problems.append(f"{spec.name}: {err}")
             continue
 
-        for stale in older_editions(library, filename):
-            ctx.log(f"removing older edition {stale.name}")
-            stale.unlink()
-            titles.pop(stale.name, None)
+        for name in remove_older_editions(library, filename):
+            ctx.log(f"removing older edition {name}")
+            titles.pop(name, None)
         titles[filename] = {
             "name": entry.get("name", spec.name),
             "title": entry.get("title") or spec.name,
