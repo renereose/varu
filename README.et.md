@@ -206,7 +206,7 @@ Otsingukast otsib kõigist raamatukogu raamatutest.
 
 ### Hädaolukorras
 
-Leheküljel **Hädaolukorras** on kolm osa:
+Leheküljel **Hädaolukorras** on neli osa:
 
 - **Kui juhtub**: lühikesed sammud elektri-, vee-, kütte- ja sidekatkestuse,
   sireeni ja ohuteate, varjumise, evakueerimise, tulekahju, vingugaasi, tormi,
@@ -214,6 +214,9 @@ Leheküljel **Hädaolukorras** on kolm osa:
   lähima koha kaardile ja raamatukogu artiklitesse ning iga kaart nimetab
   ametliku allika, millel see põhineb (kriis.ee, Päästeamet, Siseministeerium,
   Terviseamet ja Häirekeskus).
+- **Raadio**: millise sageduse peale keerata patarei- või autoraadio, kui
+  elekter või side kaob. Vikerraadio (eesti keeles) ja Raadio 4 (vene keeles),
+  iga saatja sagedus ERR-i enda andmetest. Prinditakse koos sinu plaaniga.
 - **Kodune varu**: kontrollnimekiri, et nädal aega ise hakkama saada.
   Linnukesed jäävad sellesse seadmesse.
 - **Minu plaan**: kontaktid, kokkusaamiskohad, kus on dokumendid ja ravimid.

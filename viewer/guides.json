@@ -53,7 +53,8 @@
           "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 12–13",
           "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
         }
-      ]
+      ],
+      "radio": true
     },
     {
       "id": "water",
@@ -203,7 +204,8 @@
           "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 20–21",
           "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
         }
-      ]
+      ],
+      "radio": true
     },
     {
       "id": "warning",
@@ -250,7 +252,8 @@
           "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 26–27",
           "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
         }
-      ]
+      ],
+      "radio": true
     },
     {
       "id": "shelter",
@@ -302,7 +305,8 @@
           "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 32–33",
           "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
         }
-      ]
+      ],
+      "radio": true
     },
     {
       "id": "evacuation",
@@ -528,7 +532,8 @@
           "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 46–49",
           "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
         }
-      ]
+      ],
+      "radio": true
     },
     {
       "id": "lost",
@@ -985,6 +990,165 @@
       {
         "title": "Päästeamet ja TTJA – vingugaas.ee",
         "url": "https://www.vingugaas.ee/"
+      }
+    ]
+  },
+  "radio": {
+    "et": {
+      "title": "Raadio",
+      "intro": "Kui elekter või side kaob, jagab riik ametlikku infot ERR-i kanalites. Kuula Vikerraadiot (eesti keeles) või Raadio 4 (vene keeles) patarei-, vända- või autoraadiost. Vali lähima saatja sagedus; kui see ei kosta, proovi järgmist."
+    },
+    "en": {
+      "title": "Radio",
+      "intro": "If power or phones go down, the state shares official information on ERR's channels. Listen to Vikerraadio (in Estonian) or Raadio 4 (in Russian) on a battery, wind-up or car radio. Pick the nearest transmitter; if it can't be heard, try the next one."
+    },
+    "stations": [
+      {
+        "name": "Vikerraadio",
+        "lang": {
+          "et": "eesti keeles",
+          "en": "in Estonian"
+        },
+        "as_of": "2026-10",
+        "sites": [
+          [
+            "Tallinn",
+            "Harjumaa",
+            104.1
+          ],
+          [
+            "Koeru",
+            "Järvamaa",
+            105.1
+          ],
+          [
+            "Valgjärve",
+            "Põlvamaa",
+            106.1
+          ],
+          [
+            "Tartu",
+            "Tartumaa",
+            106.7
+          ],
+          [
+            "Pärnu",
+            "Pärnumaa",
+            104.8
+          ],
+          [
+            "Kohtla-Nõmme",
+            "Ida-Virumaa",
+            105.4
+          ],
+          [
+            "Sauvere",
+            "Saaremaa",
+            105.6
+          ],
+          [
+            "Narva",
+            "Ida-Virumaa",
+            104.7
+          ],
+          [
+            "Viiratsi",
+            "Viljandimaa",
+            107.0
+          ],
+          [
+            "Haapsalu",
+            "Läänemaa",
+            105.3
+          ],
+          [
+            "Kõrgessaare",
+            "Hiiumaa",
+            91.2
+          ],
+          [
+            "Orissaare",
+            "Saaremaa",
+            105.9
+          ],
+          [
+            "Märjamaa",
+            "Raplamaa",
+            95.7
+          ],
+          [
+            "Pehka",
+            "Lääne-Virumaa",
+            106.0
+          ],
+          [
+            "Sõrve",
+            "Saaremaa",
+            92.1
+          ],
+          [
+            "Sillamäe",
+            "Ida-Virumaa",
+            92.3
+          ],
+          [
+            "Nõva, Dirhami, Osmussaare",
+            "Läänemaa",
+            91.7
+          ]
+        ]
+      },
+      {
+        "name": "Raadio 4",
+        "lang": {
+          "et": "vene keeles",
+          "en": "in Russian"
+        },
+        "as_of": "2019-09",
+        "areas": [
+          [
+            "Tallinn",
+            94.5
+          ],
+          [
+            "Ida-Virumaa",
+            95.3
+          ],
+          [
+            "Narva",
+            100.9
+          ],
+          [
+            "Tartumaa",
+            94.4
+          ],
+          [
+            "Jõgevamaa",
+            93.4
+          ],
+          [
+            "Pärnumaa",
+            94.8
+          ],
+          [
+            "Valgamaa",
+            92.5
+          ]
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "ERR – Vikerraadio sagedused",
+        "url": "https://eestiraadio.err.ee/vikerraadio/1610166142"
+      },
+      {
+        "title": "ERR – Raadio 4 sagedused (2019)",
+        "url": "https://eestiraadio.err.ee/ru/raadio4/976118/jetoj-osenju-na-radio-4"
+      },
+      {
+        "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 26",
+        "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
       }
     ]
   }

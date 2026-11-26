@@ -206,7 +206,7 @@ through every book in the library.
 
 ### In an emergency
 
-The **In an emergency** page has three parts:
+The **In an emergency** page has four parts:
 
 - **When it happens**: short steps for a power cut, no tap water, no heating,
   phone and internet down, a siren or public warning, taking shelter,
@@ -215,6 +215,9 @@ The **In an emergency** page has three parts:
   articles in the library, and names the official source it is based on
   (kriis.ee, the Rescue Board, the Ministry of the Interior, the Health Board
   and the Emergency Response Centre).
+- **Radio**: where to tune a battery or car radio when power or phones are
+  down. Vikerraadio (in Estonian) and Raadio 4 (in Russian), with each
+  transmitter's frequency from ERR's own list. It is printed with your plan.
 - **Home supplies**: a checklist for managing a week on your own. Ticks are
   kept on that device.
 - **My plan**: contacts, meeting places, where documents and medicines are.

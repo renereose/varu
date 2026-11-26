@@ -222,9 +222,9 @@ Two content files sit next to the pages and ship with the app:
   `go test -run TestTopics ./launcher` checks the file; with
   `VARU_ZIM_DIR=~/.cache/varu/zim` it also checks every article exists in the
   books there, which `release.sh` does after indexing them.
-- `viewer/guides.json`: the "In an emergency" steps and home-supplies list,
-  written for Varu from the official sources each entry names. Keep steps in
-  plain words and re-check the sources when they change.
+- `viewer/guides.json`: the "In an emergency" steps, radio frequencies and
+  home-supplies list, written for Varu from the official sources each entry
+  names. Keep steps in plain words and re-check the sources when they change.
 
 ## Licensing
 

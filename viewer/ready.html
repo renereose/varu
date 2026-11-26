@@ -17,6 +17,7 @@
 
   <nav class="ready-tabs" aria-label="Sections">
     <a href="#situations" data-i18n="readyWhen">When it happens</a>
+    <a href="#radio" data-i18n="readyRadio">Radio</a>
     <a href="#supplies" data-i18n="readySupplies">Home supplies</a>
     <a href="#plan" data-i18n="readyPlan">My plan</a>
   </nav>
@@ -26,6 +27,13 @@
       <h2 data-i18n="readyWhen">When it happens</h2>
       <div id="situation-list"></div>
       <p id="no-guides" class="meta" hidden data-i18n="noGuides">There are no emergency guides on this drive.</p>
+    </section>
+
+    <section id="radio" class="panel" hidden>
+      <h2 id="radio-title"></h2>
+      <p id="radio-intro" class="meta"></p>
+      <div id="radio-stations"></div>
+      <p id="radio-sources" class="sources"></p>
     </section>
 
     <section id="supplies" class="panel" hidden>
