@@ -818,6 +818,7 @@ function showTheme() {
   document.querySelectorAll("[data-theme-choice]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeChoice === (root.dataset.theme ?? "system"))));
   $("theme-toggle").replaceChildren(icon(isDark() ? "sun" : "moon"));
   $("theme-toggle").setAttribute("aria-label", t(isDark() ? "toLight" : "toDark"));
+  window.VaruAndroid?.bars?.(isDark()); // the phone's own bars match
 }
 function chooseTheme(theme) {
   setPref("theme", theme);
