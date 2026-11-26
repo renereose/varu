@@ -352,3 +352,25 @@ func TestRemoveOlderEditions(t *testing.T) {
 		}
 	}
 }
+
+func TestReplacesOlder(t *testing.T) {
+	target := "drive"
+	book := filepath.Join(target, "library", "wp_2026-11.zim")
+	for _, c := range []struct {
+		it   Item
+		want bool
+	}{
+		{Item{Kind: "book", dest: book, Size: 10}, true},
+		{Item{Kind: "book", dest: book, sha256: "ab"}, true},
+		// Nothing checked the download: it may be a captive portal's page.
+		{Item{Kind: "book", dest: book}, false},
+		// A search file whose path left library/.
+		{Item{Kind: "book", dest: filepath.Join(target, "maps", "x_2026-11.zim"), Size: 10}, false},
+		{Item{Kind: "book", dest: filepath.Join(target, "library", "wp_2026-11.search"), Size: 10}, false},
+		{Item{Kind: "map", dest: book, Size: 10}, false},
+	} {
+		if got := replacesOlder(&c.it, target); got != c.want {
+			t.Errorf("%+v: got %v", c.it, got)
+		}
+	}
+}

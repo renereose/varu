@@ -267,6 +267,8 @@ def choose_zim(entries: list[dict], spec: ZimSpec) -> dict | None:
 
 
 _DATED = re.compile(r"^(?P<stem>.+)_\d{4}-\d{2}\.zim$")
+# An unfinished download or search index of a dated edition.
+_PART = re.compile(r"^(?P<stem>.+)_\d{4}-\d{2}\.(?:zim|search)\.part$")
 
 
 def older_editions(library: Path, filename: str) -> list[Path]:
@@ -280,12 +282,19 @@ def older_editions(library: Path, filename: str) -> list[Path]:
 
 
 def remove_older_editions(library: Path, filename: str) -> list[str]:
-    """Delete other dated copies of the book and their search indexes; return the removed .zim names."""
+    """Delete other dated copies of the book, their search indexes and unfinished
+    files; return the removed .zim names."""
     removed = []
     for old in older_editions(library, filename):
         old.unlink()
         old.with_suffix(".search").unlink(missing_ok=True)
         removed.append(old.name)
+    # An interrupted run leaves .part files whose edition may never have arrived.
+    if match := _DATED.match(filename):
+        edition = filename.removesuffix("zim")
+        for part in library.glob(f"{match['stem']}_*.part"):
+            if (m := _PART.match(part.name)) and m["stem"] == match["stem"] and not part.name.startswith(edition):
+                part.unlink()
     return removed
 
 
