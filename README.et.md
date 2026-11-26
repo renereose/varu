@@ -251,14 +251,17 @@ varjumiskoht (**Tartu Ülikooli Kliinikum**).
 
 <table>
   <tr>
-    <td align="center" width="50%"><img src="docs/images/et/library.jpg" width="260" alt="Otsing raamatukogus"><br><sub>Otsing kõigist raamatutest korraga</sub></td>
-    <td align="center" width="50%"><img src="docs/images/et/article.jpg" width="260" alt="Artikkel Varu ribaga"><br><sub>Vikipeedia lugemine: <b>← Tagasi</b>, 🔍 otsing, <b>Raamatukogu</b></sub></td>
+    <td align="center" width="50%"><img src="docs/images/et/library.jpg" width="260" alt="Otsing Vikipeediast"><br><sub>Vikipeedia avaneb otsinguga</sub></td>
+    <td align="center" width="50%"><img src="docs/images/et/article.jpg" width="260" alt="Artikkel Varu ribaga"><br><sub>Vikipeedia lugemine: <b>← Tagasi</b>, <b>🔍 Otsi</b>, <b>Raamatukogu</b></sub></td>
   </tr>
 </table>
 
-- Kirjuta otsingukasti: esmalt tulevad sobivad **pealkirjad**, siis **artiklid,
-  milles su sõnad esinevad**, ja sõnad on esile tõstetud.
-- Raamatu sees on all rohelisel ribal **Tagasi**, **🔍 otsingunupp** ja **Raamatukogu**.
+- Raamat avaneb oma otsinguleheküljega. Kirjuta otsingukasti: esmalt tulevad
+  sobivad **pealkirjad**, siis **artiklid, milles su sõnad esinevad**, ja sõnad
+  on esile tõstetud. Raamatu esileht on kasti all.
+- Raamatu sees on all rohelisel ribal **Tagasi**, **🔍 Otsi** (tagasi selle
+  raamatu otsingusse) ja **Raamatukogu**.
+- **Raamatukogu** leheküljel saab otsida kõigist raamatutest korraga.
 - Pikemad sõnad leiavad ka teisi vorme: *tallinn* leiab *Tallinnas*.
 
 ---

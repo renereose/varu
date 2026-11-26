@@ -20,6 +20,7 @@ func newDrive(t *testing.T) string {
 	root := t.TempDir()
 	files := map[string]string{
 		"app/index.html":        "<h1>home</h1>",
+		"app/library.html":      "<h1>library</h1>",
 		"app/vendor/lib.mjs":    "export default 1;",
 		"app/assets/readme.txt": "no index here",
 		"app/.secret":           "hidden",
@@ -176,16 +177,16 @@ func TestLibrary(t *testing.T) {
 	if _, status := get(t, h, "/api/status", nil); !strings.Contains(status, `"library":true`) {
 		t.Errorf("status %q", status)
 	}
-	if _, books := get(t, h, "/api/library", nil); !strings.Contains(books, `"id":"wikipedia_et","title":"Vikipeedia"`) || !strings.Contains(books, `"search":"ready"`) {
+	if _, books := get(t, h, "/api/library", nil); !strings.Contains(books, `"id":"wikipedia_et","title":"Vikipeedia"`) || !strings.Contains(books, `"search":"ready"`) ||
+		!strings.Contains(books, `"home":"/library/wikipedia_et/Tallinn"`) {
 		t.Errorf("books %s", books)
 	}
-	for path, want := range map[string]string{
-		"/library/wikipedia_et/":      "/library/wikipedia_et/Tallinn",
-		"/library/wikipedia_et/Reval": "/library/wikipedia_et/Tallinn",
-	} {
-		if res, _ := get(t, h, path, nil); res.StatusCode != http.StatusFound || res.Header.Get("Location") != want {
-			t.Errorf("%s: %d to %q, want %s", path, res.StatusCode, res.Header.Get("Location"), want)
-		}
+	// A book opens on its own search page; a redirect title leads to its article.
+	if res, page := get(t, h, "/library/wikipedia_et/", nil); res.StatusCode != http.StatusOK || page != "<h1>library</h1>" {
+		t.Errorf("book page %d %q", res.StatusCode, page)
+	}
+	if res, _ := get(t, h, "/library/wikipedia_et/Reval", nil); res.StatusCode != http.StatusFound || res.Header.Get("Location") != "/library/wikipedia_et/Tallinn" {
+		t.Errorf("redirect: %d to %q", res.StatusCode, res.Header.Get("Location"))
 	}
 	res, page := get(t, h, "/library/wikipedia_et/Tallinn", nil)
 	if res.StatusCode != http.StatusOK || !strings.Contains(page, `library-bar.js"></script></head><body>capital`) {
@@ -203,6 +204,12 @@ func TestLibrary(t *testing.T) {
 	}
 	if _, hits := get(t, h, "/api/library/search?q=university", nil); !strings.Contains(hits, `"title":"Tartu","url":"/library/wikipedia_et/Tartu","snippet":"`) {
 		t.Errorf("text search %s", hits)
+	}
+	if _, hits := get(t, h, "/api/library/search?q=ta&book=wikipedia_et", nil); !strings.Contains(hits, "Tallinn") {
+		t.Errorf("one book's search %s", hits)
+	}
+	if _, hits := get(t, h, "/api/library/search?q=ta&book=other", nil); strings.Contains(hits, "Tallinn") {
+		t.Errorf("another book's search found %s", hits)
 	}
 }
 

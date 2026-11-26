@@ -1,5 +1,7 @@
 // The library page: the books on the drive, and search across all of them:
 // titles first, then articles containing the words (launcher /api/library).
+// At /library/<book>/ the same page searches that one book, with a link to
+// the book's own front page.
 
 import { applyStrings, currentLanguage, loadManifest, t } from "./common.js";
 
@@ -9,7 +11,9 @@ const [manifest, books] = await Promise.all([
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
-document.title = t(lang, "library");
+const bookId = decodeURIComponent(location.pathname.split("/")[2] ?? "");
+const book = books.find((b) => b.id === bookId);
+document.title = book?.title ?? t(lang, "library");
 
 const el = (tag, props = {}, ...children) => {
   const node = Object.assign(document.createElement(tag), props);
@@ -18,20 +22,30 @@ const el = (tag, props = {}, ...children) => {
 };
 const titleOf = Object.fromEntries(books.map((b) => [b.id, b.title]));
 
-document.getElementById("empty").hidden = books.length > 0;
-document.getElementById("search").hidden = books.length === 0;
-document.getElementById("books").replaceChildren(...books.map((b) => {
+function card(b, href, title, text) {
   const icon = el("img", { src: `/api/library/icon?book=${encodeURIComponent(b.id)}`, alt: "", width: 48, height: 48 });
   icon.addEventListener("error", () => icon.remove());
-  return el("a", { className: "card", href: `/library/${encodeURIComponent(b.id)}/` },
-    icon, el("h2", { textContent: b.title }), el("p", { textContent: b.description }));
-}));
+  return el("a", { className: "card", href }, icon, el("h2", { textContent: title }), el("p", { textContent: text }));
+}
+document.getElementById("empty").hidden = books.length > 0;
+document.getElementById("search").hidden = books.length === 0;
+document.getElementById("books").replaceChildren(...(book
+  ? (book.home ? [card(book, book.home, t(lang, "frontPage"), book.description)] : [])
+  : books.map((b) => card(b, `/library/${encodeURIComponent(b.id)}/`, b.title, b.description))));
+if (book) {
+  document.querySelector("h1").textContent = book.title;
+  const up = document.querySelector(".back");
+  up.href = "/library/";
+  up.textContent = t(lang, "library");
+}
 
 const input = document.getElementById("q");
 const hits = document.getElementById("hits");
 const none = document.getElementById("no-hits");
-input.placeholder = t(lang, "searchLibrary");
-input.setAttribute("aria-label", t(lang, "searchLibrary"));
+const all = document.getElementById("all-books");
+const hint = t(lang, book ? "searchBook" : "searchLibrary");
+input.placeholder = hint;
+input.setAttribute("aria-label", hint);
 
 // Shows which books cannot be searched inside yet, and checks again until
 // they can.
@@ -43,7 +57,7 @@ function showPreparing(list) {
 }
 async function watchPreparing() {
   const list = (await fetch("/api/library").then((res) => res.json()).catch(() => []))
-    .filter((b) => b.search === "preparing").map((b) => ({ title: b.title, progress: b.progress ?? 0 }));
+    .filter((b) => b.search === "preparing" && (!book || b.id === book.id)).map((b) => ({ title: b.title, progress: b.progress ?? 0 }));
   showPreparing(list);
   if (list.length) setTimeout(watchPreparing, 3000);
 }
@@ -70,18 +84,21 @@ async function search() {
   const q = input.value.trim();
   history.replaceState(null, "", q ? `?q=${encodeURIComponent(q)}` : location.pathname);
   request?.abort();
+  all.hidden = !book || books.length < 2 || !q;
+  all.href = `/library/?q=${encodeURIComponent(q)}`;
   if (!q) {
     hits.replaceChildren();
     none.hidden = true;
     return;
   }
   request = new AbortController();
+  const only = book ? `&book=${encodeURIComponent(book.id)}` : "";
   try {
-    const found = await (await fetch(`/api/library/search?q=${encodeURIComponent(q)}`, { signal: request.signal })).json();
+    const found = await (await fetch(`/api/library/search?q=${encodeURIComponent(q)}${only}`, { signal: request.signal })).json();
     hits.replaceChildren(...found.hits.map((hit) => el("li", {},
       el("div", {}, el("a", { href: hit.url, textContent: hit.title }),
         ...(hit.snippet ? [el("p", { className: "snippet" }, ...highlight(hit.snippet, q))] : [])),
-      el("span", { className: "size", textContent: titleOf[hit.book] ?? hit.book }))));
+      ...(book ? [] : [el("span", { className: "size", textContent: titleOf[hit.book] ?? hit.book })]))));
     none.hidden = found.hits.length > 0;
     showPreparing(found.preparing);
   } catch (err) {
