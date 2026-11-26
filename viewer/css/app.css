@@ -527,6 +527,12 @@ footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
 .supplies-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0.8rem 0; font-size: 1.1rem; }
 fieldset { min-width: 0; margin: 0; border: 0; padding: 0; }
 legend { padding: 0; }
+.radio-station { margin-top: 1rem; }
+.radio-station h3 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.radio-station h3 .meta { font-weight: 400; }
+.radio-table { border-collapse: collapse; width: 100%; max-width: 32rem; font-variant-numeric: tabular-nums; }
+.radio-table th, .radio-table td { text-align: left; padding: 0.3rem 0.6rem 0.3rem 0; border-bottom: 1px solid var(--line); }
+.radio-table td:last-child, .radio-table th:last-child { text-align: right; white-space: nowrap; padding-right: 0; }
 .supply-group { margin-top: 1rem; }
 .supply-group legend { font-weight: 700; margin-bottom: 0.2rem; }
 .supply-group label {
@@ -574,7 +580,7 @@ legend { padding: 0; }
   .ready .back, .ready-tabs, .no-print, #situations, #supplies-clear { display: none !important; }
   /* Whole sections run over pages; only small blocks are kept together. */
   .ready .panel { margin-top: 1.2rem; }
-  .ready .supply-group, .ready .contact { break-inside: avoid; }
+  .ready .supply-group, .ready .contact, .ready .radio-station { break-inside: avoid; }
   .ready input:not([type="checkbox"]), .ready textarea { border: 0; border-bottom: 1px solid #000; border-radius: 0; padding-left: 0; }
   .contact { grid-template-columns: 1fr 1fr; }
   .supply-group input { accent-color: #000; }

@@ -27,7 +27,8 @@ A first build on a normal internet connection will settle these:
       open map service, on by default and first in the layer list.
 - [ ] Official guidance for Estonia in `[[documents]]`, once reuse terms are
       confirmed with the publisher.
-- [ ] Crisis radio frequencies page.
+- [x] Crisis radio frequencies (Vikerraadio and Raadio 4, from ERR) on the
+      "In an emergency" page. Raadio 4's list is ERR's newest, from 2019.
 - [x] A curated practical library: 213 hand-picked articles from Vikipeedia,
       WikiMed and the post-disaster book in 12 topics (viewer/topics.json),
       checked against the books in every release.

@@ -58,6 +58,9 @@ document.getElementById("situation-list").replaceChildren(...situations.map((s) 
       textContent: t(lang, "readyNearest").replace("{name}", pick(lang, layer.label) || layer.id),
     }));
   }
+  if (s.radio && guides.radio) {
+    links.push(el("a", { className: "btn", href: "#radio", textContent: t(lang, "readyRadioLink") }));
+  }
   for (const id of s.topics ?? []) {
     const topic = topicById[id];
     if (!topic || !topicOnDrive(topic)) continue;
@@ -75,6 +78,37 @@ document.getElementById("situation-list").replaceChildren(...situations.map((s) 
   return item;
 }));
 if (location.hash.startsWith("#situation-")) document.getElementById(location.hash.slice(1))?.setAttribute("open", "");
+
+// ---------- Radio ----------
+
+const radio = guides.radio;
+if (radio) {
+  document.getElementById("radio").hidden = false;
+  const text = radio[lang] ?? radio.en ?? {};
+  document.getElementById("radio-title").textContent = text.title ?? t(lang, "readyRadio");
+  document.getElementById("radio-intro").textContent = text.intro ?? "";
+  const mhz = (f) => f.toLocaleString(lang, { minimumFractionDigits: 1 });
+  const table = (head, rows) => el("table", { className: "radio-table" },
+    el("thead", {}, el("tr", {}, ...head.map((h) => el("th", { scope: "col", textContent: h })))),
+    el("tbody", {}, ...rows.map((row) => el("tr", {}, ...row.map((cell) => el("td", { textContent: cell }))))));
+  const byName = (a, b) => a.localeCompare(b, "et");
+  document.getElementById("radio-stations").replaceChildren(...(radio.stations ?? []).map((station) => {
+    // Transmitters by county, so people find theirs; areas as the source names them.
+    const rows = station.sites
+      ? [...station.sites].sort((a, b) => byName(a[1], b[1]) || byName(a[0], b[0]))
+        .map(([site, county, f]) => [county, site, mhz(f)])
+      : (station.areas ?? []).map(([area, f]) => [area, mhz(f)]);
+    const head = station.sites
+      ? [t(lang, "radioCounty"), t(lang, "radioSite"), "MHz"]
+      : [t(lang, "radioArea"), "MHz"];
+    return el("div", { className: "radio-station" },
+      el("h3", {}, `${station.name} `, el("span", { className: "meta", textContent: pick(lang, station.lang) })),
+      table(head, rows),
+      el("p", { className: "meta", textContent: t(lang, "radioAsOf").replace("{date}",
+        new Date(`${station.as_of}-01T12:00`).toLocaleDateString(lang, { year: "numeric", month: "long" })) }));
+  }));
+  document.getElementById("radio-sources").append(`${t(lang, "source")}: `, ...sourceLinks(radio.sources));
+}
 
 // ---------- Home supplies ----------
 
