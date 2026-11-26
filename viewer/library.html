@@ -8,7 +8,7 @@
   <!-- Served at /library/, so every address here is absolute. -->
   <link rel="stylesheet" href="/css/app.css">
 </head>
-<body class="page">
+<body class="library-page">
   <header class="topbar">
     <div class="topbar-row">
       <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
@@ -24,29 +24,45 @@
       </div>
     </div>
   </header>
-  <header class="masthead">
-    <div>
-      <p class="eyebrow"><a class="back" href="/" data-i18n="back">Back</a></p>
+  <header class="lib-head">
+    <div class="wrap">
       <h1 data-i18n="library">Library</h1>
+      <p class="lib-sub" data-i18n="librarySub">Search Wikipedia and reference works stored on this device.</p>
+      <form class="lib-search" role="search" id="search">
+        <svg data-icon="search"></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search">
+        <button type="button" id="q-clear" class="q-clear" data-i18n-label="clear" hidden><svg data-icon="x"></svg></button>
+        <span class="book-select" id="book-select-box" hidden>
+          <select id="book-select" data-i18n-label="bookFilter"></select>
+          <svg data-icon="chevron-down"></svg>
+        </span>
+      </form>
+      <div id="book-chips" class="chips book-chips" role="group" data-i18n-label="bookFilter" hidden></div>
     </div>
   </header>
 
-  <main>
-    <form class="search" role="search" id="search">
-      <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search">
-    </form>
-    <p id="preparing" class="meta" hidden></p>
-    <ul id="hits" class="doc-list"></ul>
-    <p id="no-hits" class="meta" hidden data-i18n="noHits">Nothing found.</p>
-    <p class="meta"><a id="all-books" hidden data-i18n="searchAll">Search all books</a></p>
-
-    <section id="topics" class="panel topics" hidden>
-      <h2 data-i18n="topicsTitle">Survival and DIY</h2>
-      <div id="topic-list"></div>
-    </section>
-
-    <section class="cards" id="books" aria-label="Books"></section>
-    <p id="empty" class="meta" hidden data-i18n="noBooks">There are no books on this drive.</p>
+  <main class="wrap lib-body">
+    <div class="lib-main">
+      <p id="preparing" class="lib-note" hidden></p>
+      <p id="hit-count" class="lib-note" hidden></p>
+      <ul id="hits" class="hits" hidden></ul>
+      <p id="no-hits" class="lib-note" hidden data-i18n="noHits">Nothing found.</p>
+      <section id="topics" class="topics" hidden>
+        <h2 class="label" data-i18n="topicsTitle">Survival and DIY</h2>
+        <div id="topic-list" class="topic-list"></div>
+      </section>
+      <p id="empty" class="lib-note" hidden data-i18n="noBooks">There are no books on this drive.</p>
+    </div>
+    <aside class="lib-side">
+      <section id="books-box" hidden>
+        <h2 class="label" data-i18n="booksHere">Books on this device</h2>
+        <ul id="books" class="book-cards"></ul>
+      </section>
+      <section id="topic-index-box" class="topic-index-box" hidden>
+        <h2 class="label" data-i18n="topicsTitle">Survival and DIY</h2>
+        <ul id="topic-index" class="topic-index"></ul>
+      </section>
+    </aside>
   </main>
 
   <nav class="tabbar" aria-label="Varu">
