@@ -349,6 +349,7 @@ type Job struct {
 type Progress struct {
 	Target   string   `json:"target"`
 	USB      bool     `json:"usb"`
+	Items    []Item   `json:"items"` // the whole list, in the order it is installed
 	Current  *Item    `json:"current,omitempty"`
 	Done     int64    `json:"done"`
 	Total    int64    `json:"total"`
@@ -364,7 +365,8 @@ func (j *Job) snapshot() Progress {
 		total += it.Size
 	}
 	return Progress{
-		Target: j.Target, USB: j.Plan.USB, Current: j.current, Done: j.done.Load(), Total: total,
+		Target: j.Target, USB: j.Plan.USB, Items: append([]Item{}, j.Plan.Items...), Current: j.current,
+		Done: j.done.Load(), Total: total,
 		Errors: append([]string{}, j.errors...), Finished: j.finished,
 	}
 }
