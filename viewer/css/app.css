@@ -676,6 +676,7 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
   color: var(--ink);
 }
 .map-search input::placeholder { color: var(--subtle); }
+.map-search input::-webkit-search-cancel-button { display: none; }
 .search-results {
   position: absolute;
   top: calc(100% + 6px);

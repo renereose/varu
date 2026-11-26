@@ -60,7 +60,11 @@ $("book-select-box").hidden = chips.hidden = books.length < 2;
 select.addEventListener("change", () => choose(select.value));
 function showFilter() {
   select.value = filter;
-  for (const chip of chips.children) chip.setAttribute("aria-pressed", String(chip.dataset.book === filter));
+  for (const chip of chips.children) {
+    chip.setAttribute("aria-pressed", String(chip.dataset.book === filter));
+    // On a phone the chips scroll sideways: keep the chosen one in sight.
+    if (chip.dataset.book === filter) chips.scrollLeft = chip.offsetLeft - chips.offsetLeft - 20;
+  }
 }
 function choose(id) {
   filter = id;

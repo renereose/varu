@@ -121,7 +121,9 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
       say([formatDuration(p.duration_s), t(lang, mode === "car" ? "byCar" : "onFoot").replace("{d}", formatDistance(p.distance_m, lang))], extra);
       const bounds = body.geometry.coordinates.reduce((b, c) => b.extend(c), new maplibregl.LngLatBounds());
       const pad = 48;
-      map.fitBounds(bounds, { padding: { top: pad, left: pad, right: pad, bottom: pad + panel.offsetHeight }, maxZoom: 16 });
+      // On a phone the search box and its buttons float over the top of the map.
+      const over = window.matchMedia("(max-width: 719px)").matches ? document.querySelector(".map-find").offsetHeight : 0;
+      map.fitBounds(bounds, { padding: { top: pad + over, left: pad, right: pad, bottom: pad + panel.offsetHeight }, maxZoom: 16 });
     } catch (err) {
       if (err.name !== "AbortError") say(t(lang, "noRoute"));
     }
