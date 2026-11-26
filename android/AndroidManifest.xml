@@ -19,8 +19,8 @@
     <!-- extractNativeLibs: the Go programs ship as lib*.so and must be
          unpacked to run. Cleartext: the WebView talks to them over
          http://127.0.0.1; every other address opens in the browser.
-         Icon: one 192 px legacy icon that Android scales; there is no
-         adaptive (API 26+) icon, so some launchers put it on a white plate.
+         Icon: adaptive on Android 8+ (mipmap-anydpi-v26: the pin on green,
+         plus a monochrome layer for themed icons); the 192 px PNG for 7.
          Theme: Varu follows the system dark mode; a switch while the app is
          open applies on the next start (uiMode is in configChanges so
          navigation isn't restarted). -->
