@@ -115,29 +115,33 @@ if (radio) {
   $("radio").hidden = false;
   document.querySelector('.guide-nav a[href="#radio"]').hidden = false;
   const text = radio[lang] ?? radio.en ?? {};
-  document.getElementById("radio-title").textContent = text.title ?? t(lang, "readyRadio");
-  document.getElementById("radio-intro").textContent = text.intro ?? "";
+  const stations = radio.stations ?? [];
+  $("radio-title").textContent = text.title ?? t(lang, "readyRadio");
+  $("radio-sub").textContent = t(lang, "radioSub")
+    .replace("{stations}", new Intl.ListFormat(lang, { type: "conjunction" }).format(stations.map((s) => s.name)));
+  $("radio-intro").textContent = text.intro ?? "";
   const mhz = (f) => f.toLocaleString(lang, { minimumFractionDigits: 1 });
-  const table = (head, rows) => el("table", { className: "radio-table" },
-    el("thead", {}, el("tr", {}, ...head.map((h) => el("th", { scope: "col", textContent: h })))),
-    el("tbody", {}, ...rows.map((row) => el("tr", {}, ...row.map((cell) => el("td", { textContent: cell }))))));
   const byName = (a, b) => a.localeCompare(b, "et");
-  document.getElementById("radio-stations").replaceChildren(...(radio.stations ?? []).map((station) => {
+  $("radio-stations").replaceChildren(...stations.map((station) => {
     // Transmitters by county, so people find theirs; areas as the source names them.
+    // On a phone the transmitter goes under its county, in the <small>.
     const rows = station.sites
       ? [...station.sites].sort((a, b) => byName(a[1], b[1]) || byName(a[0], b[0]))
-        .map(([site, county, f]) => [county, site, mhz(f)])
-      : (station.areas ?? []).map(([area, f]) => [area, mhz(f)]);
+        .map(([site, county, f]) => el("tr", {}, el("td", {}, county, el("small", { textContent: site })),
+          el("td", { className: "site", textContent: site }), el("td", { textContent: mhz(f) })))
+      : (station.areas ?? []).map(([area, f]) => el("tr", {}, el("td", { textContent: area }), el("td", { textContent: mhz(f) })));
     const head = station.sites
       ? [t(lang, "radioCounty"), t(lang, "radioSite"), "MHz"]
       : [t(lang, "radioArea"), "MHz"];
     return el("div", { className: "radio-station" },
-      el("h3", {}, `${station.name} `, el("span", { className: "meta", textContent: pick(lang, station.lang) })),
-      table(head, rows),
-      el("p", { className: "meta", textContent: t(lang, "radioAsOf").replace("{date}",
+      el("h3", {}, station.name, el("span", { textContent: pick(lang, station.lang) })),
+      el("table", { className: "radio-table" },
+        el("thead", {}, el("tr", {}, ...head.map((h, i) => el("th", { scope: "col", textContent: h, className: i === 1 && station.sites ? "site" : "" })))),
+        el("tbody", {}, ...rows)),
+      el("p", { className: "as-of", textContent: t(lang, "radioAsOf").replace("{date}",
         new Date(`${station.as_of}-01T12:00`).toLocaleDateString(lang, { year: "numeric", month: "long" })) }));
   }));
-  document.getElementById("radio-sources").append(`${t(lang, "source")}: `, ...sourceLinks(radio.sources));
+  $("radio-sources").append(...sourceLinks(radio.sources));
 }
 
 // ---------- Home supplies ----------
