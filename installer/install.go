@@ -170,7 +170,7 @@ func makePlan(index *Index, req Request, volumeRoot bool, open func(string) (*Ar
 		}
 		plan.Items = append(plan.Items, item)
 	}
-	// ponytail: the road network is not cut to the radius; ~35 MB for the whole country.
+	// The road network is not cut to the radius; ~35 MB for the whole country.
 	if r := region.Routing; r != nil {
 		if !safeRel(r.Path) {
 			problem("bad", r.Path)

@@ -246,7 +246,7 @@ func (c *Cut) write(dest string, centerLat, centerLon float64, progress func(int
 			return err
 		}
 	}
-	// ponytail: one range request at a time, and a failed run starts the
+	// One range request at a time, and a failed run starts the
 	// map again; fetch chunks in parallel if this proves slow.
 	next := 0
 	for _, ch := range c.chunks {

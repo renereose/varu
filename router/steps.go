@@ -41,7 +41,7 @@ const (
 // steps turns a route's legs into directions: a step where the route turns
 // at a junction that offers a choice, where it moves onto a differently
 // named road, and one per roundabout.
-// ponytail: no "keep left/right" at forks and no lane advice.
+// No "keep left/right" at forks and no lane advice.
 func (g *Graph) steps(legs []leg, line []Point, total float64, m Mode) []Step {
 	name := func(l leg) string { return g.names[g.sname[l.seg]] }
 	round := func(l leg) bool { return g.sflags[l.seg]&roundabout != 0 }

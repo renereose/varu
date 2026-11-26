@@ -67,7 +67,7 @@ public class DownloadService extends Service {
         else startForeground(ONGOING, first);
         if (watcher != null || intent == null) return START_NOT_STICKY;
 
-        // ponytail: 6 h ceiling on the wake lock; a bigger library on a slow line would need longer.
+        // 6 h ceiling on the wake lock; a bigger library on a slow line would need longer.
         wake = getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "varu:download");
         wake.acquire(6 * 60 * 60 * 1000L);
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);

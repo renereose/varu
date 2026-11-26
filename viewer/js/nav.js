@@ -174,7 +174,7 @@ export function setUpNavigation(map, hooks) {
   return { start, stop, active: () => watch !== null };
 }
 
-// ponytail: flat-earth metres, plenty for following a route.
+// Flat-earth metres, plenty for following a route.
 function metres([lon1, lat1], [lon2, lat2]) {
   const kx = 111320 * Math.cos(((lat1 + lat2) / 2) * Math.PI / 180);
   return Math.hypot((lon2 - lon1) * kx, (lat2 - lat1) * 110540);

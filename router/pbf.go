@@ -14,7 +14,7 @@ import (
 )
 
 // ---------- protobuf wire format (no schema) ----------
-// ponytail: unexported here; when the e-ink device needs the same reader,
+// Unexported here; when the e-ink device needs the same reader,
 // move this section to an exported router/wire package.
 
 type wire struct {
@@ -179,7 +179,7 @@ func unpackBlob(blob []byte) ([]byte, error) {
 		case f == 3 && t == 2:
 			packed = w.bytes()
 		case f >= 4 && f <= 7:
-			// ponytail: only zlib, which is what Geofabrik and osmium write.
+			// Only zlib, which is what Geofabrik and osmium write.
 			return nil, errors.New("osm extract: unsupported compression (only zlib is read)")
 		default:
 			w.skip(t)

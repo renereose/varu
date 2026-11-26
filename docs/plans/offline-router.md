@@ -8,7 +8,7 @@ also work as a desktop with keyboard, mouse and HDMI screen.
 
 Hard rules: no third-party apps or online services at runtime (downloading open data at
 release time is fine); Go and Python standard library only; releases built locally with
-`release.sh` (no GitHub Actions triggers); commits carry no Claude attribution.
+`release.sh` (no GitHub Actions triggers).
 
 This is a big change: 4 Go modules or packages, the Python builder, the installer, the
 viewer and the docs; about 1,100 lines of Go, 600 lines of Go tests and 350 lines of
@@ -126,7 +126,7 @@ P; it reads with `bufio` + `binary.Read` into preallocated slices.
 - **Path:** `parent[v]` = half-edge `(seg<<1 | reverse)`; geometry = snapped start,
   partial start segment, full segments (reversed where needed), partial end, snapped
   end; distance and duration summed along it.
-- **Concurrency:** one query at a time behind `sync.Mutex` (`ponytail:` upgrade = pool
+- **Concurrency:** one query at a time behind `sync.Mutex` (upgrade = pool
   of search states).
 
 ## 5. Build steps
@@ -140,7 +140,7 @@ P; it reads with `bufio` + `binary.Read` into preallocated slices.
    64 KB / 32 MB); HeaderBlock rejects required features outside {OsmSchema-V0.6,
    DenseNodes} and reads the replication timestamp (field 32); PrimitiveBlock string
    table, granularity/offsets, DenseNodes, Ways. Plain `Node` → "not supported" error.
-   `ponytail:` skips: relations (no turn restrictions), node tags (no barriers),
+   Skipped: relations (no turn restrictions), node tags (no barriers),
    metadata, lzma/zstd blobs.
 3. `router/build.go` (~230 lines): `Mode` (Foot, Car) + `ParseMode`; `wayRule(tags)`
    with default car speeds (motorway 100, trunk 85, primary 75, secondary 65, tertiary
@@ -156,12 +156,12 @@ P; it reads with `bufio` + `binary.Read` into preallocated slices.
    (two passes). `assemble`: keep routable ways, sort refs for unique IDs and use
    counts, junction = used ≥ 2 or endpoint, fill coordinates by binary search, split at
    junctions, skip duplicate refs, a missing node splits the way, ferry km/h from
-   duration. `ponytail:` no junction/signal delays, flat 5 km/h foot ignoring oneway,
+   duration. Left out: junction/signal delays, flat 5 km/h foot ignoring oneway,
    `area=yes` routed along the outline.
 4. `router/graph.go` (~200 lines): `Graph` (format arrays + `first`, `adj`, `comp[2]`,
    `compSize[2]`, `grid`, `maxKmh`, `mu`, search buffers); `arrays()`, `WriteTo`,
    `Load`, `index()` (CSR, per-mode components by BFS, grid, buffers), `Stats()`.
-   `ponytail:` whole graph in RAM (~100 MB), upgrade = mmap on unix.
+   Whole graph in RAM (~100 MB), upgrade = mmap on unix.
 5. `router/route.go` (~230 lines): `Point`, `Route{Line, DistanceM, DurationS, Ferry,
    SnapFromM, SnapToM}`, errors `ErrStartTooFar`, `ErrEndTooFar`, `ErrNotConnected`,
    `ErrNoRoute`; `(g *Graph) Route(from, to, mode)`; `distM`, `snap`, `usable`, heap.
@@ -286,7 +286,7 @@ Total about 1.5–2 weeks.
 
 1. Estimates are inferred, not measured → step 7 gate with contingencies 7a/7b.
 2. OSM data quality (fragments, access tags, no turn restrictions) → component-aware
-   snapping, `ponytail:` notes, optional "follow road signs" note.
+   snapping, comments on each shortcut, optional "follow road signs" note.
 3. Pi Zero 2 W running Chromium as a desktop is tight on RAM → recommend Pi 4/5 for
    desktop use.
 4. Long-press conflicts in MapLibre / Android WebView → one replaceable popup, CSS

@@ -26,7 +26,7 @@ drive, plus mock-ups (Tallinn, Tartu, a rural area, several zooms) to choose the
 size and style before buying hardware.
 
 Hard rules: Go standard library only; no third-party apps or services at runtime; no
-GitHub Actions triggers; commits carry no Claude attribution.
+GitHub Actions triggers.
 
 ## Amendment (user, 2026-11-23): Pi as a desktop
 
@@ -69,7 +69,7 @@ raspberry pi or similar and you attach a keyboard, mouse and hdmi screen to it."
 4. **Street names.** **A:** straight rotated labels along the longest nearly straight
    stretch, one per name per screen, never upside down. B: horizontal only. C: none.
 5. **POI clutter.** **A:** per-category minimum zoom, fixed priority (hospital first),
-   overlapping symbols dropped (`ponytail:`, upgrade = clusters). B: draw all.
+   overlapping symbols dropped (upgrade = clusters). B: draw all.
 6. **Judging aids.** **A:** `-legend` sheet + Tallinn at 648×480 (5.83" panel).
    B: legend only. C: neither.
 7. **Country border.** **A:** dashed 2 px black line for `boundaries` with
