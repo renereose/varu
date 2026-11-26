@@ -2,6 +2,7 @@ import {
   applyStrings, availableLanguages, currentLanguage, formatBytes,
   loadManifest, loadStatus, pick, setLanguage, t,
 } from "./common.js";
+import { initShare } from "./share.js";
 
 const [manifest, status] = await Promise.all([loadManifest(), loadStatus()]);
 let lang = currentLanguage(manifest);
@@ -91,11 +92,13 @@ function render() {
     title: zim.title || zim.name || zim.file,
   }));
 
-  document.getElementById("lan-note").hidden = !status.lan;
+  document.getElementById("lan-note").hidden = !(status.lan && status.remote);
+  renderShare();
 
   const attribution = document.getElementById("attribution");
   attribution.replaceChildren(...(manifest.attribution ?? []).map((line) => el("li", { textContent: line })));
   document.getElementById("version").textContent = status.version ? `Varu ${status.version}` : "";
 }
 
+const renderShare = initShare(status, () => lang);
 render();

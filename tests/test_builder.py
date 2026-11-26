@@ -50,7 +50,7 @@ class ConfigTests(unittest.TestCase):
         for lon, lat in ((24.75, 59.44), (26.72, 58.38)):
             self.assertTrue(west < lon < east and south < lat < north)
         sources = load_sources(REPO)
-        self.assertEqual({p["name"] for p in sources["npm"]}, {"maplibre-gl", "pmtiles", "@protomaps/basemaps"})
+        self.assertEqual({p["name"] for p in sources["npm"]}, {"maplibre-gl", "pmtiles", "@protomaps/basemaps", "qrcode-generator"})
         for package in sources["npm"]:
             self.assertTrue(package["integrity"].startswith("sha512-"))
             self.assertIn(package["version"], package["url"])

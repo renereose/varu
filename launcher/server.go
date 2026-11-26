@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"html"
@@ -10,14 +11,18 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 )
 
 // Config describes one running instance.
 type Config struct {
 	Root    string // drive root
-	LAN     bool   // accept requests from other hosts
 	Version string
 	Search  bool // prepare the library's search indexes in the background
+
+	ShareHost string // address the sharing listener binds; 0.0.0.0 when empty
+	SharePort int    // preferred port for the sharing listener
 }
 
 func init() {
@@ -53,7 +58,37 @@ var dataDirs = []string{"maps", "pois", "docs"}
 //	/api/places       search for towns, streets and addresses (places.go)
 //	/library/  /api/library   the books in library/ (library.go)
 func NewHandler(cfg Config) http.Handler {
+	return newSite(cfg).local
+}
+
+// site is the handler for the person's own browser plus the optional
+// Wi-Fi sharing server that serves the same pages to other devices.
+type site struct {
+	local http.Handler // 127.0.0.1 only, behind the host guard
+	share *sharer
+}
+
+type remoteKey struct{}
+
+// isRemote reports whether the request arrived on the sharing server.
+func isRemote(r *http.Request) bool {
+	v, _ := r.Context().Value(remoteKey{}).(bool)
+	return v
+}
+
+func newSite(cfg Config) *site {
 	mux := http.NewServeMux()
+	sh := &sharer{host: cfg.ShareHost, port: cfg.SharePort, addrs: lanAddresses}
+	status := func(r *http.Request) map[string]any {
+		on, addrs := sh.state()
+		return map[string]any{
+			"version":   cfg.Version,
+			"library":   hasBooks(cfg.Root),
+			"lan":       on,
+			"addresses": addrs,
+			"remote":    isRemote(r),
+		}
+	}
 
 	for _, dir := range dataDirs {
 		prefix := "/" + dir + "/"
@@ -73,11 +108,35 @@ func NewHandler(cfg Config) http.Handler {
 
 	mux.HandleFunc("/api/status", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"version": cfg.Version,
-			"library": hasBooks(cfg.Root),
-			"lan":     cfg.LAN,
-		})
+		_ = json.NewEncoder(w).Encode(status(r))
+	})
+
+	// Only the person at this computer may turn sharing on or off: not
+	// from the sharing server, and not from a web page elsewhere (the
+	// custom header forces a preflight, which is never answered).
+	mux.HandleFunc("/api/share", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", http.MethodPost)
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if isRemote(r) || r.Header.Get("X-Varu") != "1" {
+			http.Error(w, "forbidden", http.StatusForbidden)
+			return
+		}
+		var req struct {
+			On bool `json:"on"`
+		}
+		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1024)).Decode(&req); err != nil {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+		if err := sh.set(req.On); err != nil {
+			http.Error(w, "Could not share on the network: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(status(r))
 	})
 
 	mux.Handle("/api/route", &routes{root: cfg.Root})
@@ -91,8 +150,74 @@ func NewHandler(cfg Config) http.Handler {
 
 	mux.Handle("/", http.FileServer(quietFS{http.Dir(filepath.Join(cfg.Root, "app"))}))
 
-	return commonHeaders(hostGuard(cfg.LAN, mux))
+	local := func(h http.Handler, remote bool) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), remoteKey{}, remote)))
+		})
+	}
+	sh.handler = commonHeaders(local(mux, true))
+	return &site{local: commonHeaders(local(hostGuard(mux), false)), share: sh}
 }
+
+// sharer owns the optional listener on the local network. It is bound
+// only while sharing is on, so people who never share never trigger the
+// firewall prompt a wildcard bind causes.
+type sharer struct {
+	host    string
+	port    int
+	addrs   func() []string
+	handler http.Handler
+
+	mu   sync.Mutex
+	srv  *http.Server
+	bind int // port in use while on
+}
+
+func (s *sharer) set(on bool) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if !on {
+		if s.srv != nil {
+			_ = s.srv.Close()
+			s.srv = nil
+		}
+		return nil
+	}
+	if s.srv != nil {
+		return nil
+	}
+	host := s.host
+	if host == "" {
+		host = "0.0.0.0"
+	}
+	ln, err := listen(host, s.port)
+	if err != nil {
+		return err
+	}
+	srv := &http.Server{Handler: s.handler, ReadHeaderTimeout: 10 * time.Second}
+	s.srv = srv
+	s.bind = ln.Addr().(*net.TCPAddr).Port
+	go func() { _ = srv.Serve(ln) }()
+	return nil
+}
+
+// state reports whether sharing is on and the addresses other devices can
+// open. The addresses are read each time so a network that appears later
+// (a phone hotspot) shows up.
+func (s *sharer) state() (bool, []string) {
+	s.mu.Lock()
+	on, port := s.srv != nil, s.bind
+	s.mu.Unlock()
+	out := []string{}
+	if on {
+		for _, ip := range s.addrs() {
+			out = append(out, fmt.Sprintf("http://%s/", net.JoinHostPort(ip, fmt.Sprint(port))))
+		}
+	}
+	return on, out
+}
+
+func (s *sharer) close() { _ = s.set(false) }
 
 func messagePage(w http.ResponseWriter, status int, title, body string, refresh bool) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -110,11 +235,8 @@ func messagePage(w http.ResponseWriter, status int, title, body string, refresh 
 
 // hostGuard rejects requests whose Host header is not this machine. Without
 // it, a hostile web page could use DNS rebinding to read the drive through
-// the visitor's browser. In LAN mode any host is accepted by design.
-func hostGuard(lan bool, next http.Handler) http.Handler {
-	if lan {
-		return next
-	}
+// the visitor's browser. The sharing server does not use it by design.
+func hostGuard(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		host := r.Host
 		if h, _, err := net.SplitHostPort(host); err == nil {

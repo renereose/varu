@@ -80,8 +80,8 @@ ega kasutajakontosid ning internetti on vaja vaid üks kord, et kõik alla laadi
 | Post Disaster Resource Library (inglise keeles) | 0,6 GB |
 
 > 💡 **iPhone?** iPhone'i äppi veel pole. iPhone'iga saab Varut kasutada
-> [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi) või hoia käepärast
-> sülearvutit või mälupulka.
+> WiFi kaudu, kui arvuti või Android-telefon [seda jagab](#jagamine-teiste-telefonidega),
+> või [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi).
 
 ---
 
@@ -284,6 +284,25 @@ varjumiskoht (**Tartu Ülikooli Kliinikum**).
   valgus, side, hügieen, tööriistad ja parandamine, orienteerumine, ohud ning
   elanikkonnakaitse. Otsides tulevad sobivad neist esimesena, tähisega ★.
 - Pikemad sõnad leiavad ka teisi vorme: *tallinn* leiab *Tallinnas*.
+
+### Jagamine teiste telefonidega
+
+Arvuti või Android-telefon, milles Varu töötab, saab seda jagada kõigile
+samas WiFi-võrgus olevatele telefonidele, tahvelarvutitele ja sülearvutitele,
+ka iPhone'idele. Neil pole vaja internetti ega äppi.
+
+1. Ava avalehe allosas **Jaga teiste seadmetega** ja vajuta **Lülita jagamine
+   sisse**. Arvuti võib küsida, kas Varu tohib võrguühendusi vastu võtta:
+   luba see.
+2. Ühenda teine telefon samasse WiFi-võrku (või selle arvuti või telefoni
+   kuumkohta), skanni kood kaameraga või sisesta näidatud aadress.
+3. **Lõpeta jagamine** või Varu sulgemine lõpetab jagamise.
+
+Teistes seadmetes töötavad kaart, kohad, **Lähim**, teejuhised ja
+raamatukogu. **Näita minu asukohta** ja **juhised teel** ei tööta: brauserid
+jagavad asukohta ainult sama seadme äppidega või turvaliste (https)
+lehtedega. Vajuta kaardil ja hoia sõrme all → **Alusta siit**, et öelda, kus
+oled.
 
 ---
 

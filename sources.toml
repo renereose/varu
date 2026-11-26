@@ -44,6 +44,17 @@ license_url = "https://raw.githubusercontent.com/protomaps/basemaps/main/LICENSE
 [npm.files]
 "package/dist/esm/index.js" = "basemaps.mjs"
 
+[[npm]]
+name = "qrcode-generator"
+version = "2.0.4"
+license = "MIT"
+homepage = "https://github.com/kazuhikoarase/qrcode-generator"
+url = "https://registry.npmjs.org/qrcode-generator/-/qrcode-generator-2.0.4.tgz"
+integrity = "sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g=="
+license_url = "https://raw.githubusercontent.com/kazuhikoarase/qrcode-generator/master/LICENSE"
+[npm.files]
+"package/dist/qrcode.mjs" = "qrcode.mjs"
+
 # --- Map fonts and icons ----------------------------------------------------
 # Glyphs (SIL OFL) and sprites (MIT) for the Protomaps basemap style.
 [assets]
