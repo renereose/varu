@@ -180,7 +180,14 @@ future version can update the app on people's phones.
 A browser cannot read a multi-gigabyte map straight off a disk, which is why
 there is a launcher at all. It binds to `127.0.0.1` only, rejects requests
 for other host names, hides dotfiles and never lists directories. Started
-with `-lan`, it also serves phones and other computers on the same Wi-Fi.
+with `-lan`, or once **Share with other devices** is switched on from the
+start page (`POST /api/share`), it also serves phones and other computers on
+the same Wi-Fi from a second listener on `0.0.0.0`. That listener exists only
+while sharing is on, it asks for the same port (Linux and some systems give
+it the next one), and only the person at the computer can switch it: the
+request must come from `127.0.0.1` and carry an `X-Varu: 1` header. Pages
+inside the library's books share the launcher's origin, so a book's own
+script could still switch it; Varu only ships books from the Kiwix catalogue.
 
 `manifest.json` on the drive lists what is actually there. The viewer shows
 only what the manifest lists, so a drive without a library simply has a

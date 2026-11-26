@@ -122,7 +122,8 @@ A first build on a normal internet connection will settle these:
 - [x] Installer: remove older ZIM editions when a newer one is installed,
       with their search indexes; the old one stays until the new one is
       complete.
-- [ ] A start script for network sharing (`-lan`), with a QR code for phones.
+- [x] Network sharing switched on from the start page, with the address and a
+      QR code for phones (`-lan` starts with it on).
 - [ ] A guide for groups that want to produce drives in bulk.
 
 ## 6. Pocket device

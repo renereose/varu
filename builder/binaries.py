@@ -62,6 +62,9 @@ EESTI KEELES
   Avaneb aken ja seejärel veebilehitseja. Internetti pole vaja.
   Hoia avanenud aken lahti; selle sulgemine peatab Varu.
 
+  Et samas WiFi-võrgus olevad telefonid ja arvutid saaksid seda mälupulka
+  kasutada, ava avalehe allosas "Jaga teiste seadmetega".
+
 IN ENGLISH
   If the stick has the Varu app, double-click the file for your system:
   Varu-Windows.exe, Varu-macOS.dmg (then open Varu in it) or Varu-Linux-x86_64.AppImage.
@@ -78,8 +81,7 @@ IN ENGLISH
   Keep the window open; closing it stops Varu.
 
   To let phones and other computers on the same Wi-Fi use this drive,
-  start the program in bin/ with the option  -lan  and open the "Network"
-  address it prints.
+  open "Share with other devices" at the bottom of the start page.
 
 Licences and credits are in the licenses folder.
 """

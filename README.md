@@ -80,8 +80,8 @@ and needs the internet only once, to download everything.
 | Post Disaster Resource Library (English) | 0.6 GB |
 
 > 💡 **iPhone?** There's no iPhone app yet. An iPhone can still use Varu
-> from a [Raspberry Pi on your Wi-Fi](#-raspberry-pi), or you can keep a
-> laptop or a stick at hand.
+> over Wi-Fi when a computer or Android phone [shares it](#sharing-with-other-phones),
+> or from a [Raspberry Pi on your Wi-Fi](#-raspberry-pi).
 
 ---
 
@@ -284,6 +284,24 @@ a hospital or shelter (**Tartu Ülikooli Kliinikum**).
   communication, hygiene, tools and repair, navigation, hazards and civil
   protection. When you search, matching ones come first, marked ★.
 - Longer words also find their other forms: *tallinn* finds *Tallinnas*.
+
+### Sharing with other phones
+
+A computer or Android phone running Varu can share it with every phone,
+tablet and laptop on the same Wi-Fi, iPhones too, and none of them needs
+the internet or an app.
+
+1. At the bottom of the start page, open **Share with other devices** and
+   press **Turn sharing on**. A computer may ask whether Varu may accept
+   network connections: allow it.
+2. On the other phone, join the same Wi-Fi (or this computer's or phone's
+   hotspot), then scan the code with the camera or type the address shown.
+3. **Stop sharing**, or closing Varu, ends it.
+
+On the other devices the map, places, **Nearest**, directions and the library
+all work. **Show my location** and **live directions** don't: browsers only
+share your location with apps on the device itself or with secure (https)
+sites. On the map, press and hold → **Start here** to say where you are.
 
 ---
 

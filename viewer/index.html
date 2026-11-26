@@ -67,6 +67,27 @@
   </main>
 
   <footer>
+    <details id="share" class="share" hidden>
+      <summary data-i18n="shareTitle">Share with other devices</summary>
+      <div class="share-body">
+        <div id="share-off" hidden>
+          <p data-i18n="shareHintOff">Let phones and computers on the same Wi-Fi open this drive.</p>
+          <button type="button" class="btn btn-primary" id="share-on" data-i18n="shareOn">Turn sharing on</button>
+        </div>
+        <div id="share-live" hidden>
+          <ul id="share-addresses" class="share-addresses"></ul>
+          <div id="share-qr" class="share-qr" hidden></div>
+          <p data-i18n="shareHint">Open this address on another phone or computer on the same Wi-Fi, or scan the code with the phone camera. No internet is needed. Sharing stops when Varu is closed.</p>
+          <button type="button" class="btn" id="share-off-btn" data-i18n="shareOff">Stop sharing</button>
+        </div>
+        <div id="share-none" hidden>
+          <p data-i18n="shareNoNetwork">No Wi-Fi network was found. Connect this computer to Wi-Fi or start a hotspot, then try again.</p>
+          <button type="button" class="btn" id="share-retry" data-i18n="shareRetry">Try again</button>
+          <button type="button" class="btn" id="share-stop-none" data-i18n="shareOff">Stop sharing</button>
+        </div>
+        <p id="share-error" class="share-error" role="alert" hidden></p>
+      </div>
+    </details>
     <p id="lan-note" hidden data-i18n="lanNote">This drive is being shared with other devices on the local network.</p>
     <ul id="attribution" class="attribution"></ul>
     <p class="meta" id="version"></p>

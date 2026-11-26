@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -139,9 +140,67 @@ func TestHostGuard(t *testing.T) {
 			t.Errorf("local mode: host %s got %d, want 200", host, res.StatusCode)
 		}
 	}
-	res, _ = get(t, NewHandler(Config{Root: root, LAN: true}), "/", func(r *http.Request) { r.Host = "192.168.1.20:8480" })
+	st := newSite(Config{Root: root})
+	res, _ = get(t, st.share.handler, "/", func(r *http.Request) { r.Host = "192.168.1.20:8480" })
 	if res.StatusCode != http.StatusOK {
-		t.Errorf("LAN mode: got %d, want 200", res.StatusCode)
+		t.Errorf("share server: got %d, want 200", res.StatusCode)
+	}
+}
+
+func post(t *testing.T, h http.Handler, body string, hdr bool) (*http.Response, string) {
+	t.Helper()
+	return get(t, h, "/api/share", func(r *http.Request) {
+		r.Method = http.MethodPost
+		r.Body = io.NopCloser(strings.NewReader(body))
+		if hdr {
+			r.Header.Set("X-Varu", "1")
+		}
+	})
+}
+
+func TestShare(t *testing.T) {
+	st := newSite(Config{Root: newDrive(t), ShareHost: "127.0.0.1"})
+	st.share.addrs = func() []string { return []string{"192.168.1.23"} }
+	defer st.share.close()
+
+	if res, _ := post(t, st.local, `{"on":true}`, false); res.StatusCode != http.StatusForbidden {
+		t.Errorf("no header: got %d, want 403", res.StatusCode)
+	}
+	if res, _ := post(t, st.share.handler, `{"on":true}`, true); res.StatusCode != http.StatusForbidden {
+		t.Errorf("share server: got %d, want 403", res.StatusCode)
+	}
+	if res, _ := get(t, st.local, "/api/share", nil); res.StatusCode != http.StatusMethodNotAllowed {
+		t.Errorf("GET: got %d, want 405", res.StatusCode)
+	}
+	if _, body := get(t, st.local, "/api/status", nil); !strings.Contains(body, `"lan":false`) || !strings.Contains(body, `"addresses":[]`) {
+		t.Errorf("status before: %s", body)
+	}
+
+	res, body := post(t, st.local, `{"on":true}`, true)
+	if res.StatusCode != http.StatusOK || !strings.Contains(body, `"lan":true`) || !strings.Contains(body, `"http://192.168.1.23:`) || !strings.Contains(body, `"remote":false`) {
+		t.Fatalf("on: %d %s", res.StatusCode, body)
+	}
+	if _, body := get(t, st.share.handler, "/api/status", func(r *http.Request) { r.Host = "192.168.1.23:8481" }); !strings.Contains(body, `"remote":true`) {
+		t.Errorf("share status: %s", body)
+	}
+	if res, _ := get(t, st.local, "/", func(r *http.Request) { r.Host = "evil.example" }); res.StatusCode != http.StatusForbidden {
+		t.Errorf("local server foreign host: got %d, want 403", res.StatusCode)
+	}
+
+	res, body = post(t, st.local, `{"on":false}`, true)
+	if res.StatusCode != http.StatusOK || !strings.Contains(body, `"lan":false`) {
+		t.Errorf("off: %d %s", res.StatusCode, body)
+	}
+}
+
+func TestShareBindFailure(t *testing.T) {
+	st := newSite(Config{Root: newDrive(t), ShareHost: "203.0.113.1"})
+	res, body := post(t, st.local, `{"on":true}`, true)
+	if res.StatusCode != http.StatusInternalServerError || body == "" {
+		t.Errorf("got %d %q, want 500 with a message", res.StatusCode, body)
+	}
+	if _, body := get(t, st.local, "/api/status", nil); !strings.Contains(body, `"lan":false`) {
+		t.Errorf("sharing should stay off: %s", body)
 	}
 }
 
@@ -264,5 +323,19 @@ func TestRouteAPI(t *testing.T) {
 		if res.StatusCode != c.status || !strings.Contains(body, c.want) {
 			t.Errorf("%s: %d %s; want %d with %s", c.query, res.StatusCode, body, c.status, c.want)
 		}
+	}
+}
+
+func TestPickAddrs(t *testing.T) {
+	ips := []net.IP{net.ParseIP("127.0.0.1"), net.ParseIP("192.168.64.1"), net.ParseIP("169.254.1.2"),
+		net.ParseIP("fe80::1"), net.ParseIP("192.168.1.23")}
+	if got := strings.Join(pickAddrs(ips, "192.168.1.23"), " "); got != "192.168.1.23 192.168.64.1" {
+		t.Errorf("route first: %s", got)
+	}
+	if got := strings.Join(pickAddrs(ips, ""), " "); got != "192.168.64.1 192.168.1.23" {
+		t.Errorf("no route: %s", got)
+	}
+	if got := strings.Join(pickAddrs(nil, "10.0.0.5"), " "); got != "10.0.0.5" {
+		t.Errorf("route only: %s", got)
 	}
 }
