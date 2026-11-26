@@ -33,7 +33,7 @@ var (
 	ErrUnsupported = errors.New("this archive uses a compression Varu cannot read (xz); use a newer edition")
 	errCorrupt     = errors.New("damaged archive")
 	le             = binary.LittleEndian
-	// ponytail: one shared decoder; DecodeAll is safe for concurrent use.
+	// One shared decoder; DecodeAll is safe for concurrent use.
 	zstdDecoder, _ = zstd.NewReader(nil, zstd.WithDecoderLowmem(true))
 )
 

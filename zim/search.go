@@ -547,7 +547,7 @@ func (x *Index) Search(query string, limit int) ([]Hit, error) {
 	if len(qwords) == 0 || x.docs == 0 {
 		return nil, nil
 	}
-	// ponytail: BM25 with a gentle length penalty (b), since the main article
+	// BM25 with a gentle length penalty (b), since the main article
 	// on a subject is usually the long one; titles weigh titleWeight times more.
 	const k1, b, titleWeight, otherForm = 1.2, 0.4, 4.0, 0.6
 	scores := map[uint32]float64{}

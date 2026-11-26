@@ -23,7 +23,7 @@ trap 'rm -rf "$work"' EXIT
 code=$(echo "$version" | awk -F'[v.]' 'NF==4 && $2$3$4 ~ /^[0-9]+$/ {print $2*10000+$3*100+$4; exit} {print 1}')
 
 # 1. The Go programs, named lib*.so so Android unpacks them where they may run.
-# ponytail: 64-bit ARM only (Go needs cgo for 32-bit Android); that is nearly every phone sold since 2017.
+# 64-bit ARM only (Go needs cgo for 32-bit Android); that is nearly every phone sold since 2017.
 libs="$work/apk/lib/arm64-v8a"
 mkdir -p "$libs"
 for program in installer launcher; do

@@ -126,7 +126,7 @@ func readPlaces(r io.Reader) (*placeIndex, error) {
 			return nil, fmt.Errorf("bad line %q", sc.Text())
 		}
 		if len(name) > 255 || len(folded) > 255 {
-			continue // ponytail: no real name is this long
+			continue // No real name is this long
 		}
 		ix.entries = append(ix.entries, place{
 			lon: float32(lon), lat: float32(lat), ctx: uint32(ctx), addresses: uint32(count), kind: f[0][0],
@@ -172,7 +172,7 @@ func fold(s string) string {
 
 var streetTypes = map[string]string{"tn": "tanav", "mnt": "maantee", "pst": "puiestee"}
 
-// ponytail: Latin letters with accents only; names in other scripts match as written.
+// Latin letters with accents only; names in other scripts match as written.
 var unaccent = func() map[rune]rune {
 	m := map[rune]rune{}
 	for plain, accented := range map[rune]string{
@@ -193,7 +193,7 @@ var unaccent = func() map[rune]rune {
 // the fewest typed only in part, names that start with the first word,
 // and then distance to near divided by size.
 //
-// ponytail: a scan of every entry, 20-60 ms for Estonia's 776,000 on a laptop.
+// A scan of every entry, 20-60 ms for Estonia's 776,000 on a laptop.
 // A sorted word index if a bigger region makes it slow.
 func (ix *placeIndex) search(q string, near *[2]float64) []placeResult {
 	words := strings.Fields(fold(q))

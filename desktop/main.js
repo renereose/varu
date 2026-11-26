@@ -13,7 +13,7 @@ const GOOS = { darwin: "darwin", win32: "windows", linux: "linux" }[process.plat
 const GOARCH = { x64: "amd64", arm64: "arm64" }[process.arch];
 const EXE = process.platform === "win32" ? ".exe" : "";
 
-// ponytail: AppImages cannot carry Chromium's setuid sandbox helper, and Ubuntu
+// AppImages cannot carry Chromium's setuid sandbox helper, and Ubuntu
 // 24.04 blocks the other kind. Pages here are only Varu's own, from the drive.
 if (process.env.APPIMAGE) app.commandLine.appendSwitch("no-sandbox");
 

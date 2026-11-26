@@ -40,7 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- ponytail: target 34 has no time limit on dataSync; 35 stops it after
+        <!-- Target 34 has no time limit on dataSync; 35 stops it after
              6 h a day and needs onTimeout. -->
         <service
             android:name=".DownloadService"

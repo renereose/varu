@@ -77,7 +77,7 @@ func firstTag(tag func(string) string, keys ...string) string {
 }
 
 // wayRule says whether cars and walkers may use a way, and how fast cars go.
-// ponytail: no turn restrictions, barriers, or junction and signal delays;
+// No turn restrictions, barriers, or junction and signal delays;
 // walking is a flat 5 km/h in both directions; maxspeed is taken as the
 // travel speed. Times are estimates, which the viewer says.
 func wayRule(tag func(string) string) (rule, bool) {
@@ -330,7 +330,7 @@ func (k *keptWays) assemble(meta Meta, locate func(ids []int64, lat, lon []int32
 				continue // the same node twice in a row
 			}
 			if !have[i] {
-				// ponytail: a node missing from the extract splits the way; the piece in progress is dropped.
+				// A node missing from the extract splits the way; the piece in progress is dropped.
 				start, prev = -1, -1
 				g.plat, g.plon = g.plat[:g.sshape[len(g.sshape)-1]], g.plon[:g.sshape[len(g.sshape)-1]]
 				continue

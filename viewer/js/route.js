@@ -225,7 +225,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     say(t(lang, "routing"));
     const [x, y] = origin.lngLat;
     const k = Math.cos((y * Math.PI) / 180);
-    // ponytail: flat-earth distance, fine for ranking within a country.
+    // Flat-earth distance, fine for ranking within a country.
     const crow = ({ lngLat: [lon, lat] }) => ((lon - x) * k) ** 2 + (lat - y) ** 2;
     const near = [...places].sort((a, b) => crow(a) - crow(b)).slice(0, NEAREST_TRIES);
     const point = ([lon, lat]) => `${lat.toFixed(6)},${lon.toFixed(6)}`;

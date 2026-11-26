@@ -33,7 +33,7 @@ var version = "dev"
 
 const repo = "https://github.com/renereose/varu"
 
-// ponytail: an idle wizard exits after this long without the page asking
+// An idle wizard exits after this long without the page asking
 // for anything. Browsers slow or pause timers in background tabs, so this
 // is long; the cost is a small process lingering after the tab is closed.
 const idleExit = 30 * time.Minute

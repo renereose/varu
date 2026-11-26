@@ -27,9 +27,9 @@ var (
 )
 
 const (
-	// ponytail: a flat boarding allowance per ferry; no timetables.
+	// A flat boarding allowance per ferry; no timetables.
 	ferryWaitS = 20 * 60
-	// ponytail: fixed snapping limits. Pieces of the network with fewer than
+	// Fixed snapping limits. Pieces of the network with fewer than
 	// mainNetwork junctions (car parks, odd footpaths) are only used when
 	// nothing in the main network is within snapNear.
 	snapNear    = 1000.0
