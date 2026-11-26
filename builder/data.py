@@ -319,7 +319,7 @@ def step_library(ctx: Context) -> None:
             continue
 
         for name in remove_older_editions(library, filename):
-            ctx.log(f"removed older edition {name}")
+            ctx.log(f"removing older edition {name}")
             titles.pop(name, None)
         titles[filename] = {
             "name": entry.get("name", spec.name),

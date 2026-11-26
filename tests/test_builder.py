@@ -201,6 +201,17 @@ class CatalogTests(unittest.TestCase):
             self.assertEqual([p.name for p in stale], ["wikipedia_et_all_maxi_2026-03.zim"])
             self.assertEqual(older_editions(library, "undated.zim"), [])
 
+    def test_remove_older_editions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            library = Path(tmp)
+            keep = ("wikipedia_et_all_maxi_2026-09.zim", "wikipedia_et_all_maxi_2026-09.search",
+                    "wikipedia_et_all_maxi_extra_2026-03.zim")
+            for name in ("wikipedia_et_all_maxi_2026-03.zim", "wikipedia_et_all_maxi_2026-03.search", *keep):
+                (library / name).touch()
+            removed = remove_older_editions(library, "wikipedia_et_all_maxi_2026-09.zim")
+            self.assertEqual(removed, ["wikipedia_et_all_maxi_2026-03.zim"])
+            self.assertEqual(sorted(p.name for p in library.iterdir()), sorted(keep))
+
 
 class RangeHandler(BaseHTTPRequestHandler):
     """Serves one payload, honours Range, and can cut the first answer short."""
