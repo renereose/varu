@@ -399,67 +399,10 @@ sudo nmcli connection modify Hotspot connection.autoconnect yes
 *Raspberry Pi OS (64-bit)*, siis väljalaske lehelt Linuxi `arm64` Varu
 (`varu_<versioon>_arm64.deb`) ja kasuta seda nagu igas arvutis.
 
-### Tulekul: taskuseade e-tindi ekraani ja GPS-iga
+### Kavas: taskuseade
 
-Kavandame taskusuurust Varut: **Raspberry Pi Zero 2 W** koos **e-tindi
-ekraani**, **GPS-mooduli**, mõne **nupu** ja **akuga**. See näitab kaarti,
-sinu asukohta ning lähimat joogivett või varjumiskohta päevade kaupa ühe
-laadimisega ja ilma telefonita.
-
-> 🚧 **Seade veel ei tööta.** Tarkvara esimene osa on kirjutatud: see
-> joonistab Varu andmetest e-tindi ekraani kaardivaateid, praegu ainult
-> piltidena arvutis (vt allpool). Päris e-tindi ekraanile need veel ei jõua
-> ning GPS-i ja nuppe miski ei loe. Plaani saad jälgida failis
-> [docs/plans/pi-eink-phase1.md](docs/plans/pi-eink-phase1.md).
-
-Nii võiks ekraan välja näha, joonistatud Eesti kaardist (400×300 pikslit,
-tegelikus suuruses umbes 85 mm lai):
-
-| Rõuge, must-valge | Tallinna vanalinn, 4 halli tooni | Tartu ja ümbrus, must-valge |
-|---|---|---|
-| ![Rõuge must-valgel e-tindi ekraanil](docs/images/pocket-rouge-14.png) | ![Tallinna vanalinn 4 halli tooniga e-tindi ekraanil](docs/images/pocket-tallinn-14-grey.png) | ![Tartu must-valgel e-tindi ekraanil](docs/images/pocket-tartu-10.png) |
-
-Arendajad saavad ise pilte joonistada käsuga `make mockups DRIVE=/Volumes/VARU`
-(vt [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
-
-Kui tahad riistvara juba koguda ja proovida, siis selle peale me plaanime:
-
-| Osa | Plaanis | Märkused |
-|---|---|---|
-| Arvuti | Raspberry Pi Zero 2 W | joodetud 40-kontaktilise liidesega |
-| Ekraan | 4,2" e-paberi HAT (400×300), nt Waveshare | kaalumisel ka 5,83" (648×480) |
-| GPS | u-blox NEO-6M või NEO-M8N moodul | sobib iga u-blox, mis saadab NMEA-d kiirusel 9600; sobib ka USB u-blox |
-| Toide | LiPo aku koos laadijaga, nt PiSugar | |
-| Nupud | 5–6 nuppu | ühendamise juhend tuleb koos tarkvaraga |
-
-<details>
-<summary><b>u-blox GPS-i ühendamine ja kontrollimine</b></summary>
-
-1. **Juhtmed** (kontaktide numbrid on Pi füüsilised kontaktid). Enamik
-   u-blox moodulite plaate töötab 3,3 V pealt; kontrolli oma moodulit.
-
-   | GPS-moodul | Raspberry Pi |
-   |---|---|
-   | VCC | kontakt 1 (3,3 V) |
-   | GND | kontakt 6 (GND) |
-   | TX | kontakt 10 (GPIO 15, RXD) |
-   | RX | kontakt 8 (GPIO 14, TXD) |
-
-   Kui e-paberi HAT on liidesel, kasuta läbivat liidest või joota juhtmed Pi
-   alt. HAT kasutab SPI-d ja veel mõnda kontakti, kuid mitte kontakte 8 ja 10.
-2. Lülita jadaport sisse: `sudo raspi-config` → **Interface Options** →
-   **Serial Port**: sisselogimiskest **No**, jadapordi riistvara **Yes**.
-   Ekraani jaoks lülita sisse ka **SPI**. Taaskäivita.
-3. Kontrolli, et GPS räägib:
-   ```sh
-   stty -F /dev/serial0 9600 && cat /dev/serial0
-   ```
-   Ekraanil peaksid jooksma read, mis algavad `$GP` või `$GN`. Mine õue:
-   esimene asukoht võib võtta mõne minuti ja selle leidmise järel ilmuvad
-   asukohaga read. Lõpetamiseks vajuta Ctrl+C.
-4. USB u-blox ilmub hoopis kui `/dev/ttyACM0`: `cat /dev/ttyACM0`.
-
-</details>
+Kavas on taskusuurune Varu e-tindi ekraani ja GPS-iga. See veel ei tööta;
+kui hakkab, kirjutame siia lähemalt.
 
 ---
 

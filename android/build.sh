@@ -35,10 +35,11 @@ done
 "$tools/aapt2" compile --dir "$repo/android/res" -o "$work/res.zip"
 "$tools/aapt2" link -o "$work/app.apk" -I "$platform/android.jar" \
   --manifest "$repo/android/AndroidManifest.xml" --version-code "$code" --version-name "${version#v}" "$work/res.zip"
-javac -nowarn --release 11 -classpath "$platform/android.jar" -d "$work/classes" \
-  $(find "$repo/android/src" -name '*.java')
-"$tools/d8" --release --min-api 24 --lib "$platform/android.jar" --output "$work/apk" \
-  $(find "$work/classes" -name '*.class')
+# find -exec rather than $(find), so a folder name with a space still works.
+find "$repo/android/src" -name '*.java' -exec \
+  javac -nowarn --release 11 -classpath "$platform/android.jar" -d "$work/classes" {} +
+find "$work/classes" -name '*.class' -exec \
+  "$tools/d8" --release --min-api 24 --lib "$platform/android.jar" --output "$work/apk" {} +
 
 # 3. Assemble, align, sign.
 (cd "$work/apk" && zip -qr "$work/app.apk" classes.dex lib)

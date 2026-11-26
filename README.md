@@ -399,67 +399,10 @@ Join the *Varu* network and open `http://10.42.0.1:8480/`.
 (64-bit)* with the desktop, then the Linux `arm64` Varu
 (`varu_<version>_arm64.deb`) from the release page, and use it like on any computer.
 
-### Coming: a pocket device with an e-ink screen and GPS
+### Planned: a pocket device
 
-We're designing a pocket-sized Varu: a **Raspberry Pi Zero 2 W** with an
-**e-ink screen**, a **GPS module**, a few **buttons** and a **battery**. It
-shows the map, where you are and the nearest water or shelter, for days on
-one charge, with no phone.
-
-> 🚧 **The device doesn't work yet.** The first part of its software is
-> written: it draws e-ink map screens from a Varu drive, so far only as
-> pictures on a computer (below). Nothing yet shows them on a real e-ink
-> screen or reads the GPS and buttons. Follow the plan in
-> [docs/plans/pi-eink-phase1.md](docs/plans/pi-eink-phase1.md).
-
-What the screen could look like, drawn from the Estonia map (400×300 pixels,
-real size about 85 mm wide):
-
-| Rõuge, black and white | Tallinn Old Town, 4 greys | Tartu and around, black and white |
-|---|---|---|
-| ![Rõuge on a black and white e-ink screen](docs/images/pocket-rouge-14.png) | ![Tallinn Old Town on a 4-grey e-ink screen](docs/images/pocket-tallinn-14-grey.png) | ![Tartu on a black and white e-ink screen](docs/images/pocket-tartu-10.png) |
-
-Developers can draw their own with `make mockups DRIVE=/Volumes/VARU`
-(see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
-
-If you'd like to collect and test the hardware now, this is what we're planning for:
-
-| Part | Planned | Notes |
-|---|---|---|
-| Computer | Raspberry Pi Zero 2 W | with a soldered 40-pin header |
-| Screen | 4.2" e-paper HAT (400×300), e.g. Waveshare | 5.83" (648×480) is also being considered |
-| GPS | u-blox NEO-6M or NEO-M8N module | any u-blox that sends NMEA at 9600 baud; a USB u-blox stick works too |
-| Power | LiPo battery with charger, e.g. PiSugar | |
-| Buttons | 5–6 push buttons | wiring comes with the software |
-
-<details>
-<summary><b>Connecting and checking a u-blox GPS</b></summary>
-
-1. **Wiring** (pin numbers are the Pi's physical pins). Most u-blox breakout
-   boards take 3.3 V; check yours.
-
-   | GPS module | Raspberry Pi |
-   |---|---|
-   | VCC | pin 1 (3.3 V) |
-   | GND | pin 6 (GND) |
-   | TX | pin 10 (GPIO 15, RXD) |
-   | RX | pin 8 (GPIO 14, TXD) |
-
-   With the e-paper HAT on the header, use a stacking header or solder the
-   wires under the Pi. The HAT uses SPI and a few other pins, but not 8 and 10.
-2. Turn on the serial port: `sudo raspi-config` → **Interface Options** →
-   **Serial Port**: login shell **No**, serial hardware **Yes**. For the
-   screen, also turn on **SPI**. Reboot.
-3. Check the GPS talks:
-   ```sh
-   stty -F /dev/serial0 9600 && cat /dev/serial0
-   ```
-   Lines starting with `$GP` or `$GN` should scroll by. Take it outside:
-   the first fix can take a few minutes, and lines with your position appear
-   once it has one. Press Ctrl+C to stop.
-4. A USB u-blox appears as `/dev/ttyACM0` instead: `cat /dev/ttyACM0`.
-
-</details>
+A pocket-sized Varu with an e-ink screen and GPS is planned. It doesn't work
+yet; this section will grow when it does.
 
 ---
 

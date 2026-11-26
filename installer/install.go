@@ -273,6 +273,16 @@ func existing(dest string, size int64) int64 {
 // its index or an unfinished download of either.
 var datedBook = regexp.MustCompile(`^(.+)_(\d{4}-\d{2})\.(?:zim|search)(?:\.part)?$`)
 
+// replacesOlder reports whether a finished item is a book archive in the
+// drive's library/ whose download was checked (by size or checksum), so the
+// earlier editions it replaces can go. Without either check a captive portal's
+// web page could pass for the new edition.
+func replacesOlder(it *Item, target string) bool {
+	return it.Kind == "book" && strings.HasSuffix(it.dest, ".zim") &&
+		filepath.Dir(it.dest) == filepath.Join(target, "library") &&
+		(it.Size > 0 || it.sha256 != "")
+}
+
 // removeOlderEditions deletes earlier editions of file's book from dir,
 // partial downloads included; newer ones stay.
 func removeOlderEditions(dir, file string) {
@@ -399,7 +409,7 @@ func (j *Job) Run() {
 				time.Sleep(diskPause)
 			}
 		}
-		if err == nil && it.Kind == "book" && strings.HasSuffix(it.dest, ".zim") {
+		if err == nil && replacesOlder(it, j.Target) {
 			// A refresh needs room for both editions until the new one is complete.
 			removeOlderEditions(filepath.Dir(it.dest), filepath.Base(it.dest))
 		}

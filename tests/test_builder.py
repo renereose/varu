@@ -206,7 +206,10 @@ class CatalogTests(unittest.TestCase):
             library = Path(tmp)
             keep = ("wikipedia_et_all_maxi_2026-09.zim", "wikipedia_et_all_maxi_2026-09.search",
                     "wikipedia_et_all_maxi_extra_2026-03.zim")
-            for name in ("wikipedia_et_all_maxi_2026-03.zim", "wikipedia_et_all_maxi_2026-03.search", *keep):
+            keep += ("wikipedia_et_all_maxi_2026-09.zim.part", "wikipedia_et_all_maxi_2026-09.search.part")
+            for name in ("wikipedia_et_all_maxi_2026-03.zim", "wikipedia_et_all_maxi_2026-03.search",
+                         "wikipedia_et_all_maxi_2026-05.zim.part", "wikipedia_et_all_maxi_2026-03.search.part",
+                         *keep):
                 (library / name).touch()
             removed = remove_older_editions(library, "wikipedia_et_all_maxi_2026-09.zim")
             self.assertEqual(removed, ["wikipedia_et_all_maxi_2026-03.zim"])
