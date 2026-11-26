@@ -9,46 +9,70 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body class="map-page">
-  <div id="map" role="application" aria-label="Map"></div>
-
-  <aside class="map-panel" id="panel">
-    <div class="map-panel-head">
-      <a class="back" href="./" data-i18n="back">Back</a>
-      <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="layer-list" data-i18n="layers">Layers</button>
-    </div>
-    <form id="search" class="map-search" role="search" hidden>
-      <input id="search-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
-        aria-controls="search-results" aria-expanded="false">
-      <ul id="search-results" class="search-results" hidden></ul>
-    </form>
-    <ul id="layer-list" class="layer-list"></ul>
-  </aside>
-
-  <section id="nav-banner" class="nav-banner" hidden aria-live="polite">
-    <div id="nav-arrow" class="nav-arrow"></div>
-    <div>
-      <p id="nav-distance" class="nav-distance"></p>
-      <p id="nav-text" class="nav-text"></p>
-      <p id="nav-name" class="nav-name"></p>
-    </div>
-  </section>
-
-  <section id="route-panel" class="route-panel" hidden aria-live="polite">
-    <div class="route-head">
-      <div class="route-modes" role="group">
-        <button type="button" data-mode="foot" data-i18n="walk">Walk</button>
-        <button type="button" data-mode="car" data-i18n="drive">Drive</button>
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
+      <nav class="topnav" aria-label="Varu">
+        <a href="/" data-i18n="navHome">Home</a>
+        <a href="/map.html" aria-current="page" data-needs="map" data-i18n="navMap">Map</a>
+        <a href="/library/" data-needs="library" data-i18n="library">Library</a>
+        <a href="/ready.html" data-i18n="guideTitle">Emergency guide</a>
+      </nav>
+      <div class="topbar-end">
+        <span class="offline-badge" data-i18n="offlineReady">Offline ready</span>
+        <div class="langs" id="langs" role="group"></div>
       </div>
-      <button type="button" id="route-start" class="route-start" hidden data-i18n="navStart">Start</button>
-      <button type="button" id="route-clear" data-i18n="clearRoute">Clear</button>
-      <button type="button" id="route-end" class="route-end" data-i18n="navEnd">End</button>
     </div>
-    <p id="route-summary" class="route-summary"></p>
-    <div id="route-notes" class="route-notes"></div>
-    <p class="route-safety" data-i18n="routeSafety">Estimate from OpenStreetMap. Follow road signs.</p>
-  </section>
+  </header>
+  <div class="map-area">
+    <div id="map" role="application" aria-label="Map"></div>
 
-  <p id="map-message" class="map-message" hidden></p>
+    <aside class="map-panel" id="panel">
+      <div class="map-panel-head">
+        <a class="back" href="./" data-i18n="back">Back</a>
+        <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="layer-list" data-i18n="layers">Layers</button>
+      </div>
+      <form id="search" class="map-search" role="search" hidden>
+        <input id="search-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
+          aria-controls="search-results" aria-expanded="false">
+        <ul id="search-results" class="search-results" hidden></ul>
+      </form>
+      <ul id="layer-list" class="layer-list"></ul>
+    </aside>
+
+    <section id="nav-banner" class="nav-banner" hidden aria-live="polite">
+      <div id="nav-arrow" class="nav-arrow"></div>
+      <div>
+        <p id="nav-distance" class="nav-distance"></p>
+        <p id="nav-text" class="nav-text"></p>
+        <p id="nav-name" class="nav-name"></p>
+      </div>
+    </section>
+
+    <section id="route-panel" class="route-panel" hidden aria-live="polite">
+      <div class="route-head">
+        <div class="route-modes" role="group">
+          <button type="button" data-mode="foot" data-i18n="walk">Walk</button>
+          <button type="button" data-mode="car" data-i18n="drive">Drive</button>
+        </div>
+        <button type="button" id="route-start" class="route-start" hidden data-i18n="navStart">Start</button>
+        <button type="button" id="route-clear" data-i18n="clearRoute">Clear</button>
+        <button type="button" id="route-end" class="route-end" data-i18n="navEnd">End</button>
+      </div>
+      <p id="route-summary" class="route-summary"></p>
+      <div id="route-notes" class="route-notes"></div>
+      <p class="route-safety" data-i18n="routeSafety">Estimate from OpenStreetMap. Follow road signs.</p>
+    </section>
+
+    <p id="map-message" class="map-message" hidden></p>
+  </div>
+
+  <nav class="tabbar" aria-label="Varu">
+    <a href="/"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
+    <a href="/map.html" aria-current="page" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
+    <a href="/library/" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
+    <a href="/ready.html"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
+  </nav>
 
   <script>
     // If a script fails before the map exists, say so instead of showing a blank page.

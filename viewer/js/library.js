@@ -6,6 +6,7 @@
 // ones first among the results.
 
 import { applyStrings, currentLanguage, loadManifest, t } from "./common.js";
+import { initShell } from "./shell.js";
 
 const [manifest, books, topics] = await Promise.all([
   loadManifest(),
@@ -14,6 +15,7 @@ const [manifest, books, topics] = await Promise.all([
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
+initShell(manifest, lang);
 const bookId = decodeURIComponent(location.pathname.split("/")[2] ?? "");
 const book = books.find((b) => b.id === bookId);
 document.title = book?.title ?? t(lang, "library");

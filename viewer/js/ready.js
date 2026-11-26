@@ -9,6 +9,7 @@
 import {
   applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
 } from "./common.js";
+import { initShell } from "./shell.js";
 
 const SUPPLIES_KEY = "varu.supplies";
 const PLAN_KEY = "varu.plan";
@@ -20,6 +21,7 @@ const [manifest, guides, topics] = await Promise.all([
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
+initShell(manifest, lang);
 document.title = t(lang, "emergencyTitle");
 
 const el = (tag, props = {}, ...children) => {

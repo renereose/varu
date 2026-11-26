@@ -7,7 +7,22 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="home ready">
+<body class="page ready">
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
+      <nav class="topnav" aria-label="Varu">
+        <a href="/" data-i18n="navHome">Home</a>
+        <a href="/map.html" data-needs="map" data-i18n="navMap">Map</a>
+        <a href="/library/" data-needs="library" data-i18n="library">Library</a>
+        <a href="/ready.html" aria-current="page" data-i18n="guideTitle">Emergency guide</a>
+      </nav>
+      <div class="topbar-end">
+        <span class="offline-badge" data-i18n="offlineReady">Offline ready</span>
+        <div class="langs" id="langs" role="group"></div>
+      </div>
+    </div>
+  </header>
   <header class="masthead">
     <div>
       <p class="eyebrow"><a class="back" href="./" data-i18n="back">Back</a></p>
@@ -68,6 +83,13 @@
       <div id="plan-print" class="print-only"></div>
     </section>
   </main>
+
+  <nav class="tabbar" aria-label="Varu">
+    <a href="/"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
+    <a href="/map.html" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
+    <a href="/library/" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
+    <a href="/ready.html" aria-current="page"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
+  </nav>
 
   <script type="module" src="js/ready.js"></script>
 </body>

@@ -112,6 +112,7 @@ export function initShare(status, getLang) {
     $("share-off").hidden = status.lan;
     $("share-live").hidden = !(status.lan && addresses.length > 0);
     $("share-none").hidden = !(status.lan && addresses.length === 0);
+    $("share-pill").hidden = $("share-live").hidden;
 
     const list = $("share-addresses");
     list.replaceChildren(...addresses.map((address) => {

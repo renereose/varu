@@ -7,78 +7,129 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="home">
-  <header class="masthead">
-    <div>
-      <p class="eyebrow" data-i18n="offline">Works without internet</p>
-      <h1 id="drive-name">Varu</h1>
-      <p class="meta" id="drive-meta"></p>
+<body class="home-page">
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
+      <nav class="topnav" aria-label="Varu">
+        <a href="/" aria-current="page" data-i18n="navHome">Home</a>
+        <a href="/map.html" data-needs="map" data-i18n="navMap">Map</a>
+        <a href="/library/" data-needs="library" data-i18n="library">Library</a>
+        <a href="/ready.html" data-i18n="guideTitle">Emergency guide</a>
+      </nav>
+      <div class="topbar-end">
+        <span class="offline-badge" data-i18n="offlineReady">Offline ready</span>
+        <div class="langs" id="langs" role="group"></div>
+      </div>
     </div>
-    <nav class="langs" id="langs" aria-label="Language"></nav>
   </header>
+  <main class="wrap home">
+    <div class="hero">
+      <div class="hero-intro">
+        <p class="eyebrow"><svg data-icon="wifi-off"></svg><span data-i18n="offline">Works without internet</span></p>
+        <h1><span class="wide" data-i18n="heroTitle">Maps, shelters and guidance, ready when the network isn't.</span><span class="narrow" data-i18n="heroTitleShort">Ready when the network isn't.</span></h1>
+        <p class="hero-meta"><span class="wide" id="meta-wide"></span><span class="narrow" id="meta-narrow"></span></p>
+      </div>
 
-  <main>
-    <section class="quick" aria-label="Emergency">
-      <a class="quick-call" href="tel:112">
-        <strong>📞 <span data-i18n="sos112">112</span></strong>
-        <span data-i18n="sos112Hint">Emergency: rescue, ambulance, police</span>
-      </a>
-      <a class="quick-shelter" id="quick-shelter" href="map.html?nearest=shelter" hidden>
-        <strong data-i18n="nearestShelter">Nearest shelter</strong>
-        <span data-i18n="nearestShelterHint">Show the closest one on the map</span>
-      </a>
-      <a class="quick-ready" href="ready.html">
-        <strong data-i18n="emergencyTitle">In an emergency</strong>
-        <span data-i18n="emergencyText">What to do, supplies at home, and your own plan.</span>
-      </a>
+      <form id="home-search" class="home-search" role="search" action="/library/" hidden>
+        <svg data-icon="search"></svg>
+        <input name="q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false">
+        <button type="submit" data-i18n="search">Search</button>
+      </form>
+
+      <section class="sos" aria-labelledby="sos-title">
+        <h2 id="sos-title" class="label" data-i18n="emergencyTitle">In an emergency</h2>
+        <a class="sos-call" href="tel:112">
+          <span class="sos-ring"><svg data-icon="phone"></svg></span>
+          <span><strong data-i18n="call112">Call 112</strong><span data-i18n="sos112Hint">Rescue, ambulance, police</span></span>
+        </a>
+        <div class="sos-row">
+          <a class="sos-link sos-shelter" id="quick-shelter" href="/map.html?nearest=shelter" hidden>
+            <svg data-icon="shield"></svg>
+            <span><strong data-i18n="nearestShelter">Nearest shelter</strong><span data-i18n="nearestShelterHint">Show the closest one on the map</span></span>
+            <svg class="chev" data-icon="chevron-right"></svg>
+          </a>
+          <a class="sos-link" href="/ready.html">
+            <svg data-icon="list-checks"></svg>
+            <span><strong data-i18n="whatNow">What to do now</strong><span data-i18n="whatNowHint">Steps, radio, supplies and your plan</span></span>
+            <svg class="chev" data-icon="chevron-right"></svg>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <section class="device" aria-labelledby="device-title">
+      <h2 id="device-title" data-i18n="onDevice">On this device</h2>
+      <div class="cards">
+        <a class="card" id="card-map" href="/map.html" hidden>
+          <svg class="card-art map-art" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect class="land" width="400" height="168"/>
+            <path class="water" d="M262 0h138v62c-30 8-52 2-70-14-20-18-46-22-68-48z"/>
+            <path class="park" d="M18 98c22-16 58-14 72 4 10 14-4 34-30 36-30 2-62-22-42-40zM300 118c18-10 46-6 56 10 8 14-10 28-34 26-24-2-38-24-22-36z"/>
+            <path class="road" d="M-10 76C80 70 150 92 230 84s130-30 190-26M120-10c8 60 4 110 16 190M-10 150c90-20 190-10 300-34M250 -10c-10 60 0 120-20 190"/>
+            <path class="street" d="M40-10l20 190M180-10c-6 50 10 120 2 190M-10 30c120 6 200-6 420 10M330 70l-10 110M60 120c60-6 110 4 170-6"/>
+            <g class="dot shelter"><circle cx="76" cy="44" r="5"/><circle cx="196" cy="120" r="5"/><circle cx="292" cy="96" r="5"/><circle cx="356" cy="150" r="5"/></g>
+            <g class="dot water"><circle cx="150" cy="58" r="5"/><circle cx="244" cy="44" r="5"/><circle cx="34" cy="128" r="5"/><circle cx="318" cy="30" r="5"/></g>
+            <path class="pin" d="M200 52c-9 0-16 7-16 16 0 12 16 28 16 28s16-16 16-28c0-9-7-16-16-16zm0 22a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/>
+          </svg>
+          <span class="card-icon"><svg data-icon="map"></svg></span>
+          <span class="card-body">
+            <span class="card-title"><svg data-icon="map"></svg><strong data-i18n="navMap">Map</strong><svg class="arrow" data-icon="arrow-right"></svg></span>
+            <span class="card-text" id="card-map-text"></span>
+            <span class="card-meta" id="card-map-meta"></span>
+          </span>
+          <svg class="chev" data-icon="chevron-right"></svg>
+        </a>
+        <a class="card" id="card-library" href="/library/" hidden>
+          <span class="card-art"><svg data-icon="library-big"></svg></span>
+          <span class="card-icon"><svg data-icon="book-open"></svg></span>
+          <span class="card-body">
+            <span class="card-title"><svg data-icon="book-open"></svg><strong data-i18n="library">Library</strong><svg class="arrow" data-icon="arrow-right"></svg></span>
+            <span class="card-text" data-i18n="libraryText">Wikipedia and reference works, fully searchable offline.</span>
+            <span class="card-meta" id="card-library-meta"></span>
+          </span>
+          <svg class="chev" data-icon="chevron-right"></svg>
+        </a>
+        <a class="card card-warn" id="card-guide" href="/ready.html">
+          <span class="card-art"><svg data-icon="clipboard-list"></svg></span>
+          <span class="card-icon"><svg data-icon="life-buoy"></svg></span>
+          <span class="card-body">
+            <span class="card-title"><svg data-icon="life-buoy"></svg><strong data-i18n="guideTitle">Emergency guide</strong><svg class="arrow" data-icon="arrow-right"></svg></span>
+            <span class="card-text" id="card-guide-text"></span>
+            <span class="card-meta" id="card-guide-meta"></span>
+          </span>
+          <svg class="chev" data-icon="chevron-right"></svg>
+        </a>
+      </div>
     </section>
 
-    <form id="home-search" class="search home-search" role="search" action="library/" hidden>
-      <input name="q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false">
-      <button type="submit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button>
-    </form>
-    <section class="cards" aria-label="Contents">
-      <a class="card" id="card-map" href="map.html">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 0v14m6-12v14"/></svg>
-        <h2 data-i18n="maps">Maps</h2>
-        <p id="card-map-text" data-i18n="mapsText">Street-level map with hospitals, pharmacies, water and fuel.</p>
-      </a>
-      <a class="card" id="card-library" href="library/">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h5v16H6a2 2 0 0 0-2 2V5Zm16 0a2 2 0 0 0-2-2h-5v16h5a2 2 0 0 1 2 2V5Z"/></svg>
-        <h2 data-i18n="library">Library</h2>
-        <p id="card-library-text" data-i18n="libraryText">Wikipedia and reference works, searchable.</p>
-      </a>
-      <a class="card" id="card-docs" href="#documents">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7V3Zm7 0v5h5M10 13h6m-6 4h6"/></svg>
-        <h2 data-i18n="documents">Documents</h2>
-        <p id="card-docs-text" data-i18n="documentsText">Official guidance and practical guides.</p>
-      </a>
-    </section>
-
-    <section id="documents" class="panel" hidden>
+    <ul id="library-list" class="rows book-rows" hidden aria-label="Library"></ul>
+    <section id="documents" hidden>
       <h2 data-i18n="documents">Documents</h2>
-      <ul id="doc-list" class="doc-list"></ul>
+      <ul id="doc-list" class="rows"></ul>
     </section>
 
-    <section id="library-list-panel" class="panel" hidden>
-      <h2 data-i18n="inLibrary">In the library</h2>
-      <ul id="library-list" class="doc-list"></ul>
-    </section>
-  </main>
-
-  <footer>
     <details id="share" class="share" hidden>
-      <summary data-i18n="shareTitle">Share with other devices</summary>
+      <summary>
+        <svg class="share-wifi" data-icon="wifi"></svg>
+        <span class="share-head">
+          <span class="share-title"><strong data-i18n="shareTitle">Share with other devices</strong><span class="pill" id="share-pill" data-i18n="shareLive" hidden>Sharing on</span></span>
+          <span class="share-sub" data-i18n="shareHintOff">Let phones and computers on the same Wi-Fi open this drive.</span>
+        </span>
+        <svg class="chev" data-icon="chevron-down"></svg>
+      </summary>
       <div class="share-body">
         <div id="share-off" hidden>
-          <p data-i18n="shareHintOff">Let phones and computers on the same Wi-Fi open this drive.</p>
+          <p class="share-hint" data-i18n="shareHintOff">Let phones and computers on the same Wi-Fi open this drive.</p>
           <button type="button" class="btn btn-primary" id="share-on" data-i18n="shareOn">Turn sharing on</button>
         </div>
-        <div id="share-live" hidden>
-          <ul id="share-addresses" class="share-addresses"></ul>
+        <div id="share-live" class="share-live" hidden>
+          <div>
+            <ul id="share-addresses" class="share-addresses"></ul>
+            <p data-i18n="shareHint">Open this address on another phone or computer on the same Wi-Fi, or scan the code with the phone camera. No internet is needed. Sharing stops when Varu is closed.</p>
+            <button type="button" class="btn" id="share-off-btn" data-i18n="shareOff">Stop sharing</button>
+          </div>
           <div id="share-qr" class="share-qr" hidden></div>
-          <p data-i18n="shareHint">Open this address on another phone or computer on the same Wi-Fi, or scan the code with the phone camera. No internet is needed. Sharing stops when Varu is closed.</p>
-          <button type="button" class="btn" id="share-off-btn" data-i18n="shareOff">Stop sharing</button>
         </div>
         <div id="share-none" hidden>
           <p data-i18n="shareNoNetwork">No Wi-Fi network was found. Connect this computer to Wi-Fi or start a hotspot, then try again.</p>
@@ -88,10 +139,20 @@
         <p id="share-error" class="share-error" role="alert" hidden></p>
       </div>
     </details>
-    <p id="lan-note" hidden data-i18n="lanNote">This drive is being shared with other devices on the local network.</p>
-    <ul id="attribution" class="attribution"></ul>
-    <p class="meta" id="version"></p>
-  </footer>
+    <p id="lan-note" class="lan-note" hidden data-i18n="lanNote">This drive is being shared with other devices on the local network.</p>
+
+    <footer class="home-foot">
+      <ul id="attribution" class="attribution"></ul>
+      <p id="version"></p>
+    </footer>
+  </main>
+
+  <nav class="tabbar" aria-label="Varu">
+    <a href="/" aria-current="page"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
+    <a href="/map.html" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
+    <a href="/library/" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
+    <a href="/ready.html"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
+  </nav>
 
   <script type="module" src="js/home.js"></script>
 </body>

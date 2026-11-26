@@ -3,6 +3,7 @@ import { layers as basemapLayers, namedFlavor } from "../vendor/basemaps.mjs";
 import {
   applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
 } from "./common.js";
+import { initShell } from "./shell.js";
 import { setUpRouting } from "./route.js";
 import { setUpSearch } from "./search.js";
 
@@ -14,6 +15,7 @@ const OVERVIEW_ZOOM = 12; // matches overviewZoom in installer/pmtiles.go
 const manifest = await loadManifest();
 const lang = currentLanguage(manifest);
 applyStrings(lang);
+initShell(manifest, lang);
 
 const message = document.getElementById("map-message");
 function showMessage(key) {
