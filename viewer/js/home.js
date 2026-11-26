@@ -71,6 +71,13 @@ function render() {
   setCard("card-library", Boolean(status.library), "card-library-text");
   setCard("card-docs", docs.length > 0, "card-docs-text");
 
+  const search = document.getElementById("home-search");
+  const searchLabel = t(lang, "searchLibrary");
+  search.hidden = !status.library;
+  search.q.placeholder = searchLabel;
+  search.q.setAttribute("aria-label", searchLabel);
+  search.querySelector("button").setAttribute("aria-label", searchLabel);
+
   renderList("doc-list", "documents", docs, (doc) => ({
     href: doc.file,
     title: pick(lang, doc.title) || doc.file,

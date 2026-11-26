@@ -199,7 +199,8 @@ The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wi
 ### The start page
 
 Varu opens to its start page: **Maps**, **Library** and **Documents**. It also
-shows when the data was made, so you know how fresh it is.
+shows when the data was made, so you know how fresh it is. The search box at
+the top looks through every book in the library.
 
 ### The map
 
