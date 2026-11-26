@@ -57,7 +57,7 @@ A first build on a normal internet connection will settle these:
 - [ ] Router follow-ups: turn restrictions and barriers, spoken directions,
       "keep left/right" at forks, cycling, timing on a Pi Zero 2 W and a
       phone; live directions tried on a real phone outdoors.
-- [ ] Search box on the start page that goes straight into the library.
+- [x] Search box on the start page that goes straight into the library.
 - [ ] Review of the Estonian interface text by a native speaker; Russian,
       Latvian, Lithuanian and Finnish translations.
 - [ ] Print-friendly map view.

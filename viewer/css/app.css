@@ -135,6 +135,19 @@ h1, h2 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
   color: var(--ink);
 }
 .search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.home-search { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.home-search[hidden] { display: none; }
+.home-search input { flex: 1; min-width: 0; }
+.home-search button {
+  display: grid;
+  place-items: center;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
 .doc-list .snippet { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.9rem; }
 mark { background: rgb(255 200 0 / 0.35); color: inherit; border-radius: 2px; }
 .card.is-empty svg { stroke: var(--muted); }
