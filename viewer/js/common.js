@@ -10,6 +10,12 @@ const STRINGS = {
     guideTitle: "Emergency guide",
     guideShort: "Guide",
     offlineReady: "Offline ready",
+    theme: "Theme",
+    themeSystem: "Same as the device",
+    themeLight: "Light",
+    themeDark: "Dark",
+    toDark: "Switch to dark",
+    toLight: "Switch to light",
     heroTitle: "Maps, shelters and guidance, ready when the network isn't.",
     heroTitleShort: "Ready when the network isn't.",
     heroStored: "Everything is stored on this device.",
@@ -162,6 +168,12 @@ const STRINGS = {
     guideTitle: "Hädaolukorra juhend",
     guideShort: "Juhend",
     offlineReady: "Töötab võrguta",
+    theme: "Teema",
+    themeSystem: "Nagu seadmes",
+    themeLight: "Hele",
+    themeDark: "Tume",
+    toDark: "Lülita tumedaks",
+    toLight: "Lülita heledaks",
     heroTitle: "Kaardid, varjumiskohad ja juhised – valmis ka siis, kui võrku pole.",
     heroTitleShort: "Valmis ka siis, kui võrku pole.",
     heroStored: "Kõik on salvestatud selles seadmes.",
@@ -310,14 +322,33 @@ const STRINGS = {
   },
 };
 
-const LANG_KEY = "varu.lang";
-
 function stored(key) {
   try { return localStorage.getItem(key); } catch { return null; }
 }
 
 function store(key, value) {
   try { localStorage.setItem(key, value); } catch { /* private mode: fine */ }
+}
+
+// The language and theme chosen on this device. Kept in a cookie as well as
+// localStorage: a cookie belongs to the address without its port, so the
+// choice outlives the launcher starting on another port.
+const TEN_YEARS = 10 * 365 * 24 * 60 * 60;
+
+export function pref(name) {
+  const cookie = document.cookie.match(new RegExp(`(?:^|; )varu_${name}=([^;]*)`));
+  return cookie ? decodeURIComponent(cookie[1]) : stored(`varu.${name}`);
+}
+
+export function setPref(name, value) {
+  document.cookie = `varu_${name}=${encodeURIComponent(value)}; max-age=${TEN_YEARS}; path=/; SameSite=Lax`;
+  store(`varu.${name}`, value);
+}
+
+/** Whether the page is dark: the theme chosen here, else the device's. */
+export function isDark() {
+  const theme = document.documentElement.dataset.theme;
+  return theme ? theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
 /** Interface languages offered on this drive, in the region's order. */
@@ -329,14 +360,14 @@ export function availableLanguages(manifest) {
 
 export function currentLanguage(manifest) {
   const offered = availableLanguages(manifest);
-  const saved = stored(LANG_KEY);
+  const saved = pref("lang");
   if (saved && offered.includes(saved)) return saved;
   const browser = (navigator.language || "").slice(0, 2).toLowerCase();
   return offered.includes(browser) ? browser : offered[0];
 }
 
 export function setLanguage(code) {
-  store(LANG_KEY, code);
+  setPref("lang", code);
 }
 
 /** Translate an interface key. */

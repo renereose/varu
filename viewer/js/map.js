@@ -1,7 +1,7 @@
 import * as maplibregl from "../vendor/maplibre-gl.mjs";
 import { layers as basemapLayers, namedFlavor } from "../vendor/basemaps.mjs";
 import {
-  applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
+  applyStrings, currentLanguage, isDark, loadManifest, pick, store, stored, t,
 } from "./common.js";
 import { initShell } from "./shell.js";
 import { icon } from "./icons.js";
@@ -34,7 +34,9 @@ function showMessage(key) {
 // Absolute URLs: MapLibre resolves sprites and glyphs in a worker, where
 // relative paths have no page to be relative to.
 const base = new URL("./", document.baseURI).href;
-const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+const dark = isDark();
+// The map's colours are fixed when it loads; a new theme needs a fresh start.
+document.addEventListener("varu-theme", () => location.reload());
 let routing = null; // Route here / Start here, when the drive has road data
 
 if (!manifest.map?.file) {

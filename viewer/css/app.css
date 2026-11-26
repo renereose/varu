@@ -1,7 +1,8 @@
 /* Varu viewer. No web fonts, no external requests: everything here must
    render from the drive alone. */
 
-/* The "Varu 2026" tokens. */
+/* The "Varu 2026" tokens. Dark follows the device unless a theme is chosen
+   on this device (data-theme on <html>, set by js/theme.js and js/shell.js). */
 :root {
   --bg: #f3f0e8;
   --surface: #fffdf8;
@@ -20,13 +21,46 @@
   --warn-soft: #fdf1da;
   --radius: 10px;
   --radius-sm: 6px;
+  /* The start page's map picture, and how much a layer's colour is lifted to read on dark. */
+  --map-land: #ebe7de;
+  --map-water: #a9d6e8;
+  --map-park: #cde6cf;
+  --map-road: #ffffff;
+  --map-pin: #0b5d4b;
+  --lift: 0%;
   --wrap: min(100% - 40px, 1136px);
   --tabbar: 0px;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+      --bg: #121715;
+      --surface: #1a211e;
+      --surface-alt: #232c28;
+      --ink: #e9e6dd;
+      --muted: #a3aea8;
+      --subtle: #7f8a84;
+      --line: #2c3632;
+      --accent: #74d3b6;
+      --accent-soft: #173029;
+      --accent-ink: #0d1512;
+      --alert: #ff8a80;
+      --alert-soft: #3a1a17;
+      --alert-ink: #1a0b0a;
+      --warn: #f3b34c;
+      --warn-soft: #3a2a10;
+      --map-land: #1f2623;
+      --map-water: #1c3640;
+      --map-park: #1f3529;
+      --map-road: #39443f;
+      --map-pin: #74d3b6;
+      --lift: 45%;
+      color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
     --bg: #121715;
     --surface: #1a211e;
     --surface-alt: #232c28;
@@ -42,7 +76,13 @@
     --alert-ink: #1a0b0a;
     --warn: #f3b34c;
     --warn-soft: #3a2a10;
-  }
+    --map-land: #1f2623;
+    --map-water: #1c3640;
+    --map-park: #1f3529;
+    --map-road: #39443f;
+    --map-pin: #74d3b6;
+    --lift: 45%;
+    color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -216,6 +256,24 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
 }
 .langs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
 
+.theme-switch { display: flex; padding: 3px; border-radius: 8px; background: var(--surface-alt); }
+.theme-switch button, .theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.theme-switch .i, .theme-toggle .i { width: 15px; height: 15px; }
+.theme-switch button[aria-pressed="true"] { background: var(--surface); border-color: var(--line); color: var(--accent); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+.theme-toggle { display: none; width: 28px; height: 28px; border-radius: 8px; background: var(--surface-alt); color: var(--ink); }
+.theme-toggle .i { width: 16px; height: 16px; }
+
 .tabbar { display: none; }
 
 @media (max-width: 1000px) {
@@ -234,6 +292,9 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
   .logo .i { width: 19px; height: 19px; }
   .brand strong { font-size: 18px; }
   .langs button { font-size: 12px; padding: 3px 8px; }
+  .topbar-end { gap: 8px; }
+  .theme-switch { display: none; }
+  .theme-toggle { display: grid; }
   .tabbar {
     position: sticky;
     bottom: 0;
@@ -367,22 +428,15 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
 .card-icon, .card > .chev { display: none; }
 
 /* The map card's picture: a made-up town in the map's colours. */
-.map-art .land { fill: #ebe7de; }
-.map-art .water { fill: #a9d6e8; }
-.map-art .park { fill: #cde6cf; }
-.map-art .road { fill: none; stroke: #fff; stroke-width: 7; }
-.map-art .street { fill: none; stroke: #fff; stroke-width: 3; }
-.map-art .dot circle { stroke: #fff; stroke-width: 2; }
+.map-art .land { fill: var(--map-land); }
+.map-art .water { fill: var(--map-water); }
+.map-art .park { fill: var(--map-park); }
+.map-art .road { fill: none; stroke: var(--map-road); stroke-width: 7; }
+.map-art .street { fill: none; stroke: var(--map-road); stroke-width: 3; }
+.map-art .dot circle { stroke: var(--map-road); stroke-width: 2; }
 .map-art .shelter { fill: #4e342e; }
 .map-art .dot.water { fill: #1565c0; }
-.map-art .pin { fill: #0b5d4b; }
-@media (prefers-color-scheme: dark) {
-  .map-art .land { fill: #1f2623; }
-  .map-art .water { fill: #1c3640; }
-  .map-art .park { fill: #1f3529; }
-  .map-art .road, .map-art .street, .map-art .dot circle { stroke: #39443f; }
-  .map-art .pin { fill: #74d3b6; }
-}
+.map-art .pin { fill: var(--map-pin); }
 
 .rows { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .rows li + li { border-top: 1px solid var(--line); }
@@ -674,11 +728,8 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
   white-space: nowrap;
   cursor: pointer;
 }
-.chip .i { width: 15px; height: 15px; color: var(--poi); }
+.chip .i { width: 15px; height: 15px; color: color-mix(in srgb, var(--poi), white var(--lift)); }
 .chip:hover { border-color: var(--poi); }
-@media (prefers-color-scheme: dark) {
-  .chip .i { color: color-mix(in srgb, var(--poi), white 45%); }
-}
 
 .layers-sheet { display: flex; flex: 1; flex-direction: column; min-height: 0; }
 .layers-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 6px; }
@@ -1137,9 +1188,11 @@ legend { padding: 0; }
 .print-only { display: none; }
 @media print {
   .print-only { display: block; }
-  :root {
+  /* Paper is white whatever the theme on screen. */
+  :root:is([data-theme], :not([data-theme])) {
     --bg: #fff; --surface: #fff; --surface-alt: #fff; --ink: #000; --muted: #333; --subtle: #555;
     --line: #888; --accent: #000; --accent-soft: #fff; --warn: #000; --warn-soft: #fff;
+    color-scheme: light;
   }
   body { display: block; min-height: 0; background: #fff; color: #000; font-size: 12pt; }
   .topbar, .tabbar, .guide-head, .guide-nav, .head-icon, .no-print, #situations, #supplies-clear { display: none !important; }
