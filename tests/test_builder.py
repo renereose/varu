@@ -26,6 +26,7 @@ from builder.config import ConfigError, ZimSpec, load_region, load_sources, pars
 from builder.context import Context, StepError  # noqa: E402
 from builder.data import (  # noqa: E402
     choose_zim, official_to_geojson, older_editions, overpass_query, overpass_to_geojson, parse_catalog,
+    remove_older_editions,
 )
 from builder.fetch import FetchError, download, sri_matches  # noqa: E402
 from builder.manifest import build_manifest  # noqa: E402
