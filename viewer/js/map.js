@@ -156,7 +156,9 @@ function setUpPois(map, geolocate) {
 
   let saved = null;
   try { saved = JSON.parse(stored(POI_STATE_KEY) ?? "null"); } catch { /* ignore */ }
-  const enabled = new Set(Array.isArray(saved) ? saved : pois.filter((p) => p.default).map((p) => p.id));
+  // Saved ids can name layers of another drive on the same address.
+  const enabled = new Set((Array.isArray(saved) ? saved : pois.filter((p) => p.default).map((p) => p.id))
+    .filter((id) => pois.some((p) => p.id === id)));
 
   const showNearest = async (row) => {
     if (!row.toggle.checked) {
@@ -172,7 +174,6 @@ function setUpPois(map, geolocate) {
   const rows = new Map();
   const hideAll = document.getElementById("layers-hide");
   const chips = document.getElementById("nearest-chips");
-  document.getElementById("nearest-box").hidden = !routing;
   const refresh = () => {
     hideAll.hidden = enabled.size === 0;
     if (!routing) return;
@@ -189,6 +190,7 @@ function setUpPois(map, geolocate) {
         });
         return chip;
       }));
+    document.getElementById("nearest-box").hidden = chips.children.length === 0;
   };
 
   for (const poi of pois) {

@@ -242,6 +242,12 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   // crow flies are routed, and the shortest wins (a river or a bay can make
   // the nearest-looking one far).
   async function nearest(places, kind = null) {
+    // The old destination goes, so nothing later routes there under this heading.
+    request?.abort();
+    dest = current = null;
+    destMarker.remove();
+    setLine(null);
+    startButton.hidden = true;
     about = kind;
     destName = null;
     const origin = from();

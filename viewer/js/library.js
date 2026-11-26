@@ -66,6 +66,7 @@ function choose(id) {
   filter = id;
   showFilter();
   search();
+  watchPreparing();
 }
 showFilter();
 
@@ -169,7 +170,7 @@ const hit = (href, title, tag, snippet) => el("li", {},
 let request = null;
 async function search() {
   const q = input.value.trim();
-  history.replaceState(null, "", `${bookPath(filter)}${q ? `?q=${encodeURIComponent(q)}` : ""}`);
+  history.replaceState(null, "", `${bookPath(filter)}${q ? `?q=${encodeURIComponent(q)}` : location.hash}`);
   request?.abort();
   $("q-clear").hidden = !q;
   $("topics").hidden = picks.length === 0 || !!q;
@@ -212,6 +213,6 @@ $("search").addEventListener("submit", (event) => {
   if (first) location.href = first.href;
 });
 input.value = new URLSearchParams(location.search).get("q") ?? "";
-search();
 openTopic();
+search();
 input.focus({ preventScroll: true });
