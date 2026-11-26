@@ -214,6 +214,12 @@ layers, library list and documents. Run it with `--dry-run` first, then
 Interface text lives in `viewer/js/common.js`. To add a language, add a block
 there and list its code under `languages` in the region file.
 
+The colours are the "Varu 2026" tokens at the top of `viewer/css/app.css`,
+light and dark. Icons are drawn inline from `viewer/js/icons.js`; to add one,
+copy the inside of its Lucide SVG there. A place layer's or situation's icon
+is picked by its id (`POI_ICONS` in `map.js`, `ICONS` in `ready.js`); a layer
+with an id not listed there gets a plain coloured dot.
+
 Two content files sit next to the pages and ship with the app:
 
 - `viewer/topics.json`: the library's hand-picked survival and DIY articles by
@@ -222,7 +228,7 @@ Two content files sit next to the pages and ship with the app:
   `go test -run TestTopics ./launcher` checks the file; with
   `VARU_ZIM_DIR=~/.cache/varu/zim` it also checks every article exists in the
   books there, which `release.sh` does after indexing them.
-- `viewer/guides.json`: the "In an emergency" steps, radio frequencies and
+- `viewer/guides.json`: the emergency guide's steps, radio frequencies and
   home-supplies list, written for Varu from the official sources each entry
   names. Keep steps in plain words and re-check the sources when they change.
 
@@ -231,6 +237,8 @@ Two content files sit next to the pages and ship with the app:
 - **This repository's code** is MIT licensed. See [`LICENSE`](../LICENSE).
 - **klauspost/compress** (BSD-3-Clause) unpacks the library's zstd
   compression inside the launcher.
+- **Lucide icons** (ISC, some MIT from Feather) are copied into
+  `viewer/js/icons.js` with their notice.
 - **Map data** is © OpenStreetMap contributors under the ODbL. Attribution
   is shown on the map and start page and must stay. The road network is a
   derived database under the same licence.

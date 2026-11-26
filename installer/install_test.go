@@ -116,6 +116,10 @@ func TestInstall(t *testing.T) {
 	if p := job.snapshot(); len(p.Errors) > 0 || !p.Finished {
 		t.Fatalf("install: %+v", p)
 	}
+	// The page lists every part, in order, to show which are done.
+	if p := job.snapshot(); len(p.Items) != len(plan.Items) || p.Items[2].Kind != "routing" {
+		t.Errorf("progress should list the plan's items: %+v", p.Items)
+	}
 
 	if got, _ := os.ReadFile(filepath.Join(target, "library", "wp_2026-11.zim")); string(got) != string(book) {
 		t.Error("resumed book differs from the original")

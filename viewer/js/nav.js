@@ -103,7 +103,7 @@ export function setUpNavigation(map, hooks) {
     });
 
     const left = Math.max(0, total - along);
-    hooks.say(`${hooks.formatDistance(left)} · ${hooks.formatDuration(props.duration_s * (left / Math.max(total, 1)))}`, [hooks.destName()].filter(Boolean));
+    hooks.say(`${hooks.formatDistance(left)} · ${hooks.formatDuration(props.duration_s * (left / Math.max(total, 1)))}`, []); // the card's head names the place
     if (left < ARRIVED_M) {
       show(FLAG, 0, "", t(lang, "navArrived"), hooks.destName());
       return;

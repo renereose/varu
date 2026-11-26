@@ -1,8 +1,10 @@
 import * as maplibregl from "../vendor/maplibre-gl.mjs";
 import { layers as basemapLayers, namedFlavor } from "../vendor/basemaps.mjs";
 import {
-  applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
+  applyStrings, currentLanguage, isDark, loadManifest, pick, store, stored, t,
 } from "./common.js";
+import { initShell } from "./shell.js";
+import { icon } from "./icons.js";
 import { setUpRouting } from "./route.js";
 import { setUpSearch } from "./search.js";
 
@@ -10,10 +12,18 @@ const SOURCE = "basemap";
 const POI_STATE_KEY = "varu.pois";
 const LABEL_FONT = ["Noto Sans Medium"];
 const OVERVIEW_ZOOM = 12; // matches overviewZoom in installer/pmtiles.go
+// Each layer's icon, by its id in the region file.
+const POI_ICONS = {
+  shelter: "shield", hospital: "hospital", pharmacy: "pill", water: "droplet", spring: "droplets",
+  clinic: "stethoscope", fuel: "fuel", food: "shopping-basket", police: "badge", rescue: "flame", border: "flag",
+};
+// "Find nearest" always offers these, and any other layer that is switched on.
+const NEAREST_ALWAYS = ["shelter", "hospital", "water", "pharmacy"];
 
 const manifest = await loadManifest();
 const lang = currentLanguage(manifest);
 applyStrings(lang);
+initShell(manifest, lang);
 
 const message = document.getElementById("map-message");
 function showMessage(key) {
@@ -24,7 +34,9 @@ function showMessage(key) {
 // Absolute URLs: MapLibre resolves sprites and glyphs in a worker, where
 // relative paths have no page to be relative to.
 const base = new URL("./", document.baseURI).href;
-const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+const dark = isDark();
+// The map's colours are fixed when it loads; a new theme needs a fresh start.
+document.addEventListener("varu-theme", () => location.reload());
 let routing = null; // Route here / Start here, when the drive has road data
 
 if (!manifest.map?.file) {
@@ -115,7 +127,7 @@ function startMap(mapInfo) {
     setUpSearch(map, { manifest, lang, base, routing });
     setUpPois(map, geolocate);
   });
-  setUpPanel();
+  setUpSheet();
 
   // Handy when poking at the map from the browser console.
   window.varuMap = map;
@@ -126,18 +138,6 @@ function padBounds([west, south, east, north], degrees) {
     [Math.max(-180, west - degrees), Math.max(-85, south - degrees)],
     [Math.min(180, east + degrees), Math.min(85, north + degrees)],
   ];
-}
-
-function setUpPanel() {
-  const toggle = document.getElementById("panel-toggle");
-  const list = document.getElementById("layer-list");
-  const narrow = window.matchMedia("(max-width: 640px)").matches;
-  const setOpen = (open) => {
-    list.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  };
-  setOpen(!narrow);
-  toggle.addEventListener("click", () => setOpen(list.hidden));
 }
 
 // ---------- Places (hospitals, pharmacies, ...) ----------
@@ -156,60 +156,79 @@ function setUpPois(map, geolocate) {
 
   let saved = null;
   try { saved = JSON.parse(stored(POI_STATE_KEY) ?? "null"); } catch { /* ignore */ }
-  const enabled = new Set(Array.isArray(saved) ? saved : pois.filter((p) => p.default).map((p) => p.id));
+  // Saved ids can name layers of another drive on the same address.
+  const enabled = new Set((Array.isArray(saved) ? saved : pois.filter((p) => p.default).map((p) => p.id))
+    .filter((id) => pois.some((p) => p.id === id)));
 
-  const showNearest = async (poi, checkbox, label) => {
-    if (!checkbox.checked) {
-      checkbox.checked = true;
-      checkbox.dispatchEvent(new Event("change"));
+  const showNearest = async (row) => {
+    if (!row.toggle.checked) {
+      row.toggle.checked = true;
+      row.toggle.dispatchEvent(new Event("change"));
     }
-    // On a phone the list would hide the route.
-    if (window.matchMedia("(max-width: 640px)").matches && !list.hidden) document.getElementById("panel-toggle").click();
-    const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
+    const data = await fetch(`${base}${row.poi.file}`).then((res) => res.json()).catch(() => null);
     routing.nearest((data?.features ?? []).map((f) => ({
       lngLat: f.geometry.coordinates,
-      name: f.properties?.[`name:${lang}`] || f.properties?.name || label,
-    })));
+      name: f.properties?.[`name:${lang}`] || f.properties?.name || row.label,
+    })), { label: row.label, color: row.poi.color, icon: POI_ICONS[row.poi.id] });
   };
   const rows = new Map();
+  const hideAll = document.getElementById("layers-hide");
+  const chips = document.getElementById("nearest-chips");
+  const refresh = () => {
+    hideAll.hidden = enabled.size === 0;
+    if (!routing) return;
+    chips.replaceChildren(...[...rows.values()]
+      .filter((row) => NEAREST_ALWAYS.includes(row.poi.id) || enabled.has(row.poi.id))
+      .map((row) => {
+        const chip = Object.assign(document.createElement("button"), { type: "button", className: "chip" });
+        chip.style.setProperty("--poi", row.poi.color);
+        chip.setAttribute("aria-label", `${t(lang, "nearest")}: ${row.label}`);
+        chip.append(icon(POI_ICONS[row.poi.id] ?? "pin"), row.label);
+        chip.addEventListener("click", () => {
+          map.fire("userroute");
+          showNearest(row);
+        });
+        return chip;
+      }));
+    document.getElementById("nearest-box").hidden = chips.children.length === 0;
+  };
 
   for (const poi of pois) {
-    const checkbox = Object.assign(document.createElement("input"), {
-      type: "checkbox", checked: enabled.has(poi.id),
+    const label = pick(lang, poi.label) || poi.id;
+    const toggle = Object.assign(document.createElement("input"), {
+      type: "checkbox", checked: enabled.has(poi.id), className: "switch",
     });
-    const swatch = Object.assign(document.createElement("span"), { className: "swatch" });
-    swatch.style.background = poi.color;
-    const name = document.createElement("span");
-    name.textContent = pick(lang, poi.label) || poi.id;
-    const count = Object.assign(document.createElement("span"), {
-      className: "count", textContent: poi.count?.toLocaleString(lang) ?? "",
-    });
-    const label = document.createElement("label");
-    label.append(checkbox, swatch, name, count);
+    toggle.setAttribute("role", "switch");
+    const badge = Object.assign(document.createElement("span"), { className: "poi-badge" });
+    badge.style.background = poi.color;
+    if (POI_ICONS[poi.id]) badge.append(icon(POI_ICONS[poi.id]));
+    const text = Object.assign(document.createElement("span"), { className: "layer-text" });
+    text.append(Object.assign(document.createElement("strong"), { textContent: label }),
+      Object.assign(document.createElement("span"), { textContent: poi.count?.toLocaleString(lang) ?? "" }));
+    const row = document.createElement("label");
+    row.append(badge, text, toggle);
     const item = document.createElement("li");
-    item.append(label);
+    item.append(row);
     list.append(item);
 
-    if (routing) {
-      const near = Object.assign(document.createElement("button"), {
-        type: "button", className: "nearest", textContent: t(lang, "nearest"),
-      });
-      near.setAttribute("aria-label", `${t(lang, "nearest")}: ${name.textContent}`);
-      near.addEventListener("click", () => {
-        map.fire("userroute");
-        showNearest(poi, checkbox, name.textContent);
-      });
-      item.append(near);
-    }
-
-    rows.set(poi.id, { poi, checkbox, label: name.textContent });
-    checkbox.addEventListener("change", () => {
-      setPoiVisible(map, poi, checkbox.checked);
-      if (checkbox.checked) enabled.add(poi.id); else enabled.delete(poi.id);
+    rows.set(poi.id, { poi, toggle, label });
+    toggle.addEventListener("change", () => {
+      setPoiVisible(map, poi, toggle.checked);
+      if (toggle.checked) enabled.add(poi.id); else enabled.delete(poi.id);
       store(POI_STATE_KEY, JSON.stringify([...enabled]));
+      refresh();
     });
-    if (checkbox.checked) setPoiVisible(map, poi, true);
+    if (toggle.checked) setPoiVisible(map, poi, true);
   }
+  hideAll.addEventListener("click", () => {
+    for (const { toggle } of rows.values()) {
+      if (!toggle.checked) continue;
+      toggle.checked = false;
+      toggle.dispatchEvent(new Event("change"));
+    }
+  });
+  refresh();
+  setUpMore(pois.length);
 
   // map.html?nearest=<layer id>, from the start page and the emergency guide:
   // show that layer and find the closest one. Without road data, just show
@@ -218,11 +237,40 @@ function setUpPois(map, geolocate) {
   if (wanted) openNearest(map, geolocate, wanted, showNearest);
 }
 
+// On a phone the layers are a sheet at the bottom showing the first few;
+// "Show all" opens the rest. A route card takes its place. The map's own
+// buttons keep above whichever is showing (--below).
+function setUpSheet() {
+  const area = document.getElementById("map-area");
+  const sheet = document.getElementById("layers");
+  const route = document.getElementById("route-panel");
+  const below = new ResizeObserver(() => area.style.setProperty("--below",
+    `${Math.max(sheet.offsetHeight, route.hidden ? 0 : route.offsetHeight + 8)}px`));
+  below.observe(sheet);
+  below.observe(route);
+}
+
+function setUpMore(count) {
+  const sheet = document.getElementById("layers");
+  const more = document.getElementById("layers-more");
+  const SHOWN = 4;
+  if (count <= SHOWN) return;
+  more.hidden = false;
+  const show = (all) => {
+    sheet.classList.toggle("all", all);
+    more.setAttribute("aria-expanded", String(all));
+    more.textContent = all ? t(lang, "showFewer") : t(lang, "showAllN").replace("{n}", count);
+  };
+  show(false);
+  more.addEventListener("click", () => show(!sheet.classList.contains("all")));
+}
+
 // Waits for the first position fix (up to 8 s), then asks for the nearest.
-async function openNearest(map, geolocate, { poi, checkbox, label }, showNearest) {
-  if (!checkbox.checked) {
-    checkbox.checked = true;
-    checkbox.dispatchEvent(new Event("change"));
+async function openNearest(map, geolocate, row, showNearest) {
+  const { poi, toggle } = row;
+  if (!toggle.checked) {
+    toggle.checked = true;
+    toggle.dispatchEvent(new Event("change"));
   }
   if (!routing) {
     const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
@@ -249,7 +297,7 @@ async function openNearest(map, geolocate, { poi, checkbox, label }, showNearest
   if (!tracking) geolocate.trigger();
   await located;
   map.off("userroute", cancel);
-  if (!cancelled) showNearest(poi, checkbox, label);
+  if (!cancelled) showNearest(row);
 }
 
 

@@ -5,15 +5,43 @@
 
 const STRINGS = {
   en: {
+    navHome: "Home",
+    navMap: "Map",
+    guideTitle: "Emergency guide",
+    guideShort: "Guide",
+    offlineReady: "Offline ready",
+    theme: "Theme",
+    themeSystem: "Same as the device",
+    themeLight: "Light",
+    themeDark: "Dark",
+    toDark: "Switch to dark",
+    toLight: "Switch to light",
+    heroTitle: "Maps, shelters and guidance, ready when the network isn't.",
+    heroTitleShort: "Ready when the network isn't.",
+    heroStored: "Everything is stored on this device.",
+    heroMapDate: "Map data from {date}.",
+    heroStoredShort: "stored on this device",
+    call112: "Call 112",
+    whatNow: "What to do now",
+    whatNowHint: "Steps, radio, supplies and your plan",
+    onDevice: "On this device",
+    mapsRoute: "Directions on foot or by car.",
+    shelters: "{n} shelters",
+    sheltersOne: "{n} shelter",
+    layerCount: "{n} layers",
+    layerCountOne: "{n} layer",
+    books: "{n} books",
+    booksOne: "{n} book",
+    situations: "{n} situations",
+    situationsOne: "{n} situation",
+    guideText: "What to do in {n} situations, a home supplies checklist and your family plan.",
+    printablePlan: "Printable plan",
+    shareLive: "Sharing on",
     offline: "Works without internet",
-    maps: "Maps",
-    mapsText: "Street-level map with hospitals, pharmacies, water and fuel.",
+    mapsText: "Street-level map with shelters, hospitals, pharmacies, water and fuel.",
     library: "Library",
-    libraryText: "Wikipedia and reference works, searchable.",
+    libraryText: "Wikipedia and reference works, fully searchable offline.",
     documents: "Documents",
-    documentsText: "Official guidance and practical guides.",
-    inLibrary: "In the library",
-    notIncluded: "Not on this drive.",
     lanNote: "This drive is being shared with other devices on the local network.",
     shareTitle: "Share with other devices",
     shareHintOff: "Let phones and computers on the same Wi-Fi open this drive.",
@@ -25,9 +53,15 @@ const STRINGS = {
     shareFailed: "Sharing could not be changed.",
     shareCodeFor: "QR code for {address}",
     built: "Built",
-    mapData: "map data",
     back: "Back",
-    layers: "Layers",
+    findNearest: "Find nearest",
+    mapLayers: "Map layers",
+    hideAll: "Hide all",
+    showAllN: "Show all {n}",
+    showFewer: "Show fewer",
+    routeTitle: "Route",
+    onFoot: "{d} on foot",
+    byCar: "{d} by car",
     noLayers: "No place layers on this drive.",
     noMap: "There is no map on this drive.",
     mapError: "The map could not be loaded.",
@@ -73,23 +107,31 @@ const STRINGS = {
     snapNote: "Starts or ends {n} from the nearest road or path.",
     routeSafety: "Estimate from OpenStreetMap. Follow road signs.",
     searchLibrary: "Search the library",
+    librarySub: "Search Wikipedia and reference works stored on this device.",
+    bookFilter: "Book",
+    allBooks: "All books",
+    booksHere: "Books on this device",
+    results: "{n} results for “{q}”",
+    resultsOne: "{n} result for “{q}”",
     search: "Search",
-    searchBook: "Search for an article or a word",
-    frontPage: "The book's front page",
-    searchAll: "Search all books",
     topicsTitle: "Survival and DIY",
     noHits: "Nothing found.",
     searchPreparing: "Preparing search inside {book}: {n}%. Titles can be searched already.",
     noBooks: "There are no books on this drive.",
     searchMap: "Search the map",
-    searchMapHint: "Town, street, address or place",
+    searchMapHint: "Search addresses and places",
     searching: "Searching…",
     emergencyTitle: "In an emergency",
     emergencyText: "What to do, supplies at home, and your own plan.",
-    sos112: "112",
-    sos112Hint: "Emergency: rescue, ambulance, police",
+    sos112Hint: "Rescue, ambulance, police",
     nearestShelter: "Nearest shelter",
     nearestShelterHint: "Show the closest one on the map",
+    guideSub: "Clear steps for common crises, a home supplies checklist and your family's plan.",
+    printPlan: "Print my plan",
+    lifeDanger: "Life in danger? Call 112 first.",
+    suppliesShort: "Supplies",
+    steps: "{n} steps",
+    stepsOne: "{n} step",
     readyWhen: "When it happens",
     readySupplies: "Home supplies",
     readyPlan: "My plan",
@@ -101,6 +143,7 @@ const STRINGS = {
     radioSite: "Transmitter",
     radioArea: "Area",
     radioAsOf: "ERR's list as of {date}.",
+    radioSub: "{stations} frequencies, printed with your plan",
     source: "Source",
     sources: "Sources",
     noGuides: "There are no emergency guides on this drive.",
@@ -108,7 +151,6 @@ const STRINGS = {
     clearConfirm: "Clear all ticks?",
     suppliesCount: "{n}/{total}",
     planNote: "Saved only on this device. Print it or write it down on paper too.",
-    print: "Print",
     planContacts: "Family and close contacts",
     planName: "Name",
     planPhone: "Phone",
@@ -121,15 +163,43 @@ const STRINGS = {
     planEmpty: "Nothing filled in yet.",
   },
   et: {
+    navHome: "Avaleht",
+    navMap: "Kaart",
+    guideTitle: "Hädaolukorra juhend",
+    guideShort: "Juhend",
+    offlineReady: "Töötab võrguta",
+    theme: "Teema",
+    themeSystem: "Nagu seadmes",
+    themeLight: "Hele",
+    themeDark: "Tume",
+    toDark: "Lülita tumedaks",
+    toLight: "Lülita heledaks",
+    heroTitle: "Kaardid, varjumiskohad ja juhised – valmis ka siis, kui võrku pole.",
+    heroTitleShort: "Valmis ka siis, kui võrku pole.",
+    heroStored: "Kõik on salvestatud selles seadmes.",
+    heroMapDate: "Kaardiandmed seisuga {date}.",
+    heroStoredShort: "salvestatud selles seadmes",
+    call112: "Helista 112",
+    whatNow: "Mida teha kohe",
+    whatNowHint: "Sammud, raadio, varud ja sinu plaan",
+    onDevice: "Selles seadmes",
+    mapsRoute: "Teejuhised jalgsi või autoga.",
+    shelters: "{n} varjumiskohta",
+    sheltersOne: "{n} varjumiskoht",
+    layerCount: "{n} kihti",
+    layerCountOne: "{n} kiht",
+    books: "{n} raamatut",
+    booksOne: "{n} raamat",
+    situations: "{n} olukorda",
+    situationsOne: "{n} olukord",
+    guideText: "Mida teha {n} olukorras, koduse varu nimekiri ja sinu pere plaan.",
+    printablePlan: "Prinditav plaan",
+    shareLive: "Jagamine sees",
     offline: "Töötab ilma internetita",
-    maps: "Kaardid",
-    mapsText: "Tänavatasemel kaart haiglate, apteekide, joogivee ja tanklatega.",
+    mapsText: "Tänavatasemel kaart varjumiskohtade, haiglate, apteekide, joogivee ja tanklatega.",
     library: "Raamatukogu",
-    libraryText: "Vikipeedia ja teatmeteosed, otsinguga.",
+    libraryText: "Vikipeedia ja teatmeteosed, otsing töötab ka ilma internetita.",
     documents: "Dokumendid",
-    documentsText: "Ametlikud juhised ja praktilised käsiraamatud.",
-    inLibrary: "Raamatukogus",
-    notIncluded: "Sellel mälupulgal puudub.",
     lanNote: "Seda mälupulka jagatakse kohtvõrgu teiste seadmetega.",
     shareTitle: "Jaga teiste seadmetega",
     shareHintOff: "Lase samas WiFi-võrgus olevatel telefonidel ja arvutitel see mälupulk avada.",
@@ -141,9 +211,15 @@ const STRINGS = {
     shareFailed: "Jagamist ei õnnestunud muuta.",
     shareCodeFor: "QR-kood aadressile {address}",
     built: "Koostatud",
-    mapData: "kaardiandmed",
     back: "Tagasi",
-    layers: "Kihid",
+    findNearest: "Leia lähim",
+    mapLayers: "Kaardikihid",
+    hideAll: "Peida kõik",
+    showAllN: "Näita kõiki ({n})",
+    showFewer: "Näita vähem",
+    routeTitle: "Teekond",
+    onFoot: "{d} jalgsi",
+    byCar: "{d} autoga",
     noLayers: "Sellel mälupulgal pole kohakihte.",
     noMap: "Sellel mälupulgal pole kaarti.",
     mapError: "Kaarti ei õnnestunud laadida.",
@@ -189,23 +265,31 @@ const STRINGS = {
     snapNote: "Algab või lõpeb lähimast teest või rajast {n} kaugusel.",
     routeSafety: "Hinnang OpenStreetMapi põhjal. Järgi liiklusmärke.",
     searchLibrary: "Otsi raamatukogust",
+    librarySub: "Otsi selles seadmes olevast Vikipeediast ja teatmeteostest.",
+    bookFilter: "Raamat",
+    allBooks: "Kõik raamatud",
+    booksHere: "Raamatud selles seadmes",
+    results: "{n} tulemust päringule „{q}“",
+    resultsOne: "{n} tulemus päringule „{q}“",
     search: "Otsi",
-    searchBook: "Otsi artiklit või sõna",
-    frontPage: "Raamatu esileht",
-    searchAll: "Otsi kõigist raamatutest",
     topicsTitle: "Ellujäämine ja tee-ise",
     noHits: "Midagi ei leitud.",
     searchPreparing: "Valmistan ette otsingut raamatus {book}: {n}%. Pealkirju saab juba otsida.",
     noBooks: "Sellel mälupulgal pole raamatuid.",
     searchMap: "Otsi kaardilt",
-    searchMapHint: "Asula, tänav, aadress või koht",
+    searchMapHint: "Otsi aadresse ja kohti",
     searching: "Otsin…",
     emergencyTitle: "Hädaolukorras",
     emergencyText: "Mida teha, kodune varu ja sinu enda plaan.",
-    sos112: "112",
-    sos112Hint: "Hädaabi: pääste, kiirabi, politsei",
+    sos112Hint: "Pääste, kiirabi, politsei",
     nearestShelter: "Lähim varjumiskoht",
     nearestShelterHint: "Näita lähimat kaardil",
+    guideSub: "Selged sammud levinumateks kriisideks, koduse varu nimekiri ja sinu pere plaan.",
+    printPlan: "Prindi minu plaan",
+    lifeDanger: "Elu on ohus? Helista kõigepealt 112.",
+    suppliesShort: "Varud",
+    steps: "{n} sammu",
+    stepsOne: "{n} samm",
     readyWhen: "Kui juhtub",
     readySupplies: "Kodune varu",
     readyPlan: "Minu plaan",
@@ -217,6 +301,7 @@ const STRINGS = {
     radioSite: "Saatja",
     radioArea: "Piirkond",
     radioAsOf: "ERR-i andmed seisuga {date}.",
+    radioSub: "{stations} sagedused, prinditakse koos sinu plaaniga",
     source: "Allikas",
     sources: "Allikad",
     noGuides: "Sellel mälupulgal pole hädaolukorra juhiseid.",
@@ -224,7 +309,6 @@ const STRINGS = {
     clearConfirm: "Kas eemaldan kõik märked?",
     suppliesCount: "{n}/{total}",
     planNote: "Salvestatud ainult sellesse seadmesse. Prindi see välja või kirjuta ka paberile.",
-    print: "Prindi",
     planContacts: "Pere ja lähikondsed",
     planName: "Nimi",
     planPhone: "Telefon",
@@ -238,14 +322,33 @@ const STRINGS = {
   },
 };
 
-const LANG_KEY = "varu.lang";
-
 function stored(key) {
   try { return localStorage.getItem(key); } catch { return null; }
 }
 
 function store(key, value) {
   try { localStorage.setItem(key, value); } catch { /* private mode: fine */ }
+}
+
+// The language and theme chosen on this device. Kept in a cookie as well as
+// localStorage: a cookie belongs to the address without its port, so the
+// choice outlives the launcher starting on another port.
+const TEN_YEARS = 10 * 365 * 24 * 60 * 60;
+
+export function pref(name) {
+  const cookie = document.cookie.match(new RegExp(`(?:^|; )varu_${name}=([^;]*)`));
+  return cookie ? decodeURIComponent(cookie[1]) : stored(`varu.${name}`);
+}
+
+export function setPref(name, value) {
+  document.cookie = `varu_${name}=${encodeURIComponent(value)}; max-age=${TEN_YEARS}; path=/; SameSite=Lax`;
+  store(`varu.${name}`, value);
+}
+
+/** Whether the page is dark: the theme chosen here, else the device's. */
+export function isDark() {
+  const theme = document.documentElement.dataset.theme;
+  return theme ? theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
 /** Interface languages offered on this drive, in the region's order. */
@@ -257,19 +360,24 @@ export function availableLanguages(manifest) {
 
 export function currentLanguage(manifest) {
   const offered = availableLanguages(manifest);
-  const saved = stored(LANG_KEY);
+  const saved = pref("lang");
   if (saved && offered.includes(saved)) return saved;
   const browser = (navigator.language || "").slice(0, 2).toLowerCase();
   return offered.includes(browser) ? browser : offered[0];
 }
 
 export function setLanguage(code) {
-  store(LANG_KEY, code);
+  setPref("lang", code);
 }
 
 /** Translate an interface key. */
 export function t(lang, key) {
   return STRINGS[lang]?.[key] ?? STRINGS.en[key] ?? key;
+}
+
+/** A count in words: plural(lang, "books", 1) is "1 book", from the key "booksOne". */
+export function plural(lang, key, n) {
+  return t(lang, n === 1 ? `${key}One` : key).replace("{n}", n.toLocaleString(lang));
 }
 
 /** Pick a content string from a {lang: text} map (or pass plain strings through). */
@@ -284,6 +392,9 @@ export function applyStrings(lang) {
   document.documentElement.lang = lang;
   for (const el of document.querySelectorAll("[data-i18n]")) {
     el.textContent = t(lang, el.dataset.i18n);
+  }
+  for (const el of document.querySelectorAll("[data-i18n-label]")) {
+    el.setAttribute("aria-label", t(lang, el.dataset.i18nLabel));
   }
 }
 

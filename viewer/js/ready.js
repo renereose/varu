@@ -1,14 +1,17 @@
-// "In an emergency": what to do (guides.json), a tickable list of home
-// supplies, and the family's own plan. The ticks and the plan live in this
-// browser's localStorage and nowhere else.
+// The emergency guide: what to do (guides.json), radio frequencies, a
+// tickable list of home supplies, and the family's own plan, one section at
+// a time (#situations, #situation-<id>, #radio, #supplies, #plan). The
+// ticks and the plan live in this browser's localStorage and nowhere else.
 //
 // Known limit: localStorage belongs to one origin (address and port). If the
 // launcher ever starts on another port, the saved plan is not seen there, so
 // printing it is the backup.
 
 import {
-  applyStrings, currentLanguage, loadManifest, pick, store, stored, t,
+  applyStrings, currentLanguage, loadManifest, pick, plural, store, stored, t,
 } from "./common.js";
+import { icon } from "./icons.js";
+import { initShell } from "./shell.js";
 
 const SUPPLIES_KEY = "varu.supplies";
 const PLAN_KEY = "varu.plan";
@@ -20,7 +23,9 @@ const [manifest, guides, topics] = await Promise.all([
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
-document.title = t(lang, "emergencyTitle");
+initShell(manifest, lang);
+document.title = t(lang, "guideTitle");
+const $ = (id) => document.getElementById(id);
 
 const el = (tag, props = {}, ...children) => {
   const node = Object.assign(document.createElement(tag), props);
@@ -37,8 +42,16 @@ const sourceLinks = (sources) => (sources ?? []).flatMap((s, i) => [
 
 // ---------- When it happens ----------
 
+// Each situation's icon, by its id in guides.json.
+const ICONS = {
+  power: "zap-off", water: "droplet-off", heat: "thermometer-snowflake", communication: "wifi-off",
+  warning: "siren", shelter: "shield", evacuation: "log-out", fire: "flame", co: "cloud-fog",
+  storm: "cloud-lightning", flood: "waves", lost: "trees", "call-112": "phone",
+};
 const situations = guides.situations ?? [];
-document.getElementById("no-guides").hidden = situations.length > 0;
+const textOf = (s) => s[lang] ?? s.en ?? Object.values(s).find((v) => v?.title) ?? {};
+$("no-guides").hidden = situations.length > 0;
+$("situation-count").textContent = situations.length || "";
 const pois = manifest.pois ?? [];
 // Same rule as the library page: topics.json names a book without its edition
 // month, and a topic is only worth a link if one of its books is on this drive.
@@ -47,74 +60,96 @@ const editions = new Set((Array.isArray(books) ? books : []).map((b) => String(b
 const topicOnDrive = (topic) => (topic.articles ?? []).some((a) => editions.has(a.book));
 const topicById = Object.fromEntries((topics.topics ?? []).map((topic) => [topic.id, topic]));
 
-document.getElementById("situation-list").replaceChildren(...situations.map((s) => {
-  const text = s[lang] ?? s.en ?? Object.values(s).find((v) => v?.title) ?? {};
+$("situation-list").replaceChildren(...situations.map((s) => el("li", {},
+  el("a", { href: `#situation-${s.id}` }, el("span", { className: "sit-icon" }, icon(ICONS[s.id] ?? "life-buoy")),
+    el("span", { textContent: textOf(s).title }), icon("chevron-right", "chev")))));
+
+function showSituation(s) {
+  const text = textOf(s);
   const links = [];
   const layer = s.map && manifest.map ? pois.find((p) => p.id === s.map) : null;
   if (layer) {
-    links.push(el("a", {
-      className: "btn btn-primary",
-      href: `map.html?nearest=${encodeURIComponent(layer.id)}`,
-      textContent: t(lang, "readyNearest").replace("{name}", pick(lang, layer.label) || layer.id),
-    }));
+    links.push(el("a", { className: "btn btn-primary", href: `map.html?nearest=${encodeURIComponent(layer.id)}` },
+      icon("map"), t(lang, "readyNearest").replace("{name}", pick(lang, layer.label) || layer.id)));
   }
-  if (s.radio && guides.radio) {
-    links.push(el("a", { className: "btn", href: "#radio", textContent: t(lang, "readyRadioLink") }));
-  }
+  if (s.radio && guides.radio) links.push(el("a", { className: "btn", href: "#radio" }, icon("radio"), t(lang, "readyRadioLink")));
   for (const id of s.topics ?? []) {
     const topic = topicById[id];
     if (!topic || !topicOnDrive(topic)) continue;
-    links.push(el("a", {
-      className: "btn",
-      href: `/library/#topic-${encodeURIComponent(id)}`,
-      textContent: t(lang, "readyMore").replace("{topic}", topic[lang] ?? topic.en),
-    }));
+    links.push(el("a", { className: "btn", href: `/library/#topic-${encodeURIComponent(id)}` },
+      icon("book-open"), t(lang, "readyMore").replace("{topic}", topic[lang] ?? topic.en)));
   }
-  const item = el("details", { id: `situation-${s.id}`, className: "situation" },
-    el("summary", { textContent: text.title }),
-    el("ol", {}, ...(text.steps ?? []).map((step) => el("li", { textContent: step }))));
-  if (links.length) item.append(el("p", { className: "actions no-print" }, ...links));
-  if (s.sources?.length) item.append(el("p", { className: "sources" }, `${t(lang, "source")}: `, ...sourceLinks(s.sources)));
-  return item;
-}));
-if (location.hash.startsWith("#situation-")) document.getElementById(location.hash.slice(1))?.setAttribute("open", "");
+  const steps = text.steps ?? [];
+  $("situation").replaceChildren(
+    el("a", { className: "back-link", href: "#situations" }, icon("arrow-left"), t(lang, "readyWhen")),
+    el("div", { className: "section-head" }, el("span", { className: "head-icon" }, icon(ICONS[s.id] ?? "life-buoy")),
+      el("div", {}, el("h2", { textContent: text.title }), el("p", { textContent: plural(lang, "steps", steps.length) }))),
+    el("ol", { className: "steps" }, ...steps.map((step) => el("li", { textContent: step }))),
+    ...(links.length ? [el("p", { className: "actions no-print" }, ...links)] : []),
+    ...(s.sources?.length ? [el("div", { className: "sources-box" }, el("p", { className: "label", textContent: t(lang, "sources") }),
+      el("p", { className: "sources" }, ...sourceLinks(s.sources)))] : []));
+  for (const a of $("situation-list").querySelectorAll("a")) {
+    if (a.hash === `#situation-${s.id}`) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+  }
+}
+
+// One section at a time. On a wide screen the list and the open situation
+// sit side by side (the first one open); on a phone, one after the other.
+function route() {
+  const hash = decodeURIComponent(location.hash.slice(1));
+  const chosen = hash.startsWith("situation-") ? situations.find((s) => `situation-${s.id}` === hash) : null;
+  const section = chosen || !["radio", "supplies", "plan"].includes(hash) || $(hash).hidden ? "situations" : hash;
+  for (const part of document.querySelectorAll(".guide-section")) part.classList.toggle("is-current", part.id === section);
+  for (const a of document.querySelectorAll(".guide-nav a")) {
+    if (a.hash === `#${section}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+  document.body.classList.toggle("has-situation", Boolean(chosen));
+  if (situations.length) showSituation(chosen ?? situations[0]);
+  if (chosen || section !== "situations") window.scrollTo(0, 0);
+}
 
 // ---------- Radio ----------
 
 const radio = guides.radio;
 if (radio) {
-  document.getElementById("radio").hidden = false;
+  $("radio").hidden = false;
+  document.querySelector('.guide-nav a[href="#radio"]').hidden = false;
   const text = radio[lang] ?? radio.en ?? {};
-  document.getElementById("radio-title").textContent = text.title ?? t(lang, "readyRadio");
-  document.getElementById("radio-intro").textContent = text.intro ?? "";
+  const stations = radio.stations ?? [];
+  $("radio-title").textContent = text.title ?? t(lang, "readyRadio");
+  $("radio-sub").textContent = t(lang, "radioSub")
+    .replace("{stations}", new Intl.ListFormat(lang, { type: "conjunction" }).format(stations.map((s) => s.name)));
+  $("radio-intro").textContent = text.intro ?? "";
   const mhz = (f) => f.toLocaleString(lang, { minimumFractionDigits: 1 });
-  const table = (head, rows) => el("table", { className: "radio-table" },
-    el("thead", {}, el("tr", {}, ...head.map((h) => el("th", { scope: "col", textContent: h })))),
-    el("tbody", {}, ...rows.map((row) => el("tr", {}, ...row.map((cell) => el("td", { textContent: cell }))))));
   const byName = (a, b) => a.localeCompare(b, "et");
-  document.getElementById("radio-stations").replaceChildren(...(radio.stations ?? []).map((station) => {
+  $("radio-stations").replaceChildren(...stations.map((station) => {
     // Transmitters by county, so people find theirs; areas as the source names them.
+    // On a phone the transmitter goes under its county, in the <small>.
     const rows = station.sites
       ? [...station.sites].sort((a, b) => byName(a[1], b[1]) || byName(a[0], b[0]))
-        .map(([site, county, f]) => [county, site, mhz(f)])
-      : (station.areas ?? []).map(([area, f]) => [area, mhz(f)]);
+        .map(([site, county, f]) => el("tr", {}, el("td", {}, county, el("small", { textContent: site })),
+          el("td", { className: "site", textContent: site }), el("td", { textContent: mhz(f) })))
+      : (station.areas ?? []).map(([area, f]) => el("tr", {}, el("td", { textContent: area }), el("td", { textContent: mhz(f) })));
     const head = station.sites
       ? [t(lang, "radioCounty"), t(lang, "radioSite"), "MHz"]
       : [t(lang, "radioArea"), "MHz"];
     return el("div", { className: "radio-station" },
-      el("h3", {}, `${station.name} `, el("span", { className: "meta", textContent: pick(lang, station.lang) })),
-      table(head, rows),
-      el("p", { className: "meta", textContent: t(lang, "radioAsOf").replace("{date}",
+      el("h3", {}, station.name, el("span", { textContent: pick(lang, station.lang) })),
+      el("table", { className: "radio-table" },
+        el("thead", {}, el("tr", {}, ...head.map((h, i) => el("th", { scope: "col", textContent: h, className: i === 1 && station.sites ? "site" : "" })))),
+        el("tbody", {}, ...rows)),
+      el("p", { className: "as-of", textContent: t(lang, "radioAsOf").replace("{date}",
         new Date(`${station.as_of}-01T12:00`).toLocaleDateString(lang, { year: "numeric", month: "long" })) }));
   }));
-  document.getElementById("radio-sources").append(`${t(lang, "source")}: `, ...sourceLinks(radio.sources));
+  $("radio-sources").append(...sourceLinks(radio.sources));
 }
 
 // ---------- Home supplies ----------
 
 const supplies = guides.supplies;
 if (supplies) {
-  document.getElementById("supplies").hidden = false;
+  $("supplies").hidden = false;
+  document.querySelector('.guide-nav a[href="#supplies"]').hidden = false;
   const text = supplies[lang] ?? supplies.en ?? {};
   document.getElementById("supplies-title").textContent = text.title ?? t(lang, "readySupplies");
   document.getElementById("supplies-intro").textContent = (text.intro ?? "").replace("{days}", supplies.days ?? "");
@@ -151,7 +186,8 @@ if (supplies) {
     refresh();
   });
   if (supplies.sources?.length) {
-    document.getElementById("supplies-sources").append(`${t(lang, "sources")}: `, ...sourceLinks(supplies.sources));
+    $("supplies-sources-box").hidden = false;
+    $("supplies-sources").append(...sourceLinks(supplies.sources));
   }
 }
 
@@ -211,12 +247,14 @@ contactList.replaceChildren(...plan.contacts.map(contactRow));
 if (!plan.contacts.length) addContact(false);
 document.getElementById("add-contact").addEventListener("click", () => addContact(true));
 
-document.getElementById("print").addEventListener("click", () => {
+// Printing gives the radio frequencies, the supplies and the plan, whichever section is open.
+const print = () => {
   // The Android app's WebView ignores window.print(); its bridge prints instead.
   renderPrintCopy();
   if (window.VaruAndroid?.print) window.VaruAndroid.print(); else window.print();
-});
+};
+$("print").addEventListener("click", print);
+$("print-side").addEventListener("click", print);
 
-// The sections are on one page, so a late #plan or #supplies still needs a
-// scroll once the content above it has been built.
-if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+route();
+window.addEventListener("hashchange", route);

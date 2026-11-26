@@ -2,9 +2,9 @@
 // search in this book, and to the library. In a shadow root, so the book's
 // own styles cannot touch it.
 
-import { stored, t } from "/js/common.js";
+import { pref, t } from "/js/common.js";
 
-const saved = stored("varu.lang");
+const saved = pref("lang");
 const lang = saved || (navigator.language || "en").slice(0, 2);
 
 const host = document.createElement("varu-bar");

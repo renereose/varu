@@ -6,33 +6,78 @@
   <title>Library</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
   <!-- Served at /library/, so every address here is absolute. -->
+  <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/app.css">
 </head>
-<body class="home">
-  <header class="masthead">
-    <div>
-      <p class="eyebrow"><a class="back" href="/" data-i18n="back">Back</a></p>
+<body class="library-page">
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
+      <nav class="topnav" aria-label="Varu">
+        <a href="/" data-i18n="navHome">Home</a>
+        <a href="/map.html" data-needs="map" data-i18n="navMap">Map</a>
+        <a href="/library/" aria-current="page" data-needs="library" data-i18n="library">Library</a>
+        <a href="/ready.html" data-i18n="guideTitle">Emergency guide</a>
+      </nav>
+      <div class="topbar-end">
+        <span class="offline-badge" data-i18n="offlineReady">Offline ready</span>
+        <div class="langs" id="langs" role="group"></div>
+        <div class="theme-switch" role="group" data-i18n-label="theme">
+          <button type="button" data-theme-choice="system" data-i18n-label="themeSystem"><svg data-icon="monitor"></svg></button>
+          <button type="button" data-theme-choice="light" data-i18n-label="themeLight"><svg data-icon="sun"></svg></button>
+          <button type="button" data-theme-choice="dark" data-i18n-label="themeDark"><svg data-icon="moon"></svg></button>
+        </div>
+        <button type="button" class="theme-toggle" id="theme-toggle"></button>
+      </div>
+    </div>
+  </header>
+  <header class="lib-head">
+    <div class="wrap">
       <h1 data-i18n="library">Library</h1>
+      <p class="lib-sub" data-i18n="librarySub">Search Wikipedia and reference works stored on this device.</p>
+      <form class="lib-search" role="search" id="search">
+        <svg data-icon="search"></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search">
+        <button type="button" id="q-clear" class="q-clear" data-i18n-label="clear" hidden><svg data-icon="x"></svg></button>
+        <span class="book-select" id="book-select-box" hidden>
+          <select id="book-select" data-i18n-label="bookFilter"></select>
+          <svg data-icon="chevron-down"></svg>
+        </span>
+      </form>
+      <div id="book-chips" class="chips book-chips" role="group" data-i18n-label="bookFilter" hidden></div>
     </div>
   </header>
 
-  <main>
-    <form class="search" role="search" id="search">
-      <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search">
-    </form>
-    <p id="preparing" class="meta" hidden></p>
-    <ul id="hits" class="doc-list"></ul>
-    <p id="no-hits" class="meta" hidden data-i18n="noHits">Nothing found.</p>
-    <p class="meta"><a id="all-books" hidden data-i18n="searchAll">Search all books</a></p>
-
-    <section id="topics" class="panel topics" hidden>
-      <h2 data-i18n="topicsTitle">Survival and DIY</h2>
-      <div id="topic-list"></div>
-    </section>
-
-    <section class="cards" id="books" aria-label="Books"></section>
-    <p id="empty" class="meta" hidden data-i18n="noBooks">There are no books on this drive.</p>
+  <main class="wrap lib-body">
+    <div class="lib-main">
+      <p id="preparing" class="lib-note" hidden></p>
+      <p id="hit-count" class="lib-note" hidden></p>
+      <ul id="hits" class="hits" hidden></ul>
+      <p id="no-hits" class="lib-note" hidden data-i18n="noHits">Nothing found.</p>
+      <section id="topics" class="topics" hidden>
+        <h2 class="label" data-i18n="topicsTitle">Survival and DIY</h2>
+        <div id="topic-list" class="topic-list"></div>
+      </section>
+      <p id="empty" class="lib-note" hidden data-i18n="noBooks">There are no books on this drive.</p>
+    </div>
+    <aside class="lib-side">
+      <section id="books-box" hidden>
+        <h2 class="label" data-i18n="booksHere">Books on this device</h2>
+        <ul id="books" class="book-cards"></ul>
+      </section>
+      <section id="topic-index-box" class="topic-index-box" hidden>
+        <h2 class="label" data-i18n="topicsTitle">Survival and DIY</h2>
+        <ul id="topic-index" class="topic-index"></ul>
+      </section>
+    </aside>
   </main>
+
+  <nav class="tabbar" aria-label="Varu">
+    <a href="/"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
+    <a href="/map.html" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
+    <a href="/library/" aria-current="page" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
+    <a href="/ready.html"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
+  </nav>
 
   <script type="module" src="/js/library.js"></script>
 </body>
