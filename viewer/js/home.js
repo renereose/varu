@@ -69,6 +69,7 @@ function render() {
 
   setCard("card-map", Boolean(manifest.map), "card-map-text");
   setCard("card-library", Boolean(status.library), "card-library-text");
+  setCard("card-docs", docs.length > 0, "card-docs-text");
 
   const search = document.getElementById("home-search");
   const searchLabel = t(lang, "searchLibrary");
@@ -76,7 +77,6 @@ function render() {
   search.q.placeholder = searchLabel;
   search.q.setAttribute("aria-label", searchLabel);
   search.querySelector("button").setAttribute("aria-label", searchLabel);
-  setCard("card-docs", docs.length > 0, "card-docs-text");
 
   renderList("doc-list", "documents", docs, (doc) => ({
     href: doc.file,

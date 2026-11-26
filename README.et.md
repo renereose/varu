@@ -199,8 +199,8 @@ kogemata ära ei kustutaks.
 ### Avaleht
 
 Varu avaneb avalehega: **Kaardid**, **Raamatukogu** ja **Dokumendid**. Seal
-on ka näha, millal andmed koostati, et teaksid, kui värsked need on. Ülal olev otsingukast otsib kõigist raamatukogu
-raamatutest.
+on ka näha, millal andmed koostati, et teaksid, kui värsked need on. Ülal
+olev otsingukast otsib kõigist raamatukogu raamatutest.
 
 ### Kaart
 
