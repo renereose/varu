@@ -31,9 +31,10 @@ for program in installer launcher; do
     -ldflags "-s -w -X main.version=$version" -o "$libs/libvaru$program.so" .)
 done
 
-# 2. Manifest, Java, dex.
+# 2. Resources, manifest, Java, dex.
+"$tools/aapt2" compile --dir "$repo/android/res" -o "$work/res.zip"
 "$tools/aapt2" link -o "$work/app.apk" -I "$platform/android.jar" \
-  --manifest "$repo/android/AndroidManifest.xml" --version-code "$code" --version-name "${version#v}"
+  --manifest "$repo/android/AndroidManifest.xml" --version-code "$code" --version-name "${version#v}" "$work/res.zip"
 javac -nowarn --release 11 -classpath "$platform/android.jar" -d "$work/classes" \
   $(find "$repo/android/src" -name '*.java')
 "$tools/d8" --release --min-api 24 --lib "$platform/android.jar" --output "$work/apk" \
