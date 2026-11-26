@@ -24,20 +24,32 @@
       </div>
     </div>
   </header>
-  <div class="map-area">
+  <div class="map-area" id="map-area">
     <div id="map" role="application" aria-label="Map"></div>
 
     <aside class="map-panel" id="panel">
-      <div class="map-panel-head">
-        <a class="back" href="./" data-i18n="back">Back</a>
-        <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="layer-list" data-i18n="layers">Layers</button>
+      <div class="map-find">
+        <form id="search" class="map-search" role="search" hidden>
+          <a class="map-back" href="/" data-i18n-label="navHome"><svg data-icon="arrow-left"></svg></a>
+          <svg class="search-icon" data-icon="search"></svg>
+          <input id="search-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
+            aria-controls="search-results" aria-expanded="false">
+          <svg class="search-icon-end" data-icon="search"></svg>
+          <ul id="search-results" class="search-results" hidden></ul>
+        </form>
+        <div id="nearest-box" class="nearest-box" hidden>
+          <p class="label" data-i18n="findNearest">Find nearest</p>
+          <div id="nearest-chips" class="chips"></div>
+        </div>
       </div>
-      <form id="search" class="map-search" role="search" hidden>
-        <input id="search-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
-          aria-controls="search-results" aria-expanded="false">
-        <ul id="search-results" class="search-results" hidden></ul>
-      </form>
-      <ul id="layer-list" class="layer-list"></ul>
+      <section id="layers" class="layers-sheet" aria-labelledby="layers-title">
+        <div class="layers-head">
+          <h2 id="layers-title" class="label" data-i18n="mapLayers">Map layers</h2>
+          <button type="button" class="link" id="layers-hide" hidden data-i18n="hideAll">Hide all</button>
+          <button type="button" class="link" id="layers-more" aria-expanded="false" aria-controls="layer-list" hidden></button>
+        </div>
+        <ul id="layer-list" class="layer-list"></ul>
+      </section>
     </aside>
 
     <section id="nav-banner" class="nav-banner" hidden aria-live="polite">
@@ -51,16 +63,23 @@
 
     <section id="route-panel" class="route-panel" hidden aria-live="polite">
       <div class="route-head">
-        <div class="route-modes" role="group">
-          <button type="button" data-mode="foot" data-i18n="walk">Walk</button>
-          <button type="button" data-mode="car" data-i18n="drive">Drive</button>
+        <span id="route-icon" class="route-icon" hidden></span>
+        <div class="route-title">
+          <p id="route-kind" class="label"></p>
+          <p id="route-name" class="route-name"></p>
         </div>
-        <button type="button" id="route-start" class="route-start" hidden data-i18n="navStart">Start</button>
-        <button type="button" id="route-clear" data-i18n="clearRoute">Clear</button>
-        <button type="button" id="route-end" class="route-end" data-i18n="navEnd">End</button>
+        <button type="button" id="route-clear" class="route-close" data-i18n-label="clearRoute"><svg data-icon="x"></svg></button>
       </div>
       <p id="route-summary" class="route-summary"></p>
       <div id="route-notes" class="route-notes"></div>
+      <div class="route-actions">
+        <div class="seg route-modes" role="group">
+          <button type="button" data-mode="foot"><svg data-icon="footprints"></svg><span data-i18n="walk">Walk</span></button>
+          <button type="button" data-mode="car"><svg data-icon="car"></svg><span data-i18n="drive">Drive</span></button>
+        </div>
+        <button type="button" id="route-start" class="btn btn-primary route-start" hidden><svg data-icon="navigation"></svg><span data-i18n="navStart">Start</span></button>
+        <button type="button" id="route-end" class="btn btn-primary route-end" data-i18n="navEnd">End</button>
+      </div>
       <p class="route-safety" data-i18n="routeSafety">Estimate from OpenStreetMap. Follow road signs.</p>
     </section>
 

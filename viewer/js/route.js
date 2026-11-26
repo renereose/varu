@@ -6,6 +6,7 @@
 
 import * as maplibregl from "../vendor/maplibre-gl.mjs";
 import { store, stored, t } from "./common.js";
+import { icon } from "./icons.js";
 import { setUpNavigation } from "./nav.js";
 
 const MODE_KEY = "varu.routeMode";
@@ -16,7 +17,7 @@ const ERRORS = ["startTooFar", "endTooFar", "notConnected", "noGraph"];
 // "Nearest" compares this many places, closest as the crow flies, by road.
 const NEAREST_TRIES = 5;
 
-/** Returns { buttons(lngLat, done), nearest(places) }, or null without road data. */
+/** Returns { buttons(lngLat, done), nearest(places, about) }, or null without road data. */
 export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   if (!manifest.routing?.file) return null;
 
@@ -30,6 +31,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   let start = null; // explicit start, [lon, lat]
   let dest = null;
   let destName = null;
+  let about = null; // { label, color, icon } of the layer "Find nearest" picked from
   let gps = null;
   let request = null;
   let current = null; // the route on the map, a GeoJSON Feature
@@ -60,9 +62,27 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   }, beforeId);
 
   const setLine = (feature) => map.getSource("route").setData(feature ?? { type: "FeatureCollection", features: [] });
+  // The card's head: what kind of place (from "Find nearest") and its name.
+  const badge = document.getElementById("route-icon");
+  function showHead() {
+    document.getElementById("route-kind").textContent = about
+      ? t(lang, "readyNearest").replace("{name}", about.label) : t(lang, "routeTitle");
+    const name = document.getElementById("route-name");
+    name.textContent = destName ?? "";
+    name.hidden = !destName;
+    badge.hidden = !about;
+    if (about) {
+      badge.style.background = about.color;
+      badge.replaceChildren(icon(about.icon ?? "pin"));
+    }
+  }
+  // summary is a line of text, or [duration, distance] for a route found.
   const say = (text, extra = []) => {
     panel.hidden = false;
-    summary.textContent = text;
+    showHead();
+    summary.replaceChildren(...(Array.isArray(text)
+      ? [Object.assign(document.createElement("strong"), { textContent: text[0] }), " ", text[1]]
+      : [text]));
     notes.replaceChildren(...extra.map((line) => Object.assign(document.createElement("p"), { textContent: line })));
   };
 
@@ -94,11 +114,11 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
       if (nav.active()) return; // it says what is left itself
       startButton.hidden = false;
       const p = body.properties;
-      const extra = [destName, t(lang, origin.key)].filter(Boolean);
+      const extra = [t(lang, origin.key)];
       if (p.ferry) extra.push(t(lang, "routeFerry"));
       const snapped = Math.max(p.snap_from_m, p.snap_to_m);
       if (snapped > SNAP_NOTE_M) extra.push(t(lang, "snapNote").replace("{n}", formatDistance(snapped, lang)));
-      say(`${formatDistance(p.distance_m, lang)} · ${formatDuration(p.duration_s)}`, extra);
+      say([formatDuration(p.duration_s), t(lang, mode === "car" ? "byCar" : "onFoot").replace("{d}", formatDistance(p.distance_m, lang))], extra);
       const bounds = body.geometry.coordinates.reduce((b, c) => b.extend(c), new maplibregl.LngLatBounds());
       const pad = 48;
       map.fitBounds(bounds, { padding: { top: pad, left: pad, right: pad, bottom: pad + panel.offsetHeight }, maxZoom: 16 });
@@ -107,10 +127,11 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     }
   }
 
-  function routeTo(lngLat, name = null) {
+  function routeTo(lngLat, name = null, kind = null) {
     map.fire("userroute");
     dest = lngLat;
     destName = name;
+    about = kind;
     destMarker.setLngLat(dest).addTo(map);
     update();
   }
@@ -126,7 +147,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
     if (nav.active()) nav.stop();
     request?.abort();
     current = null;
-    start = dest = destName = null;
+    start = dest = destName = about = null;
     startMarker.remove();
     destMarker.remove();
     setLine(null);
@@ -220,7 +241,9 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   // The closest of places ([{ lngLat, name }]) by road: the few nearest as the
   // crow flies are routed, and the shortest wins (a river or a bay can make
   // the nearest-looking one far).
-  async function nearest(places) {
+  async function nearest(places, kind = null) {
+    about = kind;
+    destName = null;
     const origin = from();
     if (!origin) return say(t(lang, "needStart"));
     if (!places.length) return say(t(lang, "noRoute"));
@@ -236,7 +259,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
         .then((res) => (res.ok ? res.json() : null))
         .then((body) => body?.properties?.distance_m ?? Infinity, () => Infinity)));
     const best = near[lengths.indexOf(Math.min(...lengths))];
-    routeTo(best.lngLat, best.name);
+    routeTo(best.lngLat, best.name, kind);
   }
 
   return { buttons, nearest };

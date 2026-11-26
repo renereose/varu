@@ -48,7 +48,14 @@ const STRINGS = {
     shareCodeFor: "QR code for {address}",
     built: "Built",
     back: "Back",
-    layers: "Layers",
+    findNearest: "Find nearest",
+    mapLayers: "Map layers",
+    hideAll: "Hide all",
+    showAllN: "Show all {n}",
+    showFewer: "Show fewer",
+    routeTitle: "Route",
+    onFoot: "{d} on foot",
+    byCar: "{d} by car",
     noLayers: "No place layers on this drive.",
     noMap: "There is no map on this drive.",
     mapError: "The map could not be loaded.",
@@ -103,7 +110,7 @@ const STRINGS = {
     searchPreparing: "Preparing search inside {book}: {n}%. Titles can be searched already.",
     noBooks: "There are no books on this drive.",
     searchMap: "Search the map",
-    searchMapHint: "Town, street, address or place",
+    searchMapHint: "Search addresses and places",
     searching: "Searching…",
     emergencyTitle: "In an emergency",
     emergencyText: "What to do, supplies at home, and your own plan.",
@@ -184,7 +191,14 @@ const STRINGS = {
     shareCodeFor: "QR-kood aadressile {address}",
     built: "Koostatud",
     back: "Tagasi",
-    layers: "Kihid",
+    findNearest: "Leia lähim",
+    mapLayers: "Kaardikihid",
+    hideAll: "Peida kõik",
+    showAllN: "Näita kõiki ({n})",
+    showFewer: "Näita vähem",
+    routeTitle: "Teekond",
+    onFoot: "{d} jalgsi",
+    byCar: "{d} autoga",
     noLayers: "Sellel mälupulgal pole kohakihte.",
     noMap: "Sellel mälupulgal pole kaarti.",
     mapError: "Kaarti ei õnnestunud laadida.",
@@ -239,7 +253,7 @@ const STRINGS = {
     searchPreparing: "Valmistan ette otsingut raamatus {book}: {n}%. Pealkirju saab juba otsida.",
     noBooks: "Sellel mälupulgal pole raamatuid.",
     searchMap: "Otsi kaardilt",
-    searchMapHint: "Asula, tänav, aadress või koht",
+    searchMapHint: "Otsi aadresse ja kohti",
     searching: "Otsin…",
     emergencyTitle: "Hädaolukorras",
     emergencyText: "Mida teha, kodune varu ja sinu enda plaan.",
@@ -329,6 +343,9 @@ export function applyStrings(lang) {
   document.documentElement.lang = lang;
   for (const el of document.querySelectorAll("[data-i18n]")) {
     el.textContent = t(lang, el.dataset.i18n);
+  }
+  for (const el of document.querySelectorAll("[data-i18n-label]")) {
+    el.setAttribute("aria-label", t(lang, el.dataset.i18nLabel));
   }
 }
 
