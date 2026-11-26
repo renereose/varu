@@ -250,15 +250,17 @@ a hospital or shelter (**Tartu Ülikooli Kliinikum**).
 
 <table>
   <tr>
-    <td align="center" width="50%"><img src="docs/images/en/library.jpg" width="260" alt="Library search"><br><sub>Search across every book</sub></td>
-    <td align="center" width="50%"><img src="docs/images/en/article.jpg" width="260" alt="An article with Varu's bar"><br><sub>Reading Vikipeedia: <b>← Back</b>, 🔍 search, <b>Library</b></sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/library.jpg" width="260" alt="Searching Vikipeedia"><br><sub>Opening Vikipeedia: search it straight away</sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/article.jpg" width="260" alt="An article with Varu's bar"><br><sub>Reading Vikipeedia: <b>← Back</b>, <b>🔍 Search</b>, <b>Library</b></sub></td>
   </tr>
 </table>
 
-- Type in the search box: matching **titles** come first, then **articles
-  that mention your words**, with the words highlighted.
-- Inside a book, the green bar at the bottom has **Back**, a **🔍 search**
-  button and **Library**.
+- Opening a book shows its own search page. Type in the box: matching
+  **titles** come first, then **articles that mention your words**, with the
+  words highlighted. The book's front page is one tap below the box.
+- Inside a book, the green bar at the bottom has **Back**, **🔍 Search** (back
+  to that book's search) and **Library**.
+- The **Library** page searches every book at once.
 - Longer words also find their other forms: *tallinn* finds *Tallinnas*.
 
 ---

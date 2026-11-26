@@ -1,6 +1,6 @@
 // A small bar the launcher adds to every page of a library book: back,
-// search, and to the library. In a shadow root, so the book's own
-// styles cannot touch it.
+// search in this book, and to the library. In a shadow root, so the book's
+// own styles cannot touch it.
 
 import { stored, t } from "/js/common.js";
 
@@ -15,44 +15,21 @@ root.innerHTML = `<style>
     box-shadow: 0 4px 16px rgb(0 0 0 / 0.25); font: 600 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; }
   a, button { all: unset; cursor: pointer; color: #fff; padding: 9px 13px; border-radius: 999px; white-space: nowrap; }
   a:hover, button:hover, a:focus-visible, button:focus-visible { background: rgb(255 255 255 / 0.2); }
-  form { display: flex; align-items: center; margin: 0; }
-  form button { display: flex; padding: 9px 11px; }
-  /* 16px keeps phones from zooming in on the field. */
-  input { all: unset; width: min(14em, 45vw); padding: 7px 12px; border-radius: 999px; background: #fff;
-    color: #1d1d1b; font: 400 16px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  input[hidden] { display: none; }
-  /* On a phone the open field takes the whole bar. */
-  @media (max-width: 600px) { nav.searching > button, nav.searching > a { display: none; } }
+  a.find { display: flex; align-items: center; gap: 6px; }
   @media print { nav { display: none; } }
 </style>
-<nav><button type="button"></button><form role="search"><input type="search" enterkeyhint="search" autocomplete="off" hidden><button type="submit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button></form><a href="/library/"></a></nav>`;
+<nav><button type="button"></button><a class="find"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span></span></a><a href="/library/"></a></nav>`;
 
 const back = root.querySelector("nav > button");
-const library = root.querySelector("a");
+const library = root.querySelector('a[href="/library/"]');
 back.textContent = `← ${t(lang, "back")}`;
 library.textContent = t(lang, "library");
 
-// Search: the button opens the field, Enter shows the library's results
-// (titles first, then articles, across every book).
-const find = root.querySelector("form");
-const field = find.querySelector("input");
-const findButton = find.querySelector("button");
-field.placeholder = t(lang, "searchLibrary");
-field.setAttribute("aria-label", t(lang, "searchLibrary"));
-findButton.setAttribute("aria-label", t(lang, "searchLibrary"));
-const showField = (open) => {
-  field.hidden = !open;
-  root.querySelector("nav").classList.toggle("searching", open);
-  if (open) field.focus();
-  place();
-};
-find.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const q = field.value.trim();
-  if (field.hidden || !q) return showField(field.hidden);
-  location.assign(`/library/?q=${encodeURIComponent(q)}`);
-});
-field.addEventListener("keydown", (event) => { if (event.key === "Escape") showField(false); });
+// Search opens this book's own search page (/library/<book>/).
+const find = root.querySelector("a.find");
+find.href = `/library/${location.pathname.split("/")[2]}/`;
+find.querySelector("span").textContent = t(lang, "search");
+
 // A page opened in its own window has nowhere to go back to.
 back.addEventListener("click", () => (history.length > 1 ? history.back() : location.assign("/library/")));
 document.body.append(host);

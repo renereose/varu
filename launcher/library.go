@@ -140,11 +140,17 @@ func (l *library) register(mux *http.ServeMux) {
 			Language    string `json:"language"`
 			Search      string `json:"search"` // "ready", "preparing" or "titles" (only)
 			Progress    int    `json:"progress,omitempty"`
+			Home        string `json:"home,omitempty"` // the book's own front page
 		}
 		list := []info{}
 		for _, id := range l.order {
 			b := l.books[id]
 			i := info{ID: b.ID, Title: b.Title, Description: b.Description, Language: b.Language, Search: "titles"}
+			if main, err := b.a.MainPage(); err == nil {
+				if main, err = b.a.Resolve(main); err == nil {
+					i.Home = b.url(main)
+				}
+			}
 			if b.index.Load() != nil {
 				i.Search = "ready"
 			} else if p := b.progress.Load(); p >= 0 {
@@ -185,15 +191,9 @@ func (l *library) serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if path == "" {
-		main, err := b.a.MainPage()
-		if err == nil {
-			main, err = b.a.Resolve(main)
-		}
-		if err != nil {
-			messagePage(w, http.StatusNotFound, "No start page", "This book has no start page; search it from the library.", false)
-			return
-		}
-		http.Redirect(w, r, b.url(main), http.StatusFound)
+		// A book opens on its own search page (library.js), with a link to the
+		// book's front page, rather than straight on that front page.
+		http.ServeFile(w, r, filepath.Join(l.root, "app", "library.html"))
 		return
 	}
 	ns := b.a.ContentNamespace()
@@ -281,6 +281,11 @@ type hit struct {
 func (l *library) search(w http.ResponseWriter, r *http.Request) {
 	l.open()
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
+	only := r.URL.Query().Get("book") // one book's search page; empty for all
+	titleCount := 3
+	if only != "" {
+		titleCount = 8
+	}
 	type preparing struct {
 		Title    string `json:"title"`
 		Progress int    `json:"progress"`
@@ -292,6 +297,9 @@ func (l *library) search(w http.ResponseWriter, r *http.Request) {
 	seen := map[string]bool{}
 	var text []hit
 	for _, id := range l.order {
+		if only != "" && id != only {
+			continue
+		}
 		b := l.books[id]
 		if p := b.progress.Load(); p >= 0 {
 			out.Preparing = append(out.Preparing, preparing{b.Title, int(p)})
@@ -299,7 +307,7 @@ func (l *library) search(w http.ResponseWriter, r *http.Request) {
 		if q == "" {
 			continue
 		}
-		titles, err := b.a.Titles(q, 3)
+		titles, err := b.a.Titles(q, titleCount)
 		if err != nil {
 			log.Printf("Library search in %s: %v", id, err)
 		}
