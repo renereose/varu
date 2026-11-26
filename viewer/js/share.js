@@ -48,8 +48,11 @@ export function initShare(status, getLang) {
   const panel = $("share");
   let error = "";
   let drawn = 0;
+  let busy = false; // one request at a time, so replies can't arrive out of order
 
   async function request(on) {
+    if (busy) return;
+    busy = true;
     error = "";
     try {
       const res = await fetch("/api/share", {
@@ -65,10 +68,13 @@ export function initShare(status, getLang) {
     } catch {
       error = t(getLang(), "shareFailed");
     }
+    busy = false;
     render();
   }
 
   async function reload() {
+    if (busy) return;
+    busy = true;
     error = "";
     try {
       const res = await fetch("/api/status");
@@ -76,6 +82,7 @@ export function initShare(status, getLang) {
     } catch {
       error = t(getLang(), "shareFailed");
     }
+    busy = false;
     render();
   }
 
@@ -96,8 +103,9 @@ export function initShare(status, getLang) {
   }
 
   function render() {
-    // Another device cannot turn sharing on or off, and an old launcher has no switch.
-    panel.hidden = status.remote === true || typeof status.lan !== "boolean";
+    // Another device cannot turn sharing on or off, and a launcher older
+    // than the switch doesn't say "remote".
+    panel.hidden = status.remote !== false;
     if (panel.hidden) return;
     const lang = getLang();
     const addresses = status.lan ? (status.addresses ?? []) : [];

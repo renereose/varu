@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -322,5 +323,19 @@ func TestRouteAPI(t *testing.T) {
 		if res.StatusCode != c.status || !strings.Contains(body, c.want) {
 			t.Errorf("%s: %d %s; want %d with %s", c.query, res.StatusCode, body, c.status, c.want)
 		}
+	}
+}
+
+func TestPickAddrs(t *testing.T) {
+	ips := []net.IP{net.ParseIP("127.0.0.1"), net.ParseIP("192.168.64.1"), net.ParseIP("169.254.1.2"),
+		net.ParseIP("fe80::1"), net.ParseIP("192.168.1.23")}
+	if got := strings.Join(pickAddrs(ips, "192.168.1.23"), " "); got != "192.168.1.23 192.168.64.1" {
+		t.Errorf("route first: %s", got)
+	}
+	if got := strings.Join(pickAddrs(ips, ""), " "); got != "192.168.64.1 192.168.1.23" {
+		t.Errorf("no route: %s", got)
+	}
+	if got := strings.Join(pickAddrs(nil, "10.0.0.5"), " "); got != "10.0.0.5" {
+		t.Errorf("route only: %s", got)
 	}
 }
