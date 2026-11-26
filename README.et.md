@@ -285,7 +285,9 @@ Uued versioonid toovad uusi võimalusi, värskeid kaarte ja uuemaid raamatuid. U
    **„Uuenda kaarte ja andmeid?”** Puuduta **Uuenda** või **Hiljem**: Varu
    töötab vahepeal edasi, ka ilma internetita.
 3. Viisard avaneb viimasel sammul sinu varasemate valikutega. Vajuta **Paigalda**.
-   Muutumata faile uuesti alla ei laadita.
+   Muutumata faile uuesti alla ei laadita. Kui raamatust on uuem väljaanne,
+   kustutatakse vana alles siis, kui uus on täielikult alla laaditud, nii et vanad
+   koopiad ei võta ruumi.
 
 Mälupulga uuendamiseks ühenda see ja vali **Mine → Paigalda või uuenda…**.
 Telefonis kasuta **⋮ → Allalaadimised**.
