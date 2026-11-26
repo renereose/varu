@@ -562,6 +562,11 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
 .topic-list li a { color: var(--accent); text-decoration: none; }
 .topic-list li a:hover { text-decoration: underline; }
 
+@media (max-width: 1000px) {
+  .lib-body { grid-template-columns: minmax(0, 1fr); }
+  .topic-index-box { display: none !important; }
+}
+
 @media (max-width: 719px) {
   .lib-head { padding: 20px 0 16px; }
   .lib-head .wrap { gap: 14px; }
@@ -1045,6 +1050,15 @@ legend { padding: 0; }
 .radio-table td:last-child { font-weight: 650; }
 .radio-table small { display: none; }
 .as-of { margin: 0; padding: 10px 18px 12px; color: var(--subtle); font-size: 13px; }
+
+/* Tablets: the sections go in a row above, so the open situation has room. */
+@media (min-width: 720px) and (max-width: 1100px) {
+  .guide-body { grid-template-columns: minmax(0, 1fr); }
+  .guide-nav { position: static; flex-flow: row wrap; }
+  .print-side { margin: 0 0 0 auto; }
+  .guide-section { grid-column: 1 / -1; }
+  .situations.is-current { grid-template-columns: 260px minmax(0, 1fr); }
+}
 
 @media (max-width: 719px) {
   .guide-head { background: var(--surface); }
