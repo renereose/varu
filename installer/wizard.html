@@ -5,183 +5,464 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Varu installer</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+<script>
+// Before the page draws: the theme chosen on this device, as in the viewer
+// (viewer/js/theme.js). Light or dark; anything else follows the device.
+(function () {
+  var theme = (document.cookie.match(/(?:^|; )varu_theme=([^;]*)/) || [])[1];
+  if (theme === undefined) {
+    try { theme = localStorage.getItem("varu.theme"); } catch (e) { /* private mode */ }
+  }
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+})();
+</script>
 <style>
-/* Same palette as the viewer (viewer/css/app.css). */
+/* The viewer's "Varu 2026" tokens (viewer/css/app.css). */
 :root {
-  --bg: #f3f0e8; --surface: #fffdf8; --ink: #1b2420; --muted: #5d6963; --line: #d9d4c7;
-  --accent: #0b5d4b; --accent-ink: #ffffff; --warn: #8a4b00; --bad: #b3261e; --radius: 10px;
-  color-scheme: light dark;
+  --bg: #f3f0e8; --surface: #fffdf8; --surface-alt: #eae6dc; --ink: #1b2420; --muted: #56625c;
+  --subtle: #7a847f; --line: #d9d4c7; --accent: #0b5d4b; --accent-soft: #e2efea; --accent-ink: #ffffff;
+  --alert: #b3261e; --alert-soft: #fcebe8; --alert-ink: #ffffff; --warn: #8a5300; --warn-soft: #fdf1da;
+  --radius: 10px; --wrap: min(100% - 64px, 936px);
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121715; --surface: #1a211e; --ink: #e9e6dd; --muted: #9aa69f; --line: #2c3632;
-    --accent: #74d3b6; --accent-ink: #0d1512; --warn: #f0b060; --bad: #ff8a80;
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #1a211e; --surface-alt: #232c28; --ink: #e9e6dd; --muted: #a3aea8;
+    --subtle: #7f8a84; --line: #2c3632; --accent: #74d3b6; --accent-soft: #173029; --accent-ink: #0d1512;
+    --alert: #ff8a80; --alert-soft: #3a1a17; --alert-ink: #1a0b0a; --warn: #f3b34c; --warn-soft: #3a2a10;
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #1a211e; --surface-alt: #232c28; --ink: #e9e6dd; --muted: #a3aea8;
+  --subtle: #7f8a84; --line: #2c3632; --accent: #74d3b6; --accent-soft: #173029; --accent-ink: #0d1512;
+  --alert: #ff8a80; --alert-soft: #3a1a17; --alert-ink: #1a0b0a; --warn: #f3b34c; --warn-soft: #3a2a10;
+  color-scheme: dark;
+}
 * { box-sizing: border-box; }
-body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-main { max-width: 720px; margin: 0 auto; padding: 2rem 16px 4rem; }
-header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
-.eyebrow { margin: 0; color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-h1 { margin: .2rem 0 .4rem; font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1.1; }
-h2 { margin: 2.2rem 0 .3rem; font-size: 1.15rem; }
-/* Counters skip hidden steps, so the numbers stay 1, 2, 3 ... */
-.choice.waiting { opacity: .6; }
-.format { margin: .5rem 0 0 2.6rem; }
-.format p { margin: 0 0 .5rem; }
-.format .warn-text { color: var(--warn); }
-.format .bad-text { color: var(--bad); }
-button.danger { background: var(--bad); border-color: var(--bad); color: #fff; font-weight: 700; }
-.lead, .hint { color: var(--muted); margin: 0 0 .8rem; }
-.hint { font-size: .9rem; }
-.lang { display: flex; gap: .3rem; }
-button, select, input[type=text], input[type=search] {
-  font: inherit; color: inherit; background: var(--surface);
-  border: 1px solid var(--line); border-radius: 8px; padding: .5rem .8rem;
-}
-button { cursor: pointer; }
-button:hover:not(:disabled), button:focus-visible { border-color: var(--accent); }
-button:disabled { opacity: .5; cursor: default; }
-button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; padding: .75rem 1.6rem; }
-.lang button[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-select { width: 100%; }
-.row { display: flex; gap: .5rem; flex-wrap: wrap; }
-.row > input { flex: 1 1 14rem; min-width: 0; }
-.choices { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .5rem; }
-.choice { display: flex; gap: .75rem; align-items: center; padding: .7rem .9rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
-.choice:has(input:checked) { border-color: var(--accent); }
-.choice input[type=radio], .choice input[type=checkbox] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); flex: none; margin: 0; }
-.choice .grow { flex: 1; min-width: 0; }
-.choice .grow input[type=text] { width: 100%; margin-top: .4rem; }
-.choice small, .size { color: var(--muted); }
-.size { font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.swatch { width: .8rem; height: .8rem; border-radius: 50%; flex: none; }
-.radius { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
-.radius button[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.home { margin: .6rem 0 0; font-weight: 600; }
-.results { list-style: none; padding: 0; margin: .4rem 0 0; display: grid; gap: .3rem; }
-.results button { width: 100%; text-align: left; }
-.summary { margin-top: 2rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-.summary p { margin: 0 0 .4rem; }
-.msgs { margin: .4rem 0 1rem; padding-left: 1.2rem; }
-.msgs.bad { color: var(--bad); }
-.msgs.warn { color: var(--warn); }
-.notice { padding: .8rem 1rem; border-radius: var(--radius); border: 1px solid var(--bad); color: var(--bad); }
-progress { width: 100%; height: 1rem; accent-color: var(--accent); }
-.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
 [hidden] { display: none !important; }
+body {
+  margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+}
+main { flex: 1; width: var(--wrap); margin: 0 auto; padding: 28px 0 40px; }
+h1, h2 { margin: 0; line-height: 1.2; }
+h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+p { margin: 0; }
+.hint { color: var(--muted); }
+.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bar { width: var(--wrap); margin: 0 auto; }
+.narrow { display: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 16px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); font-weight: 600; text-decoration: none;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn.primary { padding: 10px 22px; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.btn.primary:disabled { opacity: 0.45; }
+.btn.danger { background: var(--alert); border-color: var(--alert); color: var(--alert-ink); font-weight: 700; }
+
+/* Top bar */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #0b5d4b; color: #f3f0e8; }
+.logo .i { width: 22px; height: 22px; }
+.brand strong { font-size: 19px; font-weight: 750; letter-spacing: -0.02em; }
+.brand .sub { padding-left: 10px; border-left: 1px solid var(--line); color: var(--muted); font-weight: 500; line-height: 18px; }
+.bar-end { display: flex; align-items: center; gap: 10px; }
+.langs, .theme-switch { display: flex; padding: 3px; border-radius: 8px; background: var(--surface-alt); }
+.langs button { padding: 4px 10px; border: 0; border-radius: 6px; background: none; color: var(--muted); font-size: 13px; font-weight: 600; }
+.langs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+.theme-switch button, .theme-toggle {
+  display: grid; place-items: center; width: 30px; height: 24px; padding: 0;
+  border: 1px solid transparent; border-radius: 6px; background: none; color: var(--muted);
+}
+.theme-switch .i { width: 15px; height: 15px; }
+.theme-switch button[aria-pressed="true"] { background: var(--surface); border-color: var(--line); color: var(--accent); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+.theme-toggle { display: none; width: 28px; height: 28px; border-radius: 8px; background: var(--surface-alt); color: var(--ink); }
+
+/* The four steps */
+.stepper { background: var(--surface); border-bottom: 1px solid var(--line); }
+.stepper .bar { padding: 16px 0; }
+.steps { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: flex; flex: 1; align-items: center; gap: 8px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+.steps li:first-child { flex: none; }
+.steps li:not(:first-child)::before { content: ""; flex: 1; height: 2px; margin-right: 4px; border-radius: 1px; background: var(--line); }
+.steps .dot {
+  display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%;
+  background: var(--surface-alt); color: var(--muted); font-size: 12px; font-weight: 700;
+}
+.steps .dot .i { width: 14px; height: 14px; }
+.steps [data-state="done"], .steps [data-state="now"] { color: var(--ink); }
+.steps [data-state="now"] { font-weight: 650; }
+.steps [data-state="done"]::before, .steps [data-state="now"]::before { background: var(--accent) !important; }
+.steps [data-state="done"] .dot, .steps [data-state="now"] .dot { background: var(--accent); color: var(--accent-ink); }
+.bars, .step-now { display: none; }
+
+/* Setup: the step on the left, "Your Varu" on the right */
+.setup { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: 28px; }
+.setup.last { grid-template-columns: minmax(0, 1fr); }
+.setup.last .summary { display: none; }
+.step { display: flex; flex-direction: column; gap: 20px; }
+.head { display: flex; flex-direction: column; gap: 6px; }
+.intro { display: flex; gap: 12px; padding: 16px; border-radius: 12px; background: var(--accent-soft); font-size: 15px; }
+.intro .i { width: 20px; height: 20px; margin-top: 2px; color: var(--accent); }
+
+.choices { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.choices.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+/* A chosen place to go, or a book (gigabytes), stands out; the small place layers do not. */
+#targets .card:has(input:checked), #library .card:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.waiting { opacity: 0.6; }
+.card:has(.format.confirm) { border-color: var(--alert); box-shadow: inset 0 0 0 1px var(--alert); }
+.choice { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; }
+.choices.grid2 .choice { padding: 10px 14px; }
+.choice input[type=radio], .choice input[type=checkbox] { width: 20px; height: 20px; margin: 0; flex: none; accent-color: var(--accent); }
+.choice > .i { width: 18px; height: 18px; color: var(--muted); }
+.card:has(input:checked) .choice > .i { color: var(--accent); }
+.choice .grow { display: flex; flex: 1; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-width: 0; }
+.choice strong { font-size: 16px; font-weight: 650; }
+.choice .grow input[type=text] {
+  flex-basis: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px;
+}
+.tag { padding: 1px 7px; border-radius: 5px; background: var(--surface-alt); color: var(--muted); font-size: 12px; font-weight: 600; }
+.size { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dot-color { width: 10px; height: 10px; flex: none; border-radius: 50%; }
+.format { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 16px 16px; padding: 12px 14px; border-radius: 8px; background: var(--warn-soft); }
+.format > .i { color: var(--warn); }
+.format p { flex: 1; min-width: 12rem; }
+.format.confirm { align-items: flex-start; background: var(--alert-soft); }
+.format.confirm > .i { margin-top: 3px; color: var(--alert); }
+.format.done { background: var(--accent-soft); }
+.format.done > .i { color: var(--accent); }
+.format.failed { background: var(--alert-soft); color: var(--alert); }
+.format .row { display: flex; gap: 8px; flex-basis: 100%; padding-left: 30px; }
+
+.field { display: flex; flex-direction: column; gap: 8px; font-weight: 650; }
+.select { position: relative; display: block; }
+.select select {
+  appearance: none; width: 100%; height: 44px; padding: 0 40px 0 14px;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-weight: 400;
+}
+.select .i { position: absolute; top: 13px; right: 14px; width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
+.select select:disabled { opacity: 1; }
+.search-row { display: flex; gap: 8px; }
+.search-row .btn { height: 44px; }
+.search-row .btn .i { color: var(--accent); }
+.search-box {
+  display: flex; flex: 1; align-items: center; gap: 10px; height: 44px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+}
+.search-box:focus-within { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.search-box .i { width: 17px; height: 17px; color: var(--muted); }
+.search-box input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; }
+.results { display: flex; flex-direction: column; gap: 6px; margin: -8px 0 0; padding: 0; list-style: none; }
+.results:empty { display: none; }
+.results .btn { justify-content: flex-start; width: 100%; font-weight: 500; text-align: left; }
+.home-box { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 8px; background: var(--accent-soft); font-weight: 600; }
+.home-box .i { width: 18px; height: 18px; color: var(--accent); }
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 10px; background: var(--surface-alt); }
+.seg button { flex: 1; padding: 9px 4px; border: 0; border-radius: 7px; background: none; color: var(--muted); font-size: 13.5px; font-weight: 500; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 650; box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+
+/* "Your Varu" and the size */
+.summary { display: flex; flex-direction: column; gap: 14px; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.summary h2 { font-size: 15px; font-weight: 700; }
+.facts { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.facts div { display: flex; gap: 10px; }
+.facts .i { margin-top: 2px; color: var(--accent); }
+.facts dt { color: var(--muted); font-size: 12px; }
+.facts dd { margin: 0; font-weight: 600; }
+.facts .unset .i { color: var(--muted); }
+.facts .unset dd { color: var(--muted); }
+.summary hr { width: 100%; margin: 0; border: 0; border-top: 1px solid var(--line); }
+.size-part { display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 13px; }
+.size-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.size-top strong { color: var(--ink); font-size: 15px; font-variant-numeric: tabular-nums; }
+.size-top .over { color: var(--alert); }
+.track { height: 8px; overflow: hidden; border-radius: 4px; background: var(--surface-alt); }
+.track span { display: block; height: 100%; min-width: 4px; border-radius: 4px; background: var(--accent); }
+.track.over span { background: var(--alert); }
+
+/* Step 4 */
+.path { color: var(--muted); }
+.box { display: flex; gap: 12px; padding: 14px 16px; border-radius: 10px; }
+.box > .i { width: 18px; height: 18px; margin-top: 2px; }
+.box ul { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.box.bad { background: var(--alert-soft); border: 1px solid var(--alert); }
+.box.bad > .i, .box.bad li:first-child { color: var(--alert); }
+.box.bad li:first-child { font-weight: 650; }
+.box.warn { background: var(--warn-soft); }
+.box.warn > .i { color: var(--warn); }
+.box.soft { background: var(--accent-soft); }
+.box.soft > .i { color: var(--accent); }
+.review { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.review div { display: grid; grid-template-columns: 18px 150px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 12px 18px; }
+.review div + div { border-top: 1px solid var(--line); }
+.review .i { color: var(--accent); }
+.review dt { color: var(--muted); }
+.review dd { margin: 0; font-weight: 650; }
+.link { padding: 0; border: 0; background: none; color: var(--accent); font-weight: 600; }
+.size-box { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--muted); }
+.size-box .size-top strong { font-size: 15px; }
+
+/* Footer: Back and Next */
+.foot { position: sticky; bottom: 0; z-index: 2; background: var(--surface); border-top: 1px solid var(--line); }
+.foot .bar { display: flex; align-items: center; gap: 10px; padding: 14px 0; }
+.foot #next, .foot #install { margin-left: auto; }
+.mini { display: none; }
+
+/* Installing, finished, and the screens that stand in for the wizard */
+.after { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin: 24px auto 0; }
+.after .track { height: 10px; }
+.progress-line { display: flex; justify-content: space-between; gap: 16px; margin-top: -10px; }
+.progress-line span { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.parts { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 16px 18px; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--muted); }
+.parts li { display: flex; align-items: center; gap: 10px; }
+.parts .mark { display: grid; place-items: center; width: 20px; height: 20px; flex: none; border: 1.5px solid var(--line); border-radius: 50%; }
+.parts .mark .i { width: 12px; height: 12px; stroke-width: 3; }
+.parts [data-state="done"] { color: var(--ink); }
+.parts [data-state="done"] .mark { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.parts [data-state="now"] { color: var(--ink); font-weight: 650; }
+.parts [data-state="now"] .mark { border: 2px solid var(--accent); }
+.parts [data-state="now"] .mark::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.keep { display: flex; gap: 10px; color: var(--muted); }
+.keep .i { margin-top: 3px; }
+.done-head { display: flex; align-items: center; gap: 16px; }
+.done-head h1 { font-size: 28px; }
+.done-icon { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.done-icon.problems { background: var(--warn-soft); color: var(--warn); }
+.done-icon .i { width: 24px; height: 24px; }
+#errors li { display: flex; gap: 8px; align-items: flex-start; }
+#errors .i { margin-top: 3px; }
+#errors li:last-child { color: var(--ink); font-weight: 400; }
+.os-files { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.os-files div { display: grid; grid-template-columns: 84px 1fr; gap: 12px; padding: 10px 16px; }
+.os-files div + div { border-top: 1px solid var(--line); }
+.os-files dt { color: var(--muted); }
+.os-files dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.message { align-items: center; max-width: 520px; margin-top: 12vh; text-align: center; }
+.message .done-icon { background: var(--alert-soft); color: var(--alert); }
+.message code { width: 100%; padding: 10px 14px; border-radius: 8px; background: var(--surface-alt); color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.center { text-align: center; margin-top: 12vh; }
+
+@media (max-width: 719px) {
+  :root { --wrap: calc(100% - 40px); }
+  .wide { display: none; }
+  .narrow { display: inline; }
+  .topbar .bar { height: 56px; }
+  .logo { width: 28px; height: 28px; border-radius: 8px; }
+  .logo .i { width: 19px; height: 19px; }
+  .brand { gap: 9px; }
+  .brand strong { font-size: 18px; }
+  .bar-end { gap: 8px; }
+  .langs button { padding: 3px 8px; font-size: 12px; }
+  .theme-switch { display: none; }
+  .theme-toggle { display: grid; }
+  .theme-toggle .i { width: 16px; height: 16px; }
+  .stepper .bar { padding: 4px 0 14px; }
+  .steps { display: none; }
+  .bars { display: flex; gap: 4px; margin-bottom: 8px; }
+  .bars span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .bars span.on { background: var(--accent); }
+  .step-now { display: block; color: var(--muted); font-size: 13px; }
+  .step-now strong { color: var(--ink); font-weight: 650; }
+  main { padding: 24px 0 28px; }
+  h1 { font-size: 24px; }
+  .setup { display: block; }
+  .summary { display: none; }
+  .intro { padding: 14px; }
+  .choices.grid2 { grid-template-columns: 1fr; }
+  .card { border-radius: 12px; }
+  .choice { padding: 16px; }
+  .choice .grow { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .choice .grow small { color: var(--muted); font-size: 13px; }
+  .search-row { flex-wrap: wrap; }
+  .search-box { flex-basis: calc(100% - 80px); }
+  #locate { flex-basis: 100%; }
+  .seg { flex-wrap: wrap; gap: 8px; padding: 0; background: none; }
+  .seg button { flex: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .path { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; overflow-wrap: anywhere; }
+  .review div { grid-template-columns: 18px minmax(0, 1fr) auto; grid-template-areas: "icon label change" "icon value change"; gap: 0 12px; padding: 10px 12px; }
+  .review .i { grid-area: icon; }
+  .review dt { grid-area: label; font-size: 11px; }
+  .review dd { grid-area: value; }
+  .review .link { grid-area: change; }
+  .foot .bar { flex-wrap: wrap; padding: 12px 0 max(env(safe-area-inset-bottom), 20px); }
+  .foot .btn { height: 50px; font-size: 16px; }
+  .foot #back { flex: 0 0 30%; }
+  .foot #next, .foot #install { flex: 1; margin-left: 0; }
+  .mini { display: flex; flex-basis: 100%; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; }
+  .mini .track { flex: 1; height: 6px; }
+  .after { margin-top: 0; }
+  .message { margin-top: 18vh; }
+  .done-phone .done-head { flex-direction: column; text-align: center; margin-top: 14vh; }
+  .done-phone #done-text { text-align: center; color: var(--muted); }
+  .done-phone .actions { flex-direction: column; margin-top: auto; }
+  .done-phone .actions .btn { width: 100%; }
+}
 </style>
 </head>
 <body>
-<main>
-  <header>
-    <div>
-      <p class="eyebrow">Varu</p>
-      <h1 data-t="title"></h1>
-      <p class="lead" id="lead" data-t="lead"></p>
+<header class="topbar">
+  <div class="bar">
+    <div class="brand">
+      <span class="logo"><svg data-icon="pin"></svg></span>
+      <strong class="wide">Varu</strong><span class="sub wide" data-t="installer"></span>
+      <strong class="narrow" data-t="title"></strong>
     </div>
-    <div class="lang">
-      <button type="button" data-lang="et">ET</button>
-      <button type="button" data-lang="en">EN</button>
+    <div class="bar-end">
+      <div class="langs" role="group">
+        <button type="button" data-lang="et">ET</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <div class="theme-switch" role="group" data-tl="theme">
+        <button type="button" data-theme-choice="system" data-tl="themeSystem"><svg data-icon="monitor"></svg></button>
+        <button type="button" data-theme-choice="light" data-tl="themeLight"><svg data-icon="sun"></svg></button>
+        <button type="button" data-theme-choice="dark" data-tl="themeDark"><svg data-icon="moon"></svg></button>
+      </div>
+      <button type="button" class="theme-toggle" id="theme-toggle"></button>
     </div>
-  </header>
-
-  <div id="notice" class="notice" hidden>
-    <p id="notice-text"></p>
-    <button type="button" id="retry" data-t="retry"></button>
   </div>
-  <p id="loading" class="hint" data-t="loading"></p>
+</header>
 
-  <section id="setup" hidden>
-    <p class="eyebrow" id="step-count"></p>
+<nav class="stepper" id="stepper" hidden>
+  <div class="bar">
+    <ol class="steps" id="steps"></ol>
+    <div class="bars" id="bars" aria-hidden="true"></div>
+    <p class="step-now"><span id="step-count"></span> <strong id="step-name"></strong></p>
+  </div>
+</nav>
 
-    <div class="step" data-step="1">
-    <h2 data-t="whereTitle"></h2>
-    <p class="hint" id="where-hint" data-t="whereHint"></p>
-    <ul id="targets" class="choices" role="radiogroup"></ul>
+<main>
+  <section id="notice" class="after message" hidden>
+    <span class="done-icon"><svg data-icon="wifi-off"></svg></span>
+    <h1 id="notice-title"></h1>
+    <p class="hint" id="notice-text"></p>
+    <code id="notice-detail" hidden></code>
+    <button type="button" class="btn primary" id="retry"><svg data-icon="refresh-cw"></svg><span data-t="retry"></span></button>
+  </section>
+  <p id="loading" class="hint center" data-t="loading"></p>
+
+  <section id="setup" class="setup" hidden>
+    <div>
+      <div class="step" data-step="1">
+        <p class="intro"><svg data-icon="wifi-off"></svg><span id="lead"></span></p>
+        <div class="head"><h1 data-t="whereTitle"></h1><p class="hint" id="where-hint"></p></div>
+        <ul id="targets" class="choices" role="radiogroup"></ul>
+      </div>
+
+      <div class="step" data-step="2">
+        <label class="field"><span data-t="country"></span>
+          <span class="select"><select id="region"></select><svg data-icon="chevron-down"></svg></span></label>
+        <div class="head"><h1 data-t="homeTitle"></h1><p class="hint" data-t="homeHint"></p></div>
+        <form id="search" class="search-row">
+          <span class="search-box"><svg data-icon="search"></svg><input type="search" id="query" autocomplete="off" data-ph="searchPh"></span>
+          <button type="submit" class="btn" data-t="find"></button>
+          <button type="button" class="btn" id="locate"><svg data-icon="locate-fixed"></svg><span data-t="locate"></span></button>
+        </form>
+        <ul id="results" class="results"></ul>
+        <p id="home" class="home-box" hidden><svg data-icon="house"></svg><span id="home-text"></span></p>
+        <div class="seg" id="radius" role="group"></div>
+        <p class="hint" id="radius-hint"></p>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="head"><h1 data-t="placesTitle"></h1><p class="hint" data-t="placesHint"></p></div>
+        <ul id="pois" class="choices grid2"></ul>
+        <div class="head" id="library-head"><h1 data-t="libraryTitle"></h1><p class="hint" data-t="libraryHint"></p></div>
+        <ul id="library" class="choices"></ul>
+      </div>
+
+      <div class="step" data-step="4">
+        <div class="head"><h1 data-t="reviewTitle"></h1><p class="hint"><span id="recap"></span> <span class="path" id="recap-path"></span></p></div>
+        <div class="box bad" id="problems-box" hidden><svg data-icon="circle-alert"></svg><ul id="problems"></ul></div>
+        <div class="box warn" id="warnings-box" hidden><svg data-icon="triangle-alert"></svg><ul id="warnings"></ul></div>
+        <p class="box soft" id="update-note" hidden><svg data-icon="history"></svg><span data-t="updateNote"></span></p>
+        <dl class="review" id="review"></dl>
+        <div class="size-box" id="size-box"></div>
+      </div>
     </div>
-
-    <div class="step" data-step="2">
-    <h2 data-t="country"></h2>
-    <select id="region" aria-labelledby="region-label"></select>
-
-    <h2 data-t="homeTitle"></h2>
-    <p class="hint" data-t="homeHint"></p>
-    <form id="search" class="row">
-      <input type="search" id="query" autocomplete="off" data-ph="searchPh">
-      <button type="submit" data-t="find"></button>
-      <button type="button" id="locate" data-t="locate"></button>
-    </form>
-    <ul id="results" class="results"></ul>
-    <p id="home" class="home" hidden></p>
-    <div class="radius" id="radius" role="group"></div>
-    <p class="hint" id="radius-hint"></p>
-    </div>
-
-    <div class="step" data-step="3">
-    <h2 data-t="placesTitle"></h2>
-    <p class="hint" data-t="placesHint"></p>
-    <ul id="pois" class="choices"></ul>
-
-    <h2 data-t="libraryTitle"></h2>
-    <p class="hint" data-t="libraryHint"></p>
-    <ul id="library" class="choices"></ul>
-    </div>
-
-    <div class="step" data-step="4">
-    <h2 data-t="reviewTitle"></h2>
-    <p class="hint" id="update-note" data-t="updateNote" hidden></p>
-    <div class="summary" aria-live="polite">
-      <p id="recap"></p>
-      <p id="sizes"></p>
-      <ul id="problems" class="msgs bad"></ul>
-      <ul id="warnings" class="msgs warn"></ul>
-      <button type="button" class="primary" id="install" data-t="install" disabled></button>
-    </div>
-    </div>
-
-    <div class="actions">
-      <button type="button" id="back" data-t="back"></button>
-      <button type="button" class="primary" id="next" data-t="next"></button>
-    </div>
+    <aside class="summary" id="summary" aria-live="polite"></aside>
   </section>
 
-  <section id="progress" hidden aria-live="polite">
-    <h2 data-t="installing"></h2>
-    <progress id="bar" max="1" value="0"></progress>
-    <p id="current"></p>
-    <p class="hint" data-t="keepOpen"></p>
+  <section id="progress" class="after" hidden aria-live="polite">
+    <div class="head"><h1 data-t="installing"></h1><p class="hint" id="progress-to"></p></div>
+    <div class="track" id="bar" role="progressbar" aria-valuemin="0"><span></span></div>
+    <p class="progress-line"><strong id="current"></strong><span id="amount"></span></p>
+    <ol class="parts" id="parts"></ol>
+    <p class="keep"><svg data-icon="info"></svg><span id="keep-open" data-t="keepOpen"></span></p>
   </section>
 
-  <section id="done" hidden>
-    <h2 id="done-title"></h2>
-    <ul id="errors" class="msgs bad"></ul>
+  <section id="done" class="after" hidden>
+    <div class="done-head"><span class="done-icon" id="done-icon"></span><h1 id="done-title"></h1></div>
+    <div class="box bad" id="errors-box" hidden><ul id="errors"></ul></div>
+    <div class="after" id="done-usb" hidden style="margin: 0">
+      <p class="box soft"><svg data-icon="usb"></svg><strong data-t="ejectFirst"></strong></p>
+      <p data-t="openOnAny"></p>
+      <dl class="os-files">
+        <div><dt>Windows</dt><dd>Varu-Windows.exe</dd></div>
+        <div><dt>macOS</dt><dd>Varu-macOS.dmg</dd></div>
+        <div><dt>Linux</dt><dd>Varu-Linux-x86_64.AppImage</dd></div>
+      </dl>
+    </div>
     <p id="done-text"></p>
     <div class="actions">
-      <button type="button" class="primary" id="open-varu" data-t="openVaru"></button>
-      <button type="button" id="open-files" data-t="openFiles"></button>
-      <button type="button" id="quit" data-t="quit"></button>
+      <button type="button" class="btn primary" id="open-varu" data-t="openVaru"></button>
+      <button type="button" class="btn" id="open-files" data-t="openFiles"></button>
+      <button type="button" class="btn" id="quit" data-t="quit"></button>
     </div>
   </section>
 
-  <p id="closed" class="hint" data-t="closed" hidden></p>
+  <p id="closed" class="hint center" data-t="closed" hidden></p>
 </main>
+
+<footer class="foot" id="foot" hidden>
+  <div class="bar">
+    <div class="mini" id="mini" hidden></div>
+    <button type="button" class="btn" id="back"><svg data-icon="arrow-left"></svg><span data-t="back"></span></button>
+    <button type="button" class="btn primary" id="next"><span data-t="next"></span><svg data-icon="arrow-right"></svg></button>
+    <button type="button" class="btn primary" id="install" disabled><svg data-icon="download"></svg><span data-t="install"></span></button>
+  </div>
+</footer>
 
 <script>
 "use strict";
 const STRINGS = {
   en: {
     title: "Install Varu",
+    installer: "Installer",
     lead: "Maps, places that matter in an emergency, and reference books that work without internet or electricity from the grid. Put them on a USB stick or on this computer.",
     leadPhone: "Maps and places that matter in an emergency, working on this phone without internet or electricity from the grid.",
     wherePhone: "A memory card, if the phone has one, keeps the phone's own storage free.",
     donePhone: "Varu is on this phone. Open it any time from the Varu app, also without internet.",
     loading: "Loading the list of downloads…",
     retry: "Try again",
-    offline: "Could not load the list of downloads. Check the internet connection.",
+    offlineTitle: "Could not load the list of downloads",
+    offline: "Check the internet connection. Varu needs the internet only once, to download everything.",
+    goneTitle: "The installer has stopped",
+    stepWhere: "Where",
+    stepHome: "Your home",
+    stepInclude: "What to include",
+    stepInstall: "Install",
+    stepOf: "Step {n} of {total} ·",
+    theme: "Theme",
+    themeSystem: "Same as the device",
+    themeLight: "Light",
+    themeDark: "Dark",
+    toDark: "Switch to dark",
+    toLight: "Switch to light",
     country: "Your country",
     homeTitle: "Your home",
     homeHint: "Street-level map and places are kept around your home. The whole country stays on the map at road level, for travel.",
@@ -206,7 +487,7 @@ const STRINGS = {
     reviewTitle: "Ready to install",
     updateNote: "Your earlier choices are filled in. Install to bring everything up to date, or go back to change them.",
     installTo: "Varu goes to: {where}",
-    stepOf: "Step {n} of {total}",
+    installingTo: "To {where}",
     next: "Next",
     back: "Back",
     whereHint: "Plug in a USB stick and it appears here. A stick formatted as exFAT works on every computer.",
@@ -215,7 +496,25 @@ const STRINGS = {
     noStick: "Plug one in and it appears here.",
     folder: "Folder",
     free: "{free} free",
-    sizes: "Download about {download}. Needs {needed} of space; {free} free there.",
+    yourVaru: "Your Varu",
+    goesTo: "Goes to",
+    home: "Home",
+    places: "Places on the map",
+    notChosen: "Not chosen yet",
+    homeWithin: "{name} · within {km} km",
+    homeStreets: "{name} · street detail within {km} km",
+    kinds: "{n} kinds",
+    allKinds: "All {n} kinds",
+    someKinds: "{n} of {total} kinds",
+    none: "None",
+    change: "Change",
+    download: "Download",
+    about: "about {size}",
+    downloadAbout: "Download about {size}",
+    needs: "Needs {needed} of space; {free} free there.",
+    freeOn: "{free} free on {name}",
+    miniSize: "About {size} · {free} free",
+    sizeLater: "The size is worked out once your home is chosen.",
     calculating: "Working out the size…",
     install: "Install",
     installing: "Installing…",
@@ -231,7 +530,8 @@ const STRINGS = {
     of: "{done} of {total}",
     doneTitle: "Varu is ready",
     doneProblems: "Finished, with problems",
-    doneUsb: "Eject the stick before you unplug it. On any computer, open the stick and double-click Varu for that system: Varu-Windows.exe, Varu-macOS.dmg or Varu-Linux-x86_64.AppImage.",
+    ejectFirst: "Eject the stick before you unplug it.",
+    openOnAny: "On any computer, open the stick and double-click Varu for that system:",
     doneApp: "Varu is installed. Open it any time from the Varu app, also without internet.",
     doneComputer: "Start Varu any time with the Start file in {path}.",
     retryLater: "Start the installer again to retry. Finished parts are kept.",
@@ -251,8 +551,8 @@ const STRINGS = {
     p_portable: "This stick is formatted as {detail}, which not every computer can read. In step 1, format it for all computers.",
     notPortable: "{fs}: not every computer can read this stick.",
     formatButton: "Erase and format for all computers",
-    freeOfStick: "{free} free ({disk} stick)",
     partOfStick: "Only {total} of this {disk} stick is in use.",
+    freeOfStick: "{free} free ({disk} stick)",
     stickFull: "There is not enough room on this stick for what you chose.",
     eraseWhole: "Erase the stick and use all of it",
     spaceStick: "Go back to step 1 to erase the stick and use all of it.",
@@ -266,13 +566,27 @@ const STRINGS = {
   },
   et: {
     title: "Paigalda Varu",
+    installer: "Paigaldaja",
     lead: "Kaardid, hädaolukorras olulised kohad ja teatmeteosed, mis töötavad ilma internetita ja vooluvõrguta. Pane need USB-mälupulgale või sellesse arvutisse.",
     leadPhone: "Hädaolukorras olulised kaardid ja kohad, mis töötavad selles telefonis ilma internetita ja vooluvõrguta.",
     wherePhone: "Kui telefonis on mälukaart, hoiab see telefoni enda mälu vabana.",
     donePhone: "Varu on nüüd selles telefonis. Ava see igal ajal Varu rakendusest, ka ilma internetita.",
     loading: "Laadin allalaadimiste nimekirja…",
     retry: "Proovi uuesti",
-    offline: "Allalaadimiste nimekirja ei õnnestunud laadida. Kontrolli internetiühendust.",
+    offlineTitle: "Allalaadimiste nimekirja ei õnnestunud laadida",
+    offline: "Kontrolli internetiühendust. Varu vajab internetti vaid korra, et kõik alla laadida.",
+    goneTitle: "Paigaldaja on peatunud",
+    stepWhere: "Kuhu",
+    stepHome: "Sinu kodu",
+    stepInclude: "Mida kaasa võtta",
+    stepInstall: "Paigalda",
+    stepOf: "Samm {n}/{total} ·",
+    theme: "Teema",
+    themeSystem: "Nagu seadmes",
+    themeLight: "Hele",
+    themeDark: "Tume",
+    toDark: "Lülita tumedaks",
+    toLight: "Lülita heledaks",
     country: "Sinu riik",
     homeTitle: "Sinu kodu",
     homeHint: "Tänavatasemel kaart ja kohad salvestatakse sinu kodu ümbruse kohta. Kogu riik jääb kaardile teede tasemel, et saaksid liikuda.",
@@ -297,7 +611,7 @@ const STRINGS = {
     reviewTitle: "Valmis paigaldama",
     updateNote: "Varasemad valikud on täidetud. Paigalda, et kõik uuendada, või mine tagasi ja muuda neid.",
     installTo: "Varu läheb: {where}",
-    stepOf: "Samm {n}/{total}",
+    installingTo: "Sihtkoht: {where}",
     next: "Edasi",
     back: "Tagasi",
     whereHint: "Ühenda USB-mälupulk ja see ilmub siia. exFAT-vormingus pulk töötab igas arvutis.",
@@ -306,7 +620,25 @@ const STRINGS = {
     noStick: "Ühenda pulk arvutiga ja see ilmub siia.",
     folder: "Kaust",
     free: "vaba {free}",
-    sizes: "Alla laaditakse umbes {download}. Vaja on {needed} ruumi, vaba on {free}.",
+    yourVaru: "Sinu Varu",
+    goesTo: "Sihtkoht",
+    home: "Kodu",
+    places: "Kohad kaardil",
+    notChosen: "Veel valimata",
+    homeWithin: "{name} · {km} km raadiuses",
+    homeStreets: "{name} · tänavad {km} km raadiuses",
+    kinds: "{n} liiki",
+    allKinds: "Kõik {n} liiki",
+    someKinds: "{n} liiki {total}-st",
+    none: "Mitte midagi",
+    change: "Muuda",
+    download: "Allalaadimine",
+    about: "umbes {size}",
+    downloadAbout: "Alla laaditakse umbes {size}",
+    needs: "Vaja on {needed} ruumi, vaba on {free}.",
+    freeOn: "{name}: vaba {free}",
+    miniSize: "Umbes {size} · vaba {free}",
+    sizeLater: "Suurus selgub, kui kodu on valitud.",
     calculating: "Arvutan suurust…",
     install: "Paigalda",
     installing: "Paigaldan…",
@@ -322,7 +654,8 @@ const STRINGS = {
     of: "{done} / {total}",
     doneTitle: "Varu on valmis",
     doneProblems: "Valmis, kuid tekkis probleeme",
-    doneUsb: "Enne pulga eemaldamist väljuta see turvaliselt. Mis tahes arvutis ava pulk ja tee topeltklõps selle süsteemi Varu failil: Varu-Windows.exe, Varu-macOS.dmg või Varu-Linux-x86_64.AppImage.",
+    ejectFirst: "Enne pulga eemaldamist väljuta see turvaliselt.",
+    openOnAny: "Mis tahes arvutis ava pulk ja tee topeltklõps selle süsteemi Varu failil:",
     doneApp: "Varu on paigaldatud. Ava see igal ajal Varu rakendusest, ka ilma internetita.",
     doneComputer: "Käivita Varu igal ajal Start-failiga kaustas {path}.",
     retryLater: "Uuesti proovimiseks käivita paigaldaja veel kord. Valmis osad jäävad alles.",
@@ -342,8 +675,8 @@ const STRINGS = {
     p_portable: "See pulk on vormingus {detail}, mida kõik arvutid ei loe. Vorminda see 1. sammus kõigile arvutitele sobivaks.",
     notPortable: "{fs}: kõik arvutid seda pulka ei loe.",
     formatButton: "Kustuta ja vorminda kõigile arvutitele sobivaks",
-    freeOfStick: "{free} vaba ({disk} pulk)",
     partOfStick: "Sellest {disk} pulgast on kasutusel vaid {total}.",
+    freeOfStick: "{free} vaba ({disk} pulk)",
     stickFull: "Sellel pulgal pole valitud asjade jaoks piisavalt ruumi.",
     eraseWhole: "Kustuta pulk ja kasuta seda tervenisti",
     spaceStick: "Mine tagasi 1. sammu, et pulk kustutada ja seda tervenisti kasutada.",
@@ -356,16 +689,67 @@ const STRINGS = {
     w_outside: "Sinu kodu on selle riigi kaardist väljas.",
   },
 };
+// Icons drawn inline: Lucide (https://lucide.dev), ISC License, Copyright (c)
+// 2026 Lucide Icons and Contributors; the arrows, chevron, check, download,
+// info, search and x come from Feather, MIT License, Copyright (c)
+// 2013-present Cole Bemis. Permission to use, copy, modify, and/or distribute
+// this software for any purpose with or without fee is hereby granted,
+// provided that the above copyright notice and this permission notice appear
+// in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+// WARRANTIES WITH REGARD TO THIS SOFTWARE. "pin" is Varu's own map pin.
+const ICONS = {
+  "pin": '<path fill="currentColor" stroke="none" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>',
+  "arrow-left": '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  "arrow-right": '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  "book-open": '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>',
+  "card-sim": '<path d="M12 14v4"/><path d="M14.172 2a2 2 0 0 1 1.414.586l3.828 3.828A2 2 0 0 1 20 7.828V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M8 14h8"/><rect x="8" y="10" width="8" height="8" rx="2"/>',
+  "check": '<path d="M20 6 9 17l-5-5"/>',
+  "chevron-down": '<path d="m6 9 6 6 6-6"/>',
+  "circle-alert": '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+  "download": '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+  "history": '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+  "house": '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  "info": '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  "laptop": '<path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"/><path d="M20.054 15.987H3.946"/>',
+  "locate-fixed": '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
+  "map-pin": '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  "monitor": '<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
+  "moon": '<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>',
+  "refresh-cw": '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  "search": '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
+  "smartphone": '<rect x="6" y="2" width="12" height="20" rx="2" ry="2"/><path d="M12 18h.01"/>',
+  "sun": '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  "triangle-alert": '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  "usb": '<circle cx="10" cy="7" r="1"/><circle cx="4" cy="20" r="1"/><path d="M4.7 19.3 19 5"/><path d="m21 3-3 1 2 2Z"/><path d="M9.26 7.68 5 12l2 5"/><path d="m10 14 5 2 3.5-3.5"/><path d="m18 12 1-1 1 1-1 1Z"/>',
+  "wifi-off": '<path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/>',
+  "x": '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+};
 const RADII = [10, 25, 50, 100, 0];
+const STEPS = ["stepWhere", "stepHome", "stepInclude", "stepInstall"];
 const token = location.hash.slice(1);
 const $ = (id) => document.getElementById(id);
 
+// ---------- settings kept on this device ----------
+
+// In a cookie as well as localStorage, as the viewer does: a cookie belongs to
+// the address without its port, and the installer's port can change.
+function pref(name) {
+  const cookie = document.cookie.match(new RegExp(`(?:^|; )varu_${name}=([^;]*)`));
+  if (cookie) return decodeURIComponent(cookie[1]);
+  try { return localStorage.getItem(`varu.${name}`); } catch { return null; }
+}
+function setPref(name, value) {
+  document.cookie = `varu_${name}=${encodeURIComponent(value)}; max-age=${10 * 365 * 24 * 60 * 60}; path=/; SameSite=Lax`;
+  try { localStorage.setItem(`varu.${name}`, value); } catch { /* private mode */ }
+}
+
 let lang = (() => {
-  try { const saved = localStorage.getItem("varu.lang"); if (saved in STRINGS) return saved; } catch {}
+  const saved = pref("lang");
+  if (saved in STRINGS) return saved;
   return (navigator.language || "").toLowerCase().startsWith("et") ? "et" : "en";
 })();
 const s = {
-  state: null, region: null, home: null, radius: 50,
+  state: null, region: null, home: null, radius: 50, wholeChosen: false,
   pois: new Set(), library: new Set(), target: null, computerPath: "",
   plan: null, planning: false, volumesKey: "", installing: false, step: 1,
 };
@@ -384,9 +768,18 @@ function size(bytes) {
 }
 function el(tag, props = {}, ...children) {
   const node = Object.assign(document.createElement(tag), props);
-  node.append(...children.filter((c) => c != null));
+  node.append(...children.filter((c) => c != null && c !== false));
   return node;
 }
+function icon(name) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("class", "i");
+  svg.innerHTML = ICONS[name] ?? "";
+  return svg;
+}
+document.querySelectorAll("svg[data-icon]").forEach((svg) => svg.replaceWith(icon(svg.dataset.icon)));
 
 async function api(path, body) {
   const res = await fetch(path, {
@@ -399,26 +792,46 @@ async function api(path, body) {
   return data;
 }
 
-// ---------- language ----------
+// ---------- language and theme ----------
 
 function applyLanguage() {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-t]").forEach((node) => { node.textContent = t(node.dataset.t); });
   document.querySelectorAll("[data-ph]").forEach((node) => { node.placeholder = t(node.dataset.ph); });
+  document.querySelectorAll("[data-tl]").forEach((node) => node.setAttribute("aria-label", t(node.dataset.tl)));
   document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  showTheme();
+  renderStepper();
   if (s.state) renderAll();
+  if (s.job) renderJob(s.job);
 }
 document.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => {
   lang = b.dataset.lang;
-  try { localStorage.setItem("varu.lang", lang); } catch {}
+  setPref("lang", lang);
   applyLanguage();
 }));
+
+const root = document.documentElement;
+const isDark = () => (root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches);
+function showTheme() {
+  document.querySelectorAll("[data-theme-choice]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeChoice === (root.dataset.theme ?? "system"))));
+  $("theme-toggle").replaceChildren(icon(isDark() ? "sun" : "moon"));
+  $("theme-toggle").setAttribute("aria-label", t(isDark() ? "toLight" : "toDark"));
+}
+function chooseTheme(theme) {
+  setPref("theme", theme);
+  if (theme === "light" || theme === "dark") root.dataset.theme = theme; else delete root.dataset.theme;
+  showTheme();
+}
+document.querySelectorAll("[data-theme-choice]").forEach((b) => b.addEventListener("click", () => chooseTheme(b.dataset.themeChoice)));
+$("theme-toggle").addEventListener("click", () => chooseTheme(isDark() ? "light" : "dark"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", showTheme);
 
 // ---------- rendering ----------
 
 function renderAll() {
-  if (s.state.phone) { $("lead").dataset.t = "leadPhone"; $("where-hint").dataset.t = "wherePhone"; }
-  $("lead").textContent = t($("lead").dataset.t); $("where-hint").textContent = t($("where-hint").dataset.t);
+  $("lead").textContent = t(s.state.phone ? "leadPhone" : "lead");
+  $("where-hint").textContent = t(s.state.phone ? "wherePhone" : "whereHint");
   renderRegions(); renderHome(); renderPois(); renderLibrary(); renderTargets(true); renderSummary();
 }
 
@@ -432,17 +845,17 @@ function chooseRegion(id) {
   s.region = s.state.regions.find((r) => r.id === id) ?? s.state.regions[0];
   s.pois = new Set((s.region.pois ?? []).map((p) => p.id)); // all places: they are small
   s.library = new Set(); // books are gigabytes each: opt in, never a surprise download
-  s.home = null; s.radius = 0; // whole country until a home is chosen
+  s.home = null; s.radius = 0; s.wholeChosen = false; // whole country until a home is chosen
   $("results").replaceChildren();
 }
 
 function renderHome() {
   $("home").hidden = !s.home;
-  if (s.home) $("home").textContent = t("homeIs", { name: s.home.name });
+  if (s.home) $("home-text").textContent = t("homeIs", { name: s.home.name });
   $("radius").replaceChildren(...RADII.map((km) => {
     const b = el("button", { type: "button", textContent: km ? t("within", { km }) : t("whole") });
     b.setAttribute("aria-pressed", String(km === s.radius));
-    b.addEventListener("click", () => { s.radius = km; renderHome(); replan(); });
+    b.addEventListener("click", () => { s.radius = km; s.wholeChosen = !km; renderHome(); replan(); });
     return b;
   }));
   $("radius-hint").textContent = s.radius ? t("radiusHint", { km: s.radius }) : t("wholeHint");
@@ -456,10 +869,10 @@ function checkbox(checked, onChange) {
 
 function renderPois() {
   $("pois").replaceChildren(...(s.region.pois ?? []).map((p) => {
-    const swatch = el("span", { className: "swatch" });
-    swatch.style.background = p.color;
+    const dot = el("span", { className: "dot-color" });
+    dot.style.background = p.color;
     const box = checkbox(s.pois.has(p.id), (on) => { on ? s.pois.add(p.id) : s.pois.delete(p.id); replan(); });
-    return el("li", {}, el("label", { className: "choice" }, box, swatch, el("span", { className: "grow", textContent: pick(p.label) })));
+    return el("li", { className: "card" }, el("label", { className: "choice" }, box, dot, el("span", { className: "grow", textContent: pick(p.label) })));
   }));
 }
 
@@ -467,12 +880,15 @@ function renderLibrary() {
   const books = s.region.library ?? [];
   $("library").replaceChildren(...books.map((b) => {
     const box = checkbox(s.library.has(b.name), (on) => { on ? s.library.add(b.name) : s.library.delete(b.name); replan(); });
-    return el("li", {}, el("label", { className: "choice" }, box,
-      el("span", { className: "grow", textContent: b.title }), el("span", { className: "size", textContent: b.size ? size(b.size) : "" })));
+    return el("li", { className: "card" }, el("label", { className: "choice" }, box, icon("book-open"),
+      el("span", { className: "grow" }, el("strong", { textContent: b.title })), el("span", { className: "size", textContent: b.size ? size(b.size) : "" })));
   }));
-  $("library").hidden = $("library").previousElementSibling.hidden =
-    $("library").previousElementSibling.previousElementSibling.hidden = books.length === 0;
+  $("library").hidden = $("library-head").hidden = books.length === 0;
 }
+
+// On a phone the first place is the phone itself, the next a memory card.
+const volumeIcon = (i) => (!s.state.phone ? "usb" : i === 0 ? "smartphone" : "card-sim");
+const targetIcon = () => (s.target === "computer" ? "laptop" : volumeIcon(s.state.volumes.findIndex((v) => v.path === s.target)));
 
 function renderTargets(force) {
   if (s.formatting) return;
@@ -488,24 +904,28 @@ function renderTargets(force) {
     input.addEventListener("change", () => { s.target = value; replan(); });
     return input;
   };
-  const items = volumes.map((v) => el("li", {}, el("label", { className: "choice" }, radio(v.path),
-    el("span", { className: "grow" }, el("strong", { textContent: v.label }), " ", el("small", { textContent: v.fs })),
-    el("span", { className: "size", textContent: partOfStick(v) ? t("freeOfStick", { free: size(v.free), disk: size(v.disk) })
-      : t("free", { free: size(v.free) }) })), formatBox(v)));
+  const items = volumes.map((v, i) => {
+    const free = partOfStick(v) ? t("freeOfStick", { free: size(v.free), disk: size(v.disk) }) : t("free", { free: size(v.free) });
+    return el("li", { className: "card" }, el("label", { className: "choice" }, radio(v.path), icon(volumeIcon(i)),
+      el("span", { className: "grow" }, el("strong", { textContent: v.label }),
+        s.state.phone ? el("small", { textContent: free }) : el("span", { className: "tag", textContent: v.fs })),
+      !s.state.phone && el("span", { className: "size", textContent: free })), formatBox(v));
+  });
 
   if (!s.state.computer) { $("targets").replaceChildren(...items); return; }
   // On a computer, a stick is always one of the two choices, even before it is plugged in.
   if (!volumes.length) {
-    items.push(el("li", {}, el("label", { className: "choice waiting" }, el("input", { type: "radio", name: "target", disabled: true }),
-      el("span", { className: "grow" }, el("strong", { textContent: t("usbStick") }), " ", el("small", { textContent: t("noStick") })))));
+    items.push(el("li", { className: "card waiting" }, el("label", { className: "choice" }, el("input", { type: "radio", name: "target", disabled: true }),
+      icon("usb"), el("span", { className: "grow" }, el("strong", { textContent: t("usbStick") }), el("span", { className: "hint", textContent: t("noStick") })))));
   }
   const folder = el("input", { type: "text", value: s.computerPath, spellcheck: false });
   folder.setAttribute("aria-label", t("folder"));
   folder.addEventListener("input", () => { s.computerPath = folder.value; s.target = "computer"; renderTargetChecks(); replan(); });
-  items.push(el("li", {}, el("label", { className: "choice" }, radio("computer"),
+  items.push(el("li", { className: "card" }, el("label", { className: "choice" }, radio("computer"), icon("laptop"),
     el("span", { className: "grow" }, el("strong", { textContent: t("computer") }), folder))));
   $("targets").replaceChildren(...items);
 }
+
 // ---------- formatting a stick that not every computer reads ----------
 
 const portableFS = (fs) => /^(msdos|fat|fat16|fat32|vfat|exfat)$/i.test(fs ?? "");
@@ -519,31 +939,39 @@ const notPortable = (path) => {
 };
 
 function formatBox(v) {
-  if (!offerErase(v)) return s.formatted === v.path ? el("p", { className: "format hint", textContent: t("formatted") }) : null;
+  if (!offerErase(v)) {
+    return s.formatted === v.path ? el("div", { className: "format done" }, icon("check"), el("p", { textContent: t("formatted") })) : null;
+  }
   const box = el("div", { className: "format" });
   const ask = () => {
     const why = !portableFS(v.fs) ? t("notPortable", { fs: v.fs })
       : partOfStick(v) ? t("partOfStick", { total: size(v.total), disk: size(v.disk) }) : t("stickFull");
-    const button = el("button", { type: "button", textContent: t(portableFS(v.fs) ? "eraseWhole" : "formatButton") });
+    const button = el("button", { type: "button", className: "btn", textContent: t(portableFS(v.fs) ? "eraseWhole" : "formatButton") });
     button.addEventListener("click", areYouSure);
-    box.replaceChildren(el("p", { className: "warn-text", textContent: why }), button);
+    box.className = "format";
+    box.replaceChildren(icon("triangle-alert"), el("p", { textContent: why }), button);
   };
   const areYouSure = () => {
-    const yes = el("button", { type: "button", className: "danger", textContent: t("formatYes") });
-    const no = el("button", { type: "button", textContent: t("cancel") });
+    const yes = el("button", { type: "button", className: "btn danger", textContent: t("formatYes") });
+    const no = el("button", { type: "button", className: "btn", textContent: t("cancel") });
     yes.addEventListener("click", run);
     no.addEventListener("click", ask);
-    box.replaceChildren(el("p", { textContent: t("formatConfirm", { name: v.label, size: size(v.disk || v.total) }) }), el("div", { className: "row" }, yes, no));
+    box.className = "format confirm";
+    box.replaceChildren(icon("triangle-alert"), el("p", { textContent: t("formatConfirm", { name: v.label, size: size(v.disk || v.total) }) }),
+      el("div", { className: "row" }, yes, no));
   };
   const run = async () => {
     s.formatting = true;
-    box.replaceChildren(el("p", { textContent: t("formatting") }));
+    renderStep();
+    box.className = "format confirm";
+    box.replaceChildren(icon("triangle-alert"), el("p", { textContent: t("formatting") }));
     try {
       const done = await api("/api/format", { path: v.path });
       s.formatted = s.target = done.path;
       s.state = await api("/api/state");
     } catch (err) {
-      box.replaceChildren(el("p", { className: "bad-text", textContent: t("formatFailed", { error: err.message }) }));
+      box.className = "format failed";
+      box.replaceChildren(icon("circle-alert"), el("p", { textContent: t("formatFailed", { error: err.message }) }));
       setTimeout(ask, 6000);
     }
     s.formatting = false;
@@ -560,6 +988,42 @@ function renderTargetChecks() {
 
 function targetPath() { return s.target === "computer" ? s.computerPath.trim() : s.target; }
 
+// ---------- "Your Varu", the review and the size ----------
+
+function choices() {
+  const volume = s.state.volumes.find((v) => v.path === s.target);
+  const where = !targetPath() ? null : s.target === "computer" ? t("computer") : volume?.label ?? "";
+  const kind = volume && !s.state.phone ? t("usbStick") : null;
+  const name = s.home?.name.split(",")[0];
+  const pois = s.region.pois ?? [];
+  const books = (s.region.library ?? []).filter((b) => s.library.has(b.name)).map((b) => b.title);
+  return {
+    where, volume,
+    goesTo: where && [where, kind].filter(Boolean).join(" · "),
+    goesToFull: where && [where, kind && `${kind}${volume.fs ? `, ${volume.fs}` : ""}`].filter(Boolean).join(" · "),
+    home: s.home ? t("homeWithin", { name, km: s.radius }) : s.wholeChosen || (s.step > 2 && !s.radius) ? t("whole") : null,
+    homeFull: s.home ? t("homeStreets", { name, km: s.radius }) : t("whole"),
+    places: s.pois.size ? t("kinds", { n: s.pois.size }) : t("none"),
+    placesFull: !s.pois.size ? t("none") : s.pois.size === pois.length ? t("allKinds", { n: s.pois.size }) : t("someKinds", { n: s.pois.size, total: pois.length }),
+    library: books.length ? books.join(", ") : t("none"),
+  };
+}
+
+// The size of what is chosen, against the room there: { download, needed, free, over }.
+function sizes() {
+  const plan = s.plan;
+  if (!plan || !targetPath()) return null;
+  return {
+    download: plan.items.reduce((sum, it) => sum + it.size - it.have, 0),
+    needed: plan.needed, free: plan.free, over: plan.needed > plan.free,
+  };
+}
+function track(z) {
+  const fill = el("span");
+  fill.style.width = `${Math.min(100, (100 * z.needed) / Math.max(z.free, 1))}%`;
+  return el("div", { className: `track${z.over ? " over" : ""}` }, fill);
+}
+
 function renderSummary() {
   const plan = s.plan;
   const problems = [], warnings = [];
@@ -572,33 +1036,77 @@ function renderSummary() {
   if (plan?.problems.some((p) => p.code === "space") && s.target !== "computer" && !s.state.phone) problems.push(t("spaceStick"));
   const offers = s.state.volumes.filter(offerErase).map((v) => v.path).join("|");
   if (offers !== s.offers) { s.offers = offers; renderTargets(true); }
-  const download = plan ? plan.items.reduce((sum, it) => sum + it.size - it.have, 0) : 0;
-  $("sizes").textContent = s.planning ? t("calculating")
-    : plan && targetPath() ? t("sizes", { download: size(download), needed: size(plan.needed), free: size(plan.free) }) : "";
-  $("problems").replaceChildren(...[...new Set(problems)].map((text) => el("li", { textContent: text })));
-  $("warnings").replaceChildren(...warnings.map((text) => el("li", { textContent: text })));
   $("install").disabled = s.planning || !plan || problems.length > 0 || s.installing;
-  const volume = s.state.volumes.find((v) => v.path === s.target);
-  $("recap").textContent = !targetPath() ? "" : t("installTo", {
-    where: s.target === "computer" ? `${t("computer")} (${targetPath()})` : `${volume?.label ?? ""} (${targetPath()})`,
-  });
+
+  const c = choices();
+  const z = sizes();
+  // "Your Varu", beside steps 1 to 3
+  const fact = (name, label, value) => el("div", { className: value ? "" : "unset" }, icon(name),
+    el("span", {}, el("dt", { textContent: label }), el("dd", { textContent: value ?? t("notChosen") })));
+  const sizePart = s.planning ? el("p", { textContent: t("calculating") })
+    : !z || s.step < 2 ? el("p", { textContent: t("sizeLater") })
+    : el("div", { className: "size-part" },
+      el("div", { className: "size-top" }, el("span", { textContent: t("download") }), el("strong", { textContent: t("about", { size: size(z.download) }) })),
+      track(z), el("p", { textContent: t("needs", { needed: size(z.needed), free: size(z.free) }) }));
+  $("summary").replaceChildren(el("h2", { textContent: t("yourVaru") }),
+    el("dl", { className: "facts" }, fact(targetIcon(), t("goesTo"), c.goesTo),
+      fact("house", t("home"), c.home), fact("map-pin", t("places"), c.places), fact("book-open", t("libraryTitle"), c.library)),
+    el("hr"), el("div", { className: "size-part" }, sizePart));
+  // On a phone, the size above Back and Next
+  $("mini").hidden = !z || s.step < 2 || s.step > 3;
+  if (z) $("mini").replaceChildren(track(z), el("span", { textContent: t("miniSize", { size: size(z.download), free: size(z.free) }) }));
+
+  // Step 4
+  $("recap").textContent = c.where ? t("installTo", { where: c.where }) : "";
+  $("recap-path").textContent = c.where ? `(${targetPath()})` : "";
+  $("problems").replaceChildren(...[...new Set(problems)].map((text) => el("li", { textContent: text })));
+  $("problems-box").hidden = problems.length === 0 || s.planning;
+  $("warnings").replaceChildren(...warnings.map((text) => el("li", { textContent: text })));
+  $("warnings-box").hidden = warnings.length === 0;
+  const row = (name, label, value, step) => {
+    const change = el("button", { type: "button", className: "link", textContent: t("change") });
+    change.addEventListener("click", () => goStep(step));
+    return el("div", {}, icon(name), el("dt", { textContent: label }), el("dd", { textContent: value ?? t("notChosen") }), change);
+  };
+  $("review").replaceChildren(row(targetIcon(), t("goesTo"), c.goesToFull, 1),
+    row("house", t("home"), c.homeFull, 2), row("map-pin", t("places"), c.placesFull, 3), row("book-open", t("libraryTitle"), c.library, 3));
+  $("size-box").replaceChildren(...(s.planning ? [el("p", { textContent: t("calculating") })] : !z ? [] : [
+    el("div", { className: "size-top" }, el("strong", { textContent: t("downloadAbout", { size: size(z.download) }) }),
+      el("span", { className: z.over ? "over" : "", textContent: t("freeOn", { free: size(z.free), name: c.where }) })),
+    track(z), el("p", { textContent: t("needs", { needed: size(z.needed), free: size(z.free) }) })]));
   renderStep();
 }
 
 // ---------- steps ----------
 
-const STEPS = 4;
+function renderStepper() {
+  $("steps").replaceChildren(...STEPS.map((key, i) => {
+    const n = i + 1;
+    const state = n < s.step ? "done" : n === s.step ? "now" : "next";
+    const li = el("li", {}, el("span", { className: "dot" }, state === "done" ? icon("check") : String(n)), t(key));
+    li.dataset.state = state;
+    if (state === "now") li.setAttribute("aria-current", "step");
+    return li;
+  }));
+  $("bars").replaceChildren(...STEPS.map((_, i) => el("span", { className: i < s.step ? "on" : "" })));
+  $("step-count").textContent = t("stepOf", { n: s.step, total: STEPS.length });
+  $("step-name").textContent = t(STEPS[s.step - 1]);
+}
+
 function renderStep() {
   document.querySelectorAll("#setup .step").forEach((d) => { d.hidden = Number(d.dataset.step) !== s.step; });
-  $("step-count").textContent = t("stepOf", { n: s.step, total: STEPS });
+  $("setup").classList.toggle("last", s.step === STEPS.length);
+  renderStepper();
   $("back").hidden = s.step === 1;
-  $("next").hidden = s.step === STEPS;
+  $("next").hidden = s.step === STEPS.length;
+  $("install").hidden = s.step !== STEPS.length;
   // A place to put it first; a home whenever the map is cut around one.
   $("next").disabled = s.step === 1 ? !targetPath() || notPortable(s.target) || !!s.formatting : s.step === 2 && s.radius > 0 && !s.home;
 }
 function goStep(n) {
-  s.step = Math.min(Math.max(n, 1), STEPS);
-  renderStep();
+  s.step = Math.min(Math.max(n, 1), STEPS.length);
+  if (s.step > 2 && !s.home) s.wholeChosen = true;
+  renderSummary();
   scrollTo(0, 0);
 }
 $("back").addEventListener("click", () => goStep(s.step - 1));
@@ -638,7 +1146,7 @@ $("search").addEventListener("submit", async (event) => {
   try {
     const found = await api(`/api/geocode?${new URLSearchParams({ q, country: s.region.country_code ?? "" })}`);
     $("results").replaceChildren(...(found.length ? found.map((place) => {
-      const b = el("button", { type: "button", textContent: place.name });
+      const b = el("button", { type: "button", className: "btn", textContent: place.name });
       b.addEventListener("click", () => setHome(place));
       return el("li", {}, b);
     }) : [el("li", { className: "hint", textContent: t("noResults") })]));
@@ -673,7 +1181,7 @@ function prefill(u) {
   if (s.state.volumes.some((v) => v.path === u.target)) s.target = u.target;
   else { s.target = "computer"; s.computerPath = u.target; }
   $("update-note").hidden = false;
-  goStep(STEPS);
+  goStep(STEPS.length);
 }
 
 function setHome(place) {
@@ -693,41 +1201,64 @@ $("install").addEventListener("click", async () => {
     showProgress();
   } catch (err) {
     $("problems").replaceChildren(el("li", { textContent: err.message }));
+    $("problems-box").hidden = false;
     $("install").disabled = false;
   }
 });
 
 function showProgress() {
-  $("setup").hidden = true; $("progress").hidden = false;
+  $("setup").hidden = $("stepper").hidden = $("foot").hidden = true;
+  $("progress").hidden = false;
   window.scrollTo(0, 0);
 }
 
+const what = (it, fallback = "") => !it ? fallback : it.kind === "book" ? t("step_book", { title: it.title }) : t(it.cut ? "step_cut" : `step_${it.kind}`);
+const targetName = (path) => s.state?.volumes.find((v) => v.path === path)?.label ?? t("computer");
+
 function renderJob(job) {
   if (!job) return;
+  s.job = job;
   if (!job.finished) {
     if ($("progress").hidden) showProgress();
     s.installing = true;
     window.VaruAndroid?.downloading?.(); // keeps going with the screen off
-    $("bar").max = job.total || 1; $("bar").value = job.done;
-    const c = job.current;
-    const what = !c ? "" : c.kind === "book" ? t("step_book", { title: c.title }) : t(c.cut ? "step_cut" : `step_${c.kind}`);
-    $("current").textContent = `${what} – ${t("of", { done: size(job.done), total: size(job.total) })}`;
+    $("progress-to").textContent = t("installingTo", { where: `${targetName(job.target)} (${job.target})` });
+    $("bar").setAttribute("aria-valuemax", job.total || 1);
+    $("bar").setAttribute("aria-valuenow", job.done);
+    $("bar").firstElementChild.style.width = `${(100 * job.done) / (job.total || 1)}%`;
+    $("current").textContent = what(job.current);
+    $("amount").textContent = t("of", { done: size(job.done), total: size(job.total) });
+    // Parts before the running one are done; it runs them in order.
+    const items = job.items ?? [];
+    const now = items.findIndex((it) => it.kind === job.current?.kind && it.title === job.current?.title);
+    $("parts").replaceChildren(...items.map((it, i) => {
+      const li = el("li", {}, el("span", { className: "mark" }, i < now ? icon("check") : null), what(it));
+      li.dataset.state = i < now ? "done" : i === now ? "now" : "next";
+      return li;
+    }));
     return;
   }
   s.installing = false;
-  $("setup").hidden = true; $("progress").hidden = true; $("done").hidden = false;
+  $("setup").hidden = $("stepper").hidden = $("foot").hidden = $("progress").hidden = true;
+  $("done").hidden = false;
   const problems = job.errors.length > 0;
+  $("done-icon").className = `done-icon${problems ? " problems" : ""}`;
+  $("done-icon").replaceChildren(icon(problems ? "triangle-alert" : "check"));
   $("done-title").textContent = t(problems ? "doneProblems" : "doneTitle");
-  $("errors").replaceChildren(...job.errors.map((text) => el("li", { textContent: text })),
-    ...(problems ? [el("li", { textContent: t("retryLater") })] : []));
-  $("done-text").textContent = s.state?.phone ? t("donePhone") : job.usb ? t("doneUsb")
-    : window.VaruDesktop ? t("doneApp") : t("doneComputer", { path: job.target });
+  $("errors-box").hidden = !problems;
+  $("errors").replaceChildren(...job.errors.map((text) => el("li", {}, icon("x"), text)),
+    ...(problems ? [el("li", {}, icon("refresh-cw"), t("retryLater"))] : []));
+  const phone = !!s.state?.phone;
+  $("done").classList.toggle("done-phone", phone);
+  $("done-usb").hidden = phone || !job.usb;
+  $("done-text").hidden = !phone && job.usb;
+  $("done-text").textContent = phone ? t("donePhone") : window.VaruDesktop ? t("doneApp") : t("doneComputer", { path: job.target });
 }
 
 // Inside the Android or desktop app, the app itself switches to the viewer.
 const host = window.VaruAndroid ?? window.VaruDesktop;
 $("open-files").hidden = !!window.VaruAndroid;
-if (window.VaruAndroid) document.querySelector("[data-t=keepOpen]").dataset.t = "keepOpenPhone";
+if (window.VaruAndroid) $("keep-open").dataset.t = "keepOpenPhone";
 $("open-varu").addEventListener("click", () => {
   if (host) { host.openVaru(s.state?.job?.target ?? ""); return; }
   api("/api/open", { What: "varu" }).catch((err) => alert(err.message));
@@ -742,21 +1273,32 @@ $("quit").addEventListener("click", async () => {
 
 // ---------- state polling (also tells the installer the page is open) ----------
 
+function showNotice(title, text, detail) {
+  $("notice").hidden = false;
+  $("notice-title").textContent = t(title);
+  $("notice-text").textContent = t(text);
+  $("notice-detail").textContent = detail ?? "";
+  $("notice-detail").hidden = !detail;
+  $("setup").hidden = $("stepper").hidden = $("foot").hidden = true;
+}
+
+let pollTimer = 0;
 async function poll() {
+  clearTimeout(pollTimer);
   try {
     const state = await api("/api/state");
     const first = !s.state;
     s.state = state;
     $("loading").hidden = true;
     if (state.error && !state.regions?.length) {
-      $("notice").hidden = false; $("notice-text").textContent = `${t("offline")} (${state.error})`;
+      showNotice("offlineTitle", "offline", state.error);
     } else {
       $("notice").hidden = true;
       if (first || !s.region) {
         s.computerPath = state.computer;
         chooseRegion(state.regions[0].id);
         if (first && state.update && !state.job) prefill(state.update);
-        $("setup").hidden = !!state.job;
+        $("setup").hidden = $("stepper").hidden = $("foot").hidden = !!state.job;
         renderAll(); replan();
       } else {
         renderTargets(false);
@@ -765,13 +1307,13 @@ async function poll() {
     renderJob(state.job);
   } catch (err) {
     $("loading").hidden = true;
-    $("notice").hidden = false;
     // A network error here means the installer program itself is gone.
-    $("notice-text").textContent = err instanceof TypeError ? t("gone") : err.message;
+    if (err instanceof TypeError) showNotice("goneTitle", "gone");
+    else showNotice("offlineTitle", "offline", err.message);
   }
-  setTimeout(poll, s.installing ? 1000 : 5000);
+  pollTimer = setTimeout(poll, s.installing ? 1000 : 5000);
 }
-$("retry").addEventListener("click", () => { $("notice").hidden = true; $("loading").hidden = false; });
+$("retry").addEventListener("click", () => { $("notice").hidden = true; $("loading").hidden = false; poll(); });
 
 applyLanguage();
 poll();
