@@ -90,6 +90,9 @@ function startMap(mapInfo) {
     trackUserLocation: true,
   });
   map.addControl(geolocate, "top-right");
+  // Remembered so a delayed ?nearest does not switch tracking off by pressing the button again.
+  geolocate.on("trackuserlocationstart", () => { tracking = true; });
+  geolocate.on("trackuserlocationend", () => { tracking = false; });
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
   let failed = false;
@@ -110,7 +113,7 @@ function startMap(mapInfo) {
   map.on("load", () => {
     routing = setUpRouting(map, { manifest, lang, geolocate, dark });
     setUpSearch(map, { manifest, lang, base, routing });
-    setUpPois(map);
+    setUpPois(map, geolocate);
   });
   setUpPanel();
 
@@ -139,7 +142,9 @@ function setUpPanel() {
 
 // ---------- Places (hospitals, pharmacies, ...) ----------
 
-function setUpPois(map) {
+let tracking = false;
+
+function setUpPois(map, geolocate) {
   const list = document.getElementById("layer-list");
   const pois = manifest.pois ?? [];
   if (pois.length === 0) {
@@ -152,6 +157,21 @@ function setUpPois(map) {
   let saved = null;
   try { saved = JSON.parse(stored(POI_STATE_KEY) ?? "null"); } catch { /* ignore */ }
   const enabled = new Set(Array.isArray(saved) ? saved : pois.filter((p) => p.default).map((p) => p.id));
+
+  const showNearest = async (poi, checkbox, label) => {
+    if (!checkbox.checked) {
+      checkbox.checked = true;
+      checkbox.dispatchEvent(new Event("change"));
+    }
+    // On a phone the list would hide the route.
+    if (window.matchMedia("(max-width: 640px)").matches && !list.hidden) document.getElementById("panel-toggle").click();
+    const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
+    routing.nearest((data?.features ?? []).map((f) => ({
+      lngLat: f.geometry.coordinates,
+      name: f.properties?.[`name:${lang}`] || f.properties?.name || label,
+    })));
+  };
+  const rows = new Map();
 
   for (const poi of pois) {
     const checkbox = Object.assign(document.createElement("input"), {
@@ -175,22 +195,14 @@ function setUpPois(map) {
         type: "button", className: "nearest", textContent: t(lang, "nearest"),
       });
       near.setAttribute("aria-label", `${t(lang, "nearest")}: ${name.textContent}`);
-      near.addEventListener("click", async () => {
-        if (!checkbox.checked) {
-          checkbox.checked = true;
-          checkbox.dispatchEvent(new Event("change"));
-        }
-        // On a phone the list would hide the route.
-        if (window.matchMedia("(max-width: 640px)").matches) document.getElementById("panel-toggle").click();
-        const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
-        routing.nearest((data?.features ?? []).map((f) => ({
-          lngLat: f.geometry.coordinates,
-          name: f.properties?.[`name:${lang}`] || f.properties?.name || name.textContent,
-        })));
+      near.addEventListener("click", () => {
+        map.fire("userroute");
+        showNearest(poi, checkbox, name.textContent);
       });
       item.append(near);
     }
 
+    rows.set(poi.id, { poi, checkbox, label: name.textContent });
     checkbox.addEventListener("change", () => {
       setPoiVisible(map, poi, checkbox.checked);
       if (checkbox.checked) enabled.add(poi.id); else enabled.delete(poi.id);
@@ -198,7 +210,48 @@ function setUpPois(map) {
     });
     if (checkbox.checked) setPoiVisible(map, poi, true);
   }
+
+  // map.html?nearest=<layer id>, from the start page and the emergency guide:
+  // show that layer and find the closest one. Without road data, just show
+  // the layer; without a location the route starts from home, or says so.
+  const wanted = rows.get(new URLSearchParams(location.search).get("nearest"));
+  if (wanted) openNearest(map, geolocate, wanted, showNearest);
 }
+
+// Waits for the first position fix (up to 8 s), then asks for the nearest.
+async function openNearest(map, geolocate, { poi, checkbox, label }, showNearest) {
+  if (!checkbox.checked) {
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event("change"));
+  }
+  if (!routing) {
+    const data = await fetch(`${base}${poi.file}`).then((res) => res.json()).catch(() => null);
+    const bounds = new maplibregl.LngLatBounds();
+    for (const f of data?.features ?? []) bounds.extend(f.geometry.coordinates);
+    if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 0 });
+    return;
+  }
+  // Any route the person starts meanwhile (Nearest, Route here, Start here) wins.
+  let cancelled = false;
+  const cancel = () => { cancelled = true; };
+  map.once("userroute", cancel);
+  const located = new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      for (const type of ["geolocate", "error", "outofmaxbounds"]) geolocate.off(type, done);
+      map.off("userroute", done);
+      resolve();
+    };
+    const timer = setTimeout(done, 8000);
+    for (const type of ["geolocate", "error", "outofmaxbounds"]) geolocate.on(type, done);
+    map.on("userroute", done);
+  });
+  if (!tracking) geolocate.trigger();
+  await located;
+  map.off("userroute", cancel);
+  if (!cancelled) showNearest(poi, checkbox, label);
+}
+
 
 function setPoiVisible(map, poi, visible) {
   const source = `poi-${poi.id}`;

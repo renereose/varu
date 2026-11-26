@@ -71,6 +71,9 @@ function render() {
   setCard("card-library", Boolean(status.library), "card-library-text");
   setCard("card-docs", docs.length > 0, "card-docs-text");
 
+  document.getElementById("quick-shelter").hidden =
+    !(manifest.map && (manifest.pois ?? []).some((poi) => poi.id === "shelter"));
+
   const search = document.getElementById("home-search");
   const searchLabel = t(lang, "searchLibrary");
   search.hidden = !status.library;

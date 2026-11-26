@@ -198,9 +198,26 @@ kogemata ära ei kustutaks.
 
 ### Avaleht
 
-Varu avaneb avalehega: **Kaardid**, **Raamatukogu** ja **Dokumendid**. Seal
-on ka näha, millal andmed koostati, et teaksid, kui värsked need on. Ülal
-olev otsingukast otsib kõigist raamatukogu raamatutest.
+Varu avaneb avalehega. Üleval on kolm suurt nuppu: **📞 112**, **Lähim
+varjumiskoht** (kaart koos teekonnaga lähimasse avalikku varjumiskohta) ja
+**Hädaolukorras**. Nende all on **Kaardid**, **Raamatukogu** ja **Dokumendid**
+ning näha on, millal andmed koostati, et teaksid, kui värsked need on.
+Otsingukast otsib kõigist raamatukogu raamatutest.
+
+### Hädaolukorras
+
+Leheküljel **Hädaolukorras** on kolm osa:
+
+- **Kui juhtub**: lühikesed sammud elektri-, vee-, kütte- ja sidekatkestuse,
+  sireeni ja ohuteate, varjumise, evakueerimise, tulekahju, vingugaasi, tormi,
+  üleujutuse, metsas eksimise ja 112 helistamise korral. Igalt kaardilt saab
+  lähima koha kaardile ja raamatukogu artiklitesse ning iga kaart nimetab
+  ametliku allika, millel see põhineb (kriis.ee, Päästeamet, Siseministeerium,
+  Terviseamet ja Häirekeskus).
+- **Kodune varu**: kontrollnimekiri, et nädal aega ise hakkama saada.
+  Linnukesed jäävad sellesse seadmesse.
+- **Minu plaan**: kontaktid, kokkusaamiskohad, kus on dokumendid ja ravimid.
+  Jääb ainult sellesse seadmesse: vajuta **Prindi** ja hoia ka paberkoopiat.
 
 ### Kaart
 
@@ -262,6 +279,10 @@ varjumiskoht (**Tartu Ülikooli Kliinikum**).
 - Raamatu sees on all rohelisel ribal **Tagasi**, **🔍 Otsi** (tagasi selle
   raamatu otsingusse) ja **Raamatukogu**.
 - **Raamatukogu** leheküljel saab otsida kõigist raamatutest korraga.
+- **Ellujäämine ja tee-ise** raamatukogu leheküljel koondab valitud artiklid
+  teemade kaupa: esmaabi, vesi, toit, soojus ja tuli, peavari, elekter ja
+  valgus, side, hügieen, tööriistad ja parandamine, orienteerumine, ohud ning
+  elanikkonnakaitse. Otsides tulevad sobivad neist esimesena, tähisega ★.
 - Pikemad sõnad leiavad ka teisi vorme: *tallinn* leiab *Tallinnas*.
 
 ---
