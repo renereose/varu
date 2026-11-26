@@ -470,6 +470,7 @@ h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
 .share-qr svg { display: block; width: 100%; height: 100%; }
 .share-error { color: var(--alert) !important; }
 .lan-note { margin: 0; font-size: 14px; }
+.downloads { align-self: start; }
 
 .home-foot {
   display: flex;

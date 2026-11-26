@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Uri;
@@ -13,8 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
@@ -47,7 +48,6 @@ import org.json.JSONObject;
  */
 public class MainActivity extends Activity {
     private static final Pattern URL = Pattern.compile("http://\\S+");
-    private static final int MENU_MAP = 1, MENU_DOWNLOADS = 2;
 
     // Static: a download keeps the installer running while the app has no
     // screen (DownloadService), and a new screen finds it again.
@@ -67,6 +67,8 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         // The screen stays on while Varu is open, for following directions.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // The system's dark mode until the page says which theme it shows.
+        bars((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
 
         web = new WebView(this);
         WebSettings settings = web.getSettings();
@@ -141,39 +143,24 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
+    // Back from the installer opened to update returns to the map.
     @Override
     public void onBackPressed() {
-        if (web.canGoBack()) web.goBack();
+        File drive = installedDrive();
+        if (installerMode && drive != null && !downloading()) startViewer(drive);
+        else if (web.canGoBack()) web.goBack();
         else super.onBackPressed();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        boolean et = isEstonian();
-        menu.add(0, MENU_MAP, 0, et ? "Kaart" : "Map");
-        menu.add(0, MENU_DOWNLOADS, 1, et ? "Allalaadimised" : "Downloads");
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(MENU_MAP).setVisible(installedDrive() != null && !downloading());
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_DOWNLOADS) {
-            if (downloading()) web.loadUrl(page);
-            else startInstaller(installedDrive());
-            return true;
-        }
-        if (item.getItemId() == MENU_MAP) {
-            File drive = installedDrive();
-            if (drive != null) startViewer(drive);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    /** The status and navigation bars in the colour of the page's own bars. */
+    private void bars(boolean dark) {
+        Window window = getWindow();
+        int color = dark ? 0xFF1A211E : 0xFFFFFDF8; // --surface
+        window.setStatusBarColor(color);
+        window.setNavigationBarColor(color);
+        int light = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                | (Build.VERSION.SDK_INT >= 26 ? View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0);
+        window.getDecorView().setSystemUiVisibility(dark ? 0 : light);
     }
 
     // ---------- the Go programs ----------
@@ -214,7 +201,6 @@ public class MainActivity extends Activity {
         installerMode = false;
         viewerRoot = root;
         start(args);
-        invalidateOptionsMenu();
     }
 
     private void start(List<String> args) {
@@ -407,6 +393,23 @@ public class MainActivity extends Activity {
                 PrintManager pm = getSystemService(PrintManager.class);
                 if (pm == null) return;
                 pm.print("Varu", web.createPrintDocumentAdapter("Varu"), new PrintAttributes.Builder().build());
+            });
+        }
+
+        /** Pages call this with the theme they show. */
+        @JavascriptInterface
+        public void bars(boolean dark) {
+            runOnUiThread(() -> MainActivity.this.bars(dark));
+        }
+
+        /** "Update maps and data" on the start page: the installer, or the download under way. */
+        @JavascriptInterface
+        public void downloads() {
+            runOnUiThread(() -> {
+                if (MainActivity.downloading()) {
+                    installerMode = true;
+                    web.loadUrl(page);
+                } else startInstaller(installedDrive());
             });
         }
 

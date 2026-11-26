@@ -86,6 +86,9 @@ $("doc-list").replaceChildren(...docs.map((doc) => {
 // ---------- Sharing and the footer ----------
 
 $("lan-note").hidden = !(status.lan && status.remote);
+// In the Android app, the installer to update or add to what is on the phone.
+$("downloads").hidden = !window.VaruAndroid?.downloads;
+$("downloads").addEventListener("click", () => window.VaruAndroid.downloads());
 // Open on a wide screen; on a phone it is one tap away.
 $("share").open = window.matchMedia("(min-width: 720px)").matches;
 initShare(status, () => lang)();

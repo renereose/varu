@@ -43,6 +43,7 @@ function initTheme(lang) {
     }
     toggle.replaceChildren(icon(isDark() ? "sun" : "moon"));
     toggle.setAttribute("aria-label", t(lang, isDark() ? "toLight" : "toDark"));
+    window.VaruAndroid?.bars?.(isDark()); // the phone's own bars match
   };
   const choose = (theme) => {
     const wasDark = isDark();
