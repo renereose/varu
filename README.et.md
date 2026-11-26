@@ -206,6 +206,9 @@ varjumiskoht** (kaart koos teekonnaga lähimasse avalikku varjumiskohta) ja
 on, ja kaardiandmete kuupäev, et teaksid, kui värsked need on. Otsingukast
 otsib kõigist raamatukogu raamatutest.
 
+Keelevaliku kõrval saab valida heleda või tumeda teema või jätta selle
+seadme seadistuse järgi. Varu jätab mõlemad selles seadmes meelde.
+
 ### Hädaolukorra juhend
 
 **Hädaolukorra juhendis** on neli osa. Arvutis on olukorrad loendis ja

@@ -206,6 +206,9 @@ to do now** (the emergency guide). Below: what is on this device, and the date
 of the map data, so you know how fresh it is. The search box looks through
 every book in the library.
 
+Next to the language switch, the theme switch picks light, dark or the
+device's own setting. Varu remembers both on that device.
+
 ### The emergency guide
 
 The **Emergency guide** has four sections. On a computer the situations are
