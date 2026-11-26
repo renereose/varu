@@ -270,8 +270,8 @@ a hospital or shelter (**Tartu Ülikooli Kliinikum**).
 
 <table>
   <tr>
-    <td align="center" width="50%"><img src="docs/images/en/nearest.jpg" width="260" alt="Nearest shelter"><br><sub><b>Nearest</b> shelter: 430 m, 5 minutes on foot</sub></td>
-    <td align="center" width="50%"><img src="docs/images/en/navigate.jpg" width="260" alt="Live directions"><br><sub><b>Start</b>: "35 m, turn left, Kuninga"</sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/nearest.jpg" width="260" alt="Nearest shelter"><br><sub><b>Find nearest</b> shelter: 392 m, 5 minutes on foot</sub></td>
+    <td align="center" width="50%"><img src="docs/images/en/navigate.jpg" width="260" alt="Live directions"><br><sub><b>Start</b>: "85 m, turn right, Vana turg"</sub></td>
   </tr>
 </table>
 

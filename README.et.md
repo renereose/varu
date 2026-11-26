@@ -269,8 +269,8 @@ varjumiskoht (**Tartu Ülikooli Kliinikum**).
 
 <table>
   <tr>
-    <td align="center" width="50%"><img src="docs/images/et/nearest.jpg" width="260" alt="Lähim varjumiskoht"><br><sub><b>Lähim</b> varjumiskoht: 430 m, jalgsi 5 minutit</sub></td>
-    <td align="center" width="50%"><img src="docs/images/et/navigate.jpg" width="260" alt="Juhised teel"><br><sub><b>Alusta</b>: „35 m, pööra vasakule, Kuninga”</sub></td>
+    <td align="center" width="50%"><img src="docs/images/et/nearest.jpg" width="260" alt="Lähim varjumiskoht"><br><sub><b>Leia lähim</b> varjumiskoht: 392 m, jalgsi 5 minutit</sub></td>
+    <td align="center" width="50%"><img src="docs/images/et/navigate.jpg" width="260" alt="Juhised teel"><br><sub><b>Alusta</b>: „85 m, pööra paremale, Vana turg”</sub></td>
   </tr>
 </table>
 
