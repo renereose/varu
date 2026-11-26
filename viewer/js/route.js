@@ -108,6 +108,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   }
 
   function routeTo(lngLat, name = null) {
+    map.fire("userroute");
     dest = lngLat;
     destName = name;
     destMarker.setLngLat(dest).addTo(map);
@@ -115,6 +116,7 @@ export function setUpRouting(map, { manifest, lang, geolocate, dark }) {
   }
 
   function startFrom(lngLat) {
+    map.fire("userroute");
     start = lngLat;
     startMarker.setLngLat(start).addTo(map);
     update();

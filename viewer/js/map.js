@@ -90,6 +90,9 @@ function startMap(mapInfo) {
     trackUserLocation: true,
   });
   map.addControl(geolocate, "top-right");
+  // Remembered so a delayed ?nearest does not switch tracking off by pressing the button again.
+  geolocate.on("trackuserlocationstart", () => { tracking = true; });
+  geolocate.on("trackuserlocationend", () => { tracking = false; });
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
   let failed = false;
@@ -138,6 +141,8 @@ function setUpPanel() {
 }
 
 // ---------- Places (hospitals, pharmacies, ...) ----------
+
+let tracking = false;
 
 function setUpPois(map, geolocate) {
   const list = document.getElementById("layer-list");
@@ -190,7 +195,10 @@ function setUpPois(map, geolocate) {
         type: "button", className: "nearest", textContent: t(lang, "nearest"),
       });
       near.setAttribute("aria-label", `${t(lang, "nearest")}: ${name.textContent}`);
-      near.addEventListener("click", () => showNearest(poi, checkbox, name.textContent));
+      near.addEventListener("click", () => {
+        map.fire("userroute");
+        showNearest(poi, checkbox, name.textContent);
+      });
       item.append(near);
     }
 
@@ -223,15 +231,25 @@ async function openNearest(map, geolocate, { poi, checkbox, label }, showNearest
     if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 0 });
     return;
   }
+  // Any route the person starts meanwhile (Nearest, Route here, Start here) wins.
+  let cancelled = false;
+  const cancel = () => { cancelled = true; };
+  map.once("userroute", cancel);
   const located = new Promise((resolve) => {
-    const done = () => { geolocate.off("geolocate", done); geolocate.off("error", done); resolve(); };
-    geolocate.on("geolocate", done);
-    geolocate.on("error", done);
-    setTimeout(done, 8000);
+    const done = () => {
+      clearTimeout(timer);
+      for (const type of ["geolocate", "error", "outofmaxbounds"]) geolocate.off(type, done);
+      map.off("userroute", done);
+      resolve();
+    };
+    const timer = setTimeout(done, 8000);
+    for (const type of ["geolocate", "error", "outofmaxbounds"]) geolocate.on(type, done);
+    map.on("userroute", done);
   });
-  geolocate.trigger();
+  if (!tracking) geolocate.trigger();
   await located;
-  showNearest(poi, checkbox, label);
+  map.off("userroute", cancel);
+  if (!cancelled) showNearest(poi, checkbox, label);
 }
 
 

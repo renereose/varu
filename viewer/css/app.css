@@ -561,13 +561,20 @@ legend { padding: 0; }
   .contact input:first-child { grid-column: 1 / -1; }
 }
 
+.print-only { display: none; }
 @media print {
+  .print-only { display: block; }
+  .ready .no-print-field { display: none; }
+  .plan-print-field { margin-top: .8rem; break-inside: avoid; }
+  .plan-print-field p { margin: .2rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.6em; border-bottom: 1px solid #000; }
   :root { --bg: #fff; --surface: #fff; --ink: #000; --muted: #333; --line: #888; --accent: #000; }
   body { background: #fff; color: #000; font-size: 12pt; }
   .home { max-width: none; padding: 0; }
   .masthead, .ready-tabs { border-bottom: 0; padding-bottom: 0; }
   .ready .back, .ready-tabs, .no-print, #situations, #supplies-clear { display: none !important; }
-  .ready .panel { margin-top: 1.2rem; break-inside: avoid-page; }
+  /* Whole sections run over pages; only small blocks are kept together. */
+  .ready .panel { margin-top: 1.2rem; }
+  .ready .supply-group, .ready .contact { break-inside: avoid; }
   .ready input:not([type="checkbox"]), .ready textarea { border: 0; border-bottom: 1px solid #000; border-radius: 0; padding-left: 0; }
   .contact { grid-template-columns: 1fr 1fr; }
   .supply-group input { accent-color: #000; }

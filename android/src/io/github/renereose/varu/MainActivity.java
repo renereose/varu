@@ -11,6 +11,8 @@ import android.net.LinkProperties;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -395,6 +397,16 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> {
                 File root = new File(target);
                 if (isStorage(root)) startViewer(root); // only folders this app handed out
+            });
+        }
+
+        /** WebView ignores window.print(), so pages call this to open the system print dialog. */
+        @JavascriptInterface
+        public void print() {
+            runOnUiThread(() -> {
+                PrintManager pm = getSystemService(PrintManager.class);
+                if (pm == null) return;
+                pm.print("Varu", web.createPrintDocumentAdapter("Varu"), new PrintAttributes.Builder().build());
             });
         }
 

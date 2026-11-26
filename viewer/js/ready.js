@@ -40,6 +40,11 @@ const sourceLinks = (sources) => (sources ?? []).flatMap((s, i) => [
 const situations = guides.situations ?? [];
 document.getElementById("no-guides").hidden = situations.length > 0;
 const pois = manifest.pois ?? [];
+// Same rule as the library page: topics.json names a book without its edition
+// month, and a topic is only worth a link if one of its books is on this drive.
+const books = await fetch("/api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []);
+const editions = new Set((Array.isArray(books) ? books : []).map((b) => String(b.id).replace(/_\d{4}-\d{2}$/, "")));
+const topicOnDrive = (topic) => (topic.articles ?? []).some((a) => editions.has(a.book));
 const topicById = Object.fromEntries((topics.topics ?? []).map((topic) => [topic.id, topic]));
 
 document.getElementById("situation-list").replaceChildren(...situations.map((s) => {
@@ -55,7 +60,7 @@ document.getElementById("situation-list").replaceChildren(...situations.map((s) 
   }
   for (const id of s.topics ?? []) {
     const topic = topicById[id];
-    if (!topic) continue;
+    if (!topic || !topicOnDrive(topic)) continue;
     links.push(el("a", {
       className: "btn",
       href: `/library/#topic-${encodeURIComponent(id)}`,
@@ -81,7 +86,7 @@ if (supplies) {
   document.getElementById("supplies-intro").textContent = (text.intro ?? "").replace("{days}", supplies.days ?? "");
 
   const saved = readJson(SUPPLIES_KEY, []);
-  const ticked = new Set(Array.isArray(saved) ? saved : []);
+  const ticked = new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : []);
   const boxes = [];
   const count = document.getElementById("supplies-count");
   const refresh = () => {
@@ -118,19 +123,34 @@ if (supplies) {
 
 // ---------- My plan ----------
 
-const plan = readJson(PLAN_KEY, {});
-if (!Array.isArray(plan.contacts)) plan.contacts = [];
+const rawPlan = readJson(PLAN_KEY, {});
+const plan = rawPlan && typeof rawPlan === "object" && !Array.isArray(rawPlan) ? rawPlan : {};
+plan.contacts = Array.isArray(plan.contacts)
+  ? plan.contacts.filter((c) => c && typeof c === "object" && !Array.isArray(c)) : [];
 const save = () => store(PLAN_KEY, JSON.stringify(plan));
 
 for (const field of document.querySelectorAll("[data-key]")) {
-  field.value = plan[field.dataset.key] ?? "";
-  field.addEventListener("input", () => { plan[field.dataset.key] = field.value; save(); });
+  const value = plan[field.dataset.key];
+  field.value = typeof value === "string" ? value : "";
+  field.addEventListener("input", () => { plan[field.dataset.key] = field.value; save(); renderPrintCopy(); });
 }
+
+// Browsers print an input or textarea at its on-screen size and cut off the
+// rest, so the printout uses a plain-text copy of the fields instead.
+const printCopy = document.getElementById("plan-print");
+function renderPrintCopy() {
+  printCopy.replaceChildren(...[...document.querySelectorAll("[data-key]")].map((field) =>
+    el("div", { className: "plan-print-field" },
+      el("strong", { textContent: field.closest("label").querySelector("span").textContent }),
+      el("p", { textContent: field.value }))));
+}
+renderPrintCopy();
+window.addEventListener("beforeprint", renderPrintCopy);
 
 const contactList = document.getElementById("contacts");
 function contactRow(contact) {
-  const name = el("input", { value: contact.name ?? "", placeholder: t(lang, "planName"), autocomplete: "off" });
-  const phone = el("input", { value: contact.phone ?? "", placeholder: t(lang, "planPhone"), type: "tel", autocomplete: "off" });
+  const name = el("input", { value: typeof contact.name === "string" ? contact.name : "", placeholder: t(lang, "planName"), autocomplete: "off" });
+  const phone = el("input", { value: typeof contact.phone === "string" ? contact.phone : "", placeholder: t(lang, "planPhone"), type: "tel", autocomplete: "off" });
   name.setAttribute("aria-label", t(lang, "planName"));
   phone.setAttribute("aria-label", t(lang, "planPhone"));
   const remove = el("button", { type: "button", className: "btn no-print", textContent: "×" });
@@ -157,7 +177,11 @@ contactList.replaceChildren(...plan.contacts.map(contactRow));
 if (!plan.contacts.length) addContact(false);
 document.getElementById("add-contact").addEventListener("click", () => addContact(true));
 
-document.getElementById("print").addEventListener("click", () => window.print());
+document.getElementById("print").addEventListener("click", () => {
+  // The Android app's WebView ignores window.print(); its bridge prints instead.
+  renderPrintCopy();
+  if (window.VaruAndroid?.print) window.VaruAndroid.print(); else window.print();
+});
 
 // The sections are on one page, so a late #plan or #supplies still needs a
 // scroll once the content above it has been built.
