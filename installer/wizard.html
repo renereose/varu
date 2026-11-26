@@ -287,6 +287,7 @@ button:disabled { cursor: default; }
   .choice { padding: 16px; }
   .choice .grow { flex-direction: column; align-items: flex-start; gap: 2px; }
   .choice .grow small { color: var(--muted); font-size: 13px; }
+  .choice .grow input[type=text] { align-self: stretch; }
   .search-row { flex-wrap: wrap; }
   .search-box { flex-basis: calc(100% - 80px); }
   #locate { flex-basis: 100%; }
@@ -908,7 +909,7 @@ function renderTargets(force) {
     const free = partOfStick(v) ? t("freeOfStick", { free: size(v.free), disk: size(v.disk) }) : t("free", { free: size(v.free) });
     return el("li", { className: "card" }, el("label", { className: "choice" }, radio(v.path), icon(volumeIcon(i)),
       el("span", { className: "grow" }, el("strong", { textContent: v.label }),
-        s.state.phone ? el("small", { textContent: free }) : el("span", { className: "tag", textContent: v.fs })),
+        s.state.phone ? el("small", { textContent: free }) : el("span", { className: "tag", textContent: fsName(v.fs) })),
       !s.state.phone && el("span", { className: "size", textContent: free })), formatBox(v));
   });
 
@@ -928,6 +929,8 @@ function renderTargets(force) {
 
 // ---------- formatting a stick that not every computer reads ----------
 
+// The system names a format in lower case: show it as people know it.
+const fsName = (fs) => ({ exfat: "exFAT", msdos: "FAT32", fat32: "FAT32", vfat: "FAT32", ntfs: "NTFS", apfs: "APFS", hfs: "Mac OS Extended" })[fs?.toLowerCase()] ?? fs;
 const portableFS = (fs) => /^(msdos|fat|fat16|fat32|vfat|exfat)$/i.test(fs ?? "");
 // A partition much smaller than its stick: a boot stick, say, made by Rufus.
 const partOfStick = (v) => v.disk > v.total * 1.1;
@@ -944,7 +947,7 @@ function formatBox(v) {
   }
   const box = el("div", { className: "format" });
   const ask = () => {
-    const why = !portableFS(v.fs) ? t("notPortable", { fs: v.fs })
+    const why = !portableFS(v.fs) ? t("notPortable", { fs: fsName(v.fs) })
       : partOfStick(v) ? t("partOfStick", { total: size(v.total), disk: size(v.disk) }) : t("stickFull");
     const button = el("button", { type: "button", className: "btn", textContent: t(portableFS(v.fs) ? "eraseWhole" : "formatButton") });
     button.addEventListener("click", areYouSure);
@@ -1000,7 +1003,7 @@ function choices() {
   return {
     where, volume,
     goesTo: where && [where, kind].filter(Boolean).join(" · "),
-    goesToFull: where && [where, kind && `${kind}${volume.fs ? `, ${volume.fs}` : ""}`].filter(Boolean).join(" · "),
+    goesToFull: where && [where, kind && `${kind}${volume.fs ? `, ${fsName(volume.fs)}` : ""}`].filter(Boolean).join(" · "),
     home: s.home ? t("homeWithin", { name, km: s.radius }) : s.wholeChosen || (s.step > 2 && !s.radius) ? t("whole") : null,
     homeFull: s.home ? t("homeStreets", { name, km: s.radius }) : t("whole"),
     places: s.pois.size ? t("kinds", { n: s.pois.size }) : t("none"),
@@ -1029,7 +1032,7 @@ function renderSummary() {
   const problems = [], warnings = [];
   if (!targetPath()) problems.push(t("p_noTarget"));
   if (plan) {
-    const vars = (p) => ({ detail: p.detail, needed: size(plan.needed), free: size(plan.free) });
+    const vars = (p) => ({ detail: fsName(p.detail), needed: size(plan.needed), free: size(plan.free) });
     plan.problems.forEach((p) => problems.push(STRINGS.en[`p_${p.code}`] ? t(`p_${p.code}`, vars(p)) : p.detail || p.code));
     plan.warnings.forEach((p) => warnings.push(t(`w_${p.code}`, vars(p))));
   }
