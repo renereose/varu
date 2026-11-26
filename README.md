@@ -198,15 +198,19 @@ The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wi
 
 ### The start page
 
-Varu opens to its start page. At the top are three big buttons: **📞 112**,
-**Nearest shelter** (the map, with the route to the closest public shelter) and
-**In an emergency**. Below them: **Maps**, **Library** and **Documents**, and
-when the data was made, so you know how fresh it is. The search box looks
-through every book in the library.
+Varu opens to its start page. On a computer the bar at the top leads to the
+**Map**, the **Library** and the **Emergency guide**; on a phone they are tabs
+at the bottom. The **In an emergency** panel has **Call 112**, **Nearest
+shelter** (the map, with the route to the closest public shelter) and **What
+to do now** (the emergency guide). Below: what is on this device, and the date
+of the map data, so you know how fresh it is. The search box looks through
+every book in the library.
 
-### In an emergency
+### The emergency guide
 
-The **In an emergency** page has four parts:
+The **Emergency guide** has four sections. On a computer the situations are
+listed down the side and the one you pick opens beside them; on a phone they
+are cards, with 112 in a red banner on top.
 
 - **When it happens**: short steps for a power cut, no tap water, no heating,
   phone and internet down, a siren or public warning, taking shelter,
@@ -221,18 +225,22 @@ The **In an emergency** page has four parts:
 - **Home supplies**: a checklist for managing a week on your own. Ticks are
   kept on that device.
 - **My plan**: contacts, meeting places, where documents and medicines are.
-  Kept only on that device: press **Print** and keep a paper copy as well.
+  Kept only on that device: press **Print my plan** and keep a paper copy as
+  well. The printout has the radio frequencies and the supplies list too.
 
 ### The map
 
 <p align="center"><img src="docs/images/en/map.jpg" width="720" alt="The map with its layer list"></p>
 
-- **Layers** (top left) lists what the map can show: shelters, hospitals,
-  water and more. Tick a box to show it, and tap a dot for its name and address.
-- The **◎ button** (top right) shows where you are. Phones use GPS, which
+- **Map layers** (down the side on a computer, at the bottom on a phone) lists
+  what the map can show: shelters, hospitals, water and more. Switch one on to
+  show it, and tap a dot for its name and address.
+- **Find nearest** (under the search box) finds the closest shelter, hospital,
+  water or pharmacy **by road**, not in a straight line, so a river or the sea
+  doesn't send you the long way round. A layer you switch on gets a button
+  there too.
+- The **◎ button** (on the right) shows where you are. Phones use GPS, which
   works without internet. Most computers have no GPS.
-- **Nearest**, next to each layer, finds the closest one **by road**, not in
-  a straight line, so a river or the sea doesn't send you the long way round.
 
 ### Search
 
@@ -276,12 +284,12 @@ a hospital or shelter (**Tartu Ülikooli Kliinikum**).
   </tr>
 </table>
 
-- Opening a book shows its own search page. Type in the box: matching
-  **titles** come first, then **articles that mention your words**, with the
-  words highlighted. The book's front page is one tap below the box.
-- Inside a book, the green bar at the bottom has **Back**, **🔍 Search** (back
-  to that book's search) and **Library**.
-- The **Library** page searches every book at once.
+- The **Library** page searches every book at once; **All books** (on a phone,
+  the buttons under the box) narrows it to one. Matching **titles** come first,
+  then **articles that mention your words**, with the words in bold.
+- **Books on this device**, beside the results, opens a book's front page.
+- Inside a book, the green bar at the bottom has **Back**, **🔍 Search** (search
+  that book) and **Library**.
 - **Survival and DIY** on the Library page lists hand-picked articles by topic:
   first aid, water, food, heat and fire, shelter, power and light,
   communication, hygiene, tools and repair, navigation, hazards and civil
@@ -301,7 +309,7 @@ the internet or an app.
    hotspot), then scan the code with the camera or type the address shown.
 3. **Stop sharing**, or closing Varu, ends it.
 
-On the other devices the map, places, **Nearest**, directions and the library
+On the other devices the map, places, **Find nearest**, directions and the library
 all work. **Show my location** and **live directions** don't: browsers only
 share your location with apps on the device itself or with secure (https)
 sites. On the map, press and hold → **Start here** to say where you are.
@@ -411,7 +419,7 @@ sudo nmcli connection modify Hotspot connection.autoconnect yes
 ```
 Join the *Varu* network and open `http://10.42.0.1:8480/`.
 
-> ℹ️ Shared over Wi-Fi, the map, places, **Nearest**, directions and the
+> ℹ️ Shared over Wi-Fi, the map, places, **Find nearest**, directions and the
 > library all work. **Show my location** and **live directions** don't:
 > browsers only share your location with apps on the device itself or with
 > secure (https) sites. On the map, press and hold → **Start here** to say where you are.

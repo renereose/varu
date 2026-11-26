@@ -198,15 +198,19 @@ kogemata ära ei kustutaks.
 
 ### Avaleht
 
-Varu avaneb avalehega. Üleval on kolm suurt nuppu: **📞 112**, **Lähim
+Varu avaneb avalehega. Arvutis viib ülemine riba **Kaardile**,
+**Raamatukokku** ja **Hädaolukorra juhendisse**, telefonis on need all
+vahekaartidena. Paneelil **Hädaolukorras** on **Helista 112**, **Lähim
 varjumiskoht** (kaart koos teekonnaga lähimasse avalikku varjumiskohta) ja
-**Hädaolukorras**. Nende all on **Kaardid**, **Raamatukogu** ja **Dokumendid**
-ning näha on, millal andmed koostati, et teaksid, kui värsked need on.
-Otsingukast otsib kõigist raamatukogu raamatutest.
+**Mida teha kohe** (hädaolukorra juhend). Allpool on näha, mis selles seadmes
+on, ja kaardiandmete kuupäev, et teaksid, kui värsked need on. Otsingukast
+otsib kõigist raamatukogu raamatutest.
 
-### Hädaolukorras
+### Hädaolukorra juhend
 
-Leheküljel **Hädaolukorras** on neli osa:
+**Hädaolukorra juhendis** on neli osa. Arvutis on olukorrad loendis ja
+valitud olukord avaneb selle kõrval; telefonis on need kaartidena ja 112 on
+üleval punasel ribal.
 
 - **Kui juhtub**: lühikesed sammud elektri-, vee-, kütte- ja sidekatkestuse,
   sireeni ja ohuteate, varjumise, evakueerimise, tulekahju, vingugaasi, tormi,
@@ -220,19 +224,22 @@ Leheküljel **Hädaolukorras** on neli osa:
 - **Kodune varu**: kontrollnimekiri, et nädal aega ise hakkama saada.
   Linnukesed jäävad sellesse seadmesse.
 - **Minu plaan**: kontaktid, kokkusaamiskohad, kus on dokumendid ja ravimid.
-  Jääb ainult sellesse seadmesse: vajuta **Prindi** ja hoia ka paberkoopiat.
+  Jääb ainult sellesse seadmesse: vajuta **Prindi minu plaan** ja hoia ka
+  paberkoopiat. Väljaprindil on ka raadiosagedused ja varude nimekiri.
 
 ### Kaart
 
 <p align="center"><img src="docs/images/et/map.jpg" width="720" alt="Kaart ja kaardikihtide nimekiri"></p>
 
-- **Kihid** (üleval vasakul) näitab, mida kaardil kuvada saab: varjumiskohad,
-  haiglad, joogivesi ja muu. Märgi kast, et kiht nähtavale tuua, ja puuduta
-  täppi, et näha koha nime ja aadressi.
-- **◎ nupp** (üleval paremal) näitab, kus sa oled. Telefon kasutab GPS-i, mis
-  töötab ilma internetita. Enamikus arvutites GPS-i pole.
-- **Lähim**, iga kihi kõrval, leiab lähima koha **mööda teid**, mitte
-  linnulennult, nii et jõgi või meri ei saada sind pikka ringi tegema.
+- **Kaardikihid** (arvutis küljel, telefonis all) näitab, mida kaardil kuvada
+  saab: varjumiskohad, haiglad, joogivesi ja muu. Lülita kiht sisse, et see
+  nähtavale tuua, ja puuduta täppi, et näha koha nime ja aadressi.
+- **Leia lähim** (otsingukasti all) leiab lähima varjumiskoha, haigla,
+  joogivee või apteegi **mööda teid**, mitte linnulennult, nii et jõgi või meri
+  ei saada sind pikka ringi tegema. Iga sisse lülitatud kiht saab sinna ka
+  oma nupu.
+- **◎ nupp** (paremal) näitab, kus sa oled. Telefon kasutab GPS-i, mis töötab
+  ilma internetita. Enamikus arvutites GPS-i pole.
 
 ### Otsing
 
@@ -276,12 +283,13 @@ varjumiskoht (**Tartu Ülikooli Kliinikum**).
   </tr>
 </table>
 
-- Raamat avaneb oma otsinguleheküljega. Kirjuta otsingukasti: esmalt tulevad
-  sobivad **pealkirjad**, siis **artiklid, milles su sõnad esinevad**, ja sõnad
-  on esile tõstetud. Raamatu esileht on kasti all.
-- Raamatu sees on all rohelisel ribal **Tagasi**, **🔍 Otsi** (tagasi selle
-  raamatu otsingusse) ja **Raamatukogu**.
-- **Raamatukogu** leheküljel saab otsida kõigist raamatutest korraga.
+- **Raamatukogu** leheküljel saab otsida kõigist raamatutest korraga; **Kõik
+  raamatud** (telefonis kasti all olevad nupud) piirab otsingu ühe raamatuga.
+  Esmalt tulevad sobivad **pealkirjad**, siis **artiklid, milles su sõnad
+  esinevad**, ja sõnad on rasvases kirjas.
+- **Raamatud selles seadmes**, tulemuste kõrval, avab raamatu esilehe.
+- Raamatu sees on all rohelisel ribal **Tagasi**, **🔍 Otsi** (otsi sellest
+  raamatust) ja **Raamatukogu**.
 - **Ellujäämine ja tee-ise** raamatukogu leheküljel koondab valitud artiklid
   teemade kaupa: esmaabi, vesi, toit, soojus ja tuli, peavari, elekter ja
   valgus, side, hügieen, tööriistad ja parandamine, orienteerumine, ohud ning
@@ -301,7 +309,7 @@ ka iPhone'idele. Neil pole vaja internetti ega äppi.
    kuumkohta), skanni kood kaameraga või sisesta näidatud aadress.
 3. **Lõpeta jagamine** või Varu sulgemine lõpetab jagamise.
 
-Teistes seadmetes töötavad kaart, kohad, **Lähim**, teejuhised ja
+Teistes seadmetes töötavad kaart, kohad, **Leia lähim**, teejuhised ja
 raamatukogu. **Näita minu asukohta** ja **juhised teel** ei tööta: brauserid
 jagavad asukohta ainult sama seadme äppidega või turvaliste (https)
 lehtedega. Vajuta kaardil ja hoia sõrme all → **Alusta siit**, et öelda, kus
@@ -412,7 +420,7 @@ sudo nmcli connection modify Hotspot connection.autoconnect yes
 ```
 Ühendu võrguga *Varu* ja ava `http://10.42.0.1:8480/`.
 
-> ℹ️ WiFi kaudu töötavad kaart, kohad, **Lähim**, teejuhised ja raamatukogu.
+> ℹ️ WiFi kaudu töötavad kaart, kohad, **Leia lähim**, teejuhised ja raamatukogu.
 > **Näita minu asukohta** ja **juhised teel** ei tööta: brauserid jagavad
 > asukohta ainult sama seadme äppidega või turvaliste (https) lehtedega.
 > Vajuta kaardil ja hoia sõrme all → **Alusta siit**, et öelda, kus oled.
