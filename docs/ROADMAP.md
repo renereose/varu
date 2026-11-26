@@ -28,7 +28,16 @@ A first build on a normal internet connection will settle these:
 - [ ] Official guidance for Estonia in `[[documents]]`, once reuse terms are
       confirmed with the publisher.
 - [ ] Crisis radio frequencies page.
-- [ ] A curated practical library: first aid, water, food, heating, repair.
+- [x] A curated practical library: 213 hand-picked articles from Vikipeedia,
+      WikiMed and the post-disaster book in 12 topics (viewer/topics.json),
+      checked against the books in every release.
+- [x] "In an emergency": steps for 13 situations, a home-supplies checklist
+      and a family plan, written for Varu from official Estonian guidance with
+      the sources named (viewer/guides.json). Needs a native speaker's review.
+- [ ] Gaps in the library: Vikipeedia has little practical how-to on treating
+      water at home, keeping warm in a blackout, evacuation and fire safety,
+      and many first-aid articles are stubs. An Estonian first-aid manual or
+      the Rescue Board's crisis leaflet would help, with reuse permission.
 - [ ] Regions for Latvia, Lithuania and Finland.
 - [ ] Several regions on one drive, plus a low-zoom map of the rest of Europe.
       Needs a decision on how the viewer combines map files.

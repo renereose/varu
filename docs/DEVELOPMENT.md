@@ -207,6 +207,18 @@ layers, library list and documents. Run it with `--dry-run` first, then
 Interface text lives in `viewer/js/common.js`. To add a language, add a block
 there and list its code under `languages` in the region file.
 
+Two content files sit next to the pages and ship with the app:
+
+- `viewer/topics.json`: the library's hand-picked survival and DIY articles by
+  topic. A book is named without its edition month (`wikipedia_et_all_maxi`),
+  and a path is the article's address inside the book, not URL-encoded.
+  `go test -run TestTopics ./launcher` checks the file; with
+  `VARU_ZIM_DIR=~/.cache/varu/zim` it also checks every article exists in the
+  books there, which `release.sh` does after indexing them.
+- `viewer/guides.json`: the "In an emergency" steps and home-supplies list,
+  written for Varu from the official sources each entry names. Keep steps in
+  plain words and re-check the sources when they change.
+
 ## Licensing
 
 - **This repository's code** is MIT licensed. See [`LICENSE`](../LICENSE).

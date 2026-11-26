@@ -1,13 +1,16 @@
 // The library page: the books on the drive, and search across all of them:
 // titles first, then articles containing the words (launcher /api/library).
 // At /library/<book>/ the same page searches that one book, with a link to
-// the book's own front page.
+// the book's own front page. Both show hand-picked survival and DIY articles
+// by topic (topics.json) while the search box is empty, and list matching
+// ones first among the results.
 
 import { applyStrings, currentLanguage, loadManifest, t } from "./common.js";
 
-const [manifest, books] = await Promise.all([
+const [manifest, books, topics] = await Promise.all([
   loadManifest(),
   fetch("/api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []),
+  fetch("/topics.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
@@ -37,6 +40,48 @@ if (book) {
   const up = document.querySelector(".back");
   up.href = "/library/";
   up.textContent = t(lang, "library");
+}
+
+// topics.json names a book without its edition month, so a newer edition
+// keeps the links. Articles of books not on this drive are left out.
+const edition = (id) => id.replace(/_\d{4}-\d{2}$/, "");
+const topicName = (topic) => topic[lang] ?? topic.en;
+const picks = (topics.topics ?? []).flatMap((topic) => topic.articles.map((a) => ({
+  ...a, topic, in: books.find((b) => edition(b.id) === a.book),
+}))).filter((a) => a.in && (!book || a.in === book));
+const linkTo = (a) => `/library/${encodeURIComponent(a.in.id)}/${a.path.split("/").map(encodeURIComponent).join("/")}`;
+const topicSection = document.getElementById("topics");
+document.getElementById("topic-list").replaceChildren(...(topics.topics ?? []).map((topic) => {
+  const list = picks.filter((a) => a.topic === topic);
+  return list.length && el("details", { id: `topic-${topic.id}` },
+    el("summary", {}, topicName(topic), " ", el("span", { className: "size", textContent: `${list.length}` })),
+    el("ul", { className: "doc-list" }, ...list.map((a) => el("li", {}, el("a", { href: linkTo(a), textContent: a.title }),
+      ...(book ? [] : [el("span", { className: "size", textContent: a.in.title })])))));
+}).filter(Boolean));
+topicSection.hidden = picks.length === 0;
+
+// /library/#topic-<id> (from the emergency guide) opens that topic.
+function openTopic() {
+  const target = location.hash.startsWith("#topic-") ? document.getElementById(location.hash.slice(1)) : null;
+  if (!target || target.tagName !== "DETAILS") return;
+  target.open = true;
+  target.scrollIntoView();
+}
+openTopic();
+window.addEventListener("hashchange", openTopic);
+
+// Hand-picked articles whose title has every word typed (as a word start,
+// accents ignored: "korge" finds "Kõrge").
+const words = (s) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+function picked(q) {
+  const typed = words(q);
+  const seen = new Set();
+  return picks.filter((a) => {
+    const title = words(a.title);
+    if (!typed.length || !typed.every((w) => title.some((t) => t.startsWith(w))) || seen.has(linkTo(a))) return false;
+    seen.add(linkTo(a));
+    return true;
+  }).slice(0, 5);
 }
 
 const input = document.getElementById("q");
@@ -85,6 +130,7 @@ async function search() {
   history.replaceState(null, "", q ? `?q=${encodeURIComponent(q)}` : location.pathname);
   request?.abort();
   all.hidden = !book || books.length < 2 || !q;
+  topicSection.hidden = picks.length === 0 || !!q;
   all.href = `/library/?q=${encodeURIComponent(q)}`;
   if (!q) {
     hits.replaceChildren();
@@ -95,11 +141,16 @@ async function search() {
   const only = book ? `&book=${encodeURIComponent(book.id)}` : "";
   try {
     const found = await (await fetch(`/api/library/search?q=${encodeURIComponent(q)}${only}`, { signal: request.signal })).json();
-    hits.replaceChildren(...found.hits.map((hit) => el("li", {},
+    const first = picked(q);
+    const shown = new Set(first.map((a) => decodeURIComponent(linkTo(a))));
+    const rest = found.hits.filter((hit) => !shown.has(decodeURIComponent(hit.url)));
+    hits.replaceChildren(...first.map((a) => el("li", {},
+      el("div", {}, el("a", { href: linkTo(a), textContent: a.title })),
+      el("span", { className: "size", textContent: `★ ${topicName(a.topic)}` }))), ...rest.map((hit) => el("li", {},
       el("div", {}, el("a", { href: hit.url, textContent: hit.title }),
         ...(hit.snippet ? [el("p", { className: "snippet" }, ...highlight(hit.snippet, q))] : [])),
       ...(book ? [] : [el("span", { className: "size", textContent: titleOf[hit.book] ?? hit.book })]))));
-    none.hidden = found.hits.length > 0;
+    none.hidden = first.length + rest.length > 0;
     showPreparing(found.preparing);
   } catch (err) {
     if (err.name !== "AbortError") none.hidden = false;
@@ -115,4 +166,4 @@ document.getElementById("search").addEventListener("submit", (event) => {
 });
 input.value = new URLSearchParams(location.search).get("q") ?? "";
 if (input.value) search();
-input.focus();
+input.focus({ preventScroll: true });

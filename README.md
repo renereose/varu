@@ -198,9 +198,27 @@ The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wi
 
 ### The start page
 
-Varu opens to its start page: **Maps**, **Library** and **Documents**. It also
-shows when the data was made, so you know how fresh it is. The search box at
-the top looks through every book in the library.
+Varu opens to its start page. At the top are three big buttons: **📞 112**,
+**Nearest shelter** (the map, with the route to the closest public shelter) and
+**In an emergency**. Below them: **Maps**, **Library** and **Documents**, and
+when the data was made, so you know how fresh it is. The search box looks
+through every book in the library.
+
+### In an emergency
+
+The **In an emergency** page has three parts:
+
+- **When it happens**: short steps for a power cut, no tap water, no heating,
+  phone and internet down, a siren or public warning, taking shelter,
+  evacuation, fire, carbon monoxide, storm, flood, getting lost in the woods
+  and calling 112. Each card links to the nearest place on the map and to
+  articles in the library, and names the official source it is based on
+  (kriis.ee, the Rescue Board, the Ministry of the Interior, the Health Board
+  and the Emergency Response Centre).
+- **Home supplies**: a checklist for managing a week on your own. Ticks are
+  kept on that device.
+- **My plan**: contacts, meeting places, where documents and medicines are.
+  Kept only on that device: press **Print** and keep a paper copy as well.
 
 ### The map
 
@@ -261,6 +279,10 @@ a hospital or shelter (**Tartu Ülikooli Kliinikum**).
 - Inside a book, the green bar at the bottom has **Back**, **🔍 Search** (back
   to that book's search) and **Library**.
 - The **Library** page searches every book at once.
+- **Survival and DIY** on the Library page lists hand-picked articles by topic:
+  first aid, water, food, heat and fire, shelter, power and light,
+  communication, hygiene, tools and repair, navigation, hazards and civil
+  protection. When you search, matching ones come first, marked ★.
 - Longer words also find their other forms: *tallinn* finds *Tallinnas*.
 
 ---

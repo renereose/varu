@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>In an emergency</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="home ready">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow"><a class="back" href="./" data-i18n="back">Back</a></p>
+      <h1 data-i18n="emergencyTitle">In an emergency</h1>
+    </div>
+  </header>
+
+  <nav class="ready-tabs" aria-label="Sections">
+    <a href="#situations" data-i18n="readyWhen">When it happens</a>
+    <a href="#supplies" data-i18n="readySupplies">Home supplies</a>
+    <a href="#plan" data-i18n="readyPlan">My plan</a>
+  </nav>
+
+  <main>
+    <section id="situations" class="panel">
+      <h2 data-i18n="readyWhen">When it happens</h2>
+      <div id="situation-list"></div>
+      <p id="no-guides" class="meta" hidden data-i18n="noGuides">There are no emergency guides on this drive.</p>
+    </section>
+
+    <section id="supplies" class="panel" hidden>
+      <h2 id="supplies-title"></h2>
+      <p id="supplies-intro" class="meta"></p>
+      <p class="supplies-bar">
+        <strong id="supplies-count"></strong>
+        <button type="button" id="supplies-clear" class="btn" data-i18n="clear">Clear</button>
+      </p>
+      <div id="supply-groups"></div>
+      <p id="supplies-sources" class="sources"></p>
+    </section>
+
+    <section id="plan" class="panel">
+      <h2 data-i18n="readyPlan">My plan</h2>
+      <p class="meta" data-i18n="planNote">Saved only on this device. Print it or write it down on paper too.</p>
+      <p class="no-print"><button type="button" id="print" class="btn btn-primary" data-i18n="print">Print</button></p>
+
+      <fieldset class="plan-contacts">
+        <legend data-i18n="planContacts">Family and close contacts</legend>
+        <div id="contacts"></div>
+        <button type="button" id="add-contact" class="btn no-print" data-i18n="planAddContact">Add a contact</button>
+      </fieldset>
+      <label class="plan-field"><span data-i18n="planMeetNear">Meeting place near home</span>
+        <input id="plan-near" data-key="near" autocomplete="off"></label>
+      <label class="plan-field"><span data-i18n="planMeetFar">Meeting place further away</span>
+        <input id="plan-far" data-key="far" autocomplete="off"></label>
+      <label class="plan-field"><span data-i18n="planDocs">Where documents and medicines are kept</span>
+        <textarea id="plan-docs" data-key="docs" rows="3"></textarea></label>
+      <label class="plan-field"><span data-i18n="planNotes">Notes</span>
+        <textarea id="plan-notes" data-key="notes" rows="5"></textarea></label>
+    </section>
+  </main>
+
+  <script type="module" src="js/ready.js"></script>
+</body>
+</html>

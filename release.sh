@@ -46,6 +46,9 @@ for region in $regions; do
   rm -rf "build/$region/maps" "build/$region/pois"
   make release-content REGION="$region"
 done
+# The library's hand-picked articles (viewer/topics.json) must exist in the
+# books just indexed, which sit in the release's download cache.
+(cd launcher && VARU_ZIM_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/varu/zim" go test -count=1 -run TestTopics .)
 ANDROID_KEYSTORE=$keystore ANDROID_KEYSTORE_PASS=$pass make android VERSION="$version"
 
 if [ "$mode" = --dry-run ]; then
