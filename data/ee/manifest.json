@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "region": "ee",
+  "name": {
+    "en": "Varu – Estonia",
+    "et": "Varu – Eesti"
+  },
+  "languages": [
+    "et",
+    "en"
+  ],
+  "built": "2026-11-27T11:14:26Z",
+  "attribution": [
+    "Map data © OpenStreetMap contributors (ODbL). Basemap by Protomaps.",
+    "Library content from Wikipedia and other projects, under their own licences (mostly CC BY-SA).",
+    "Public shelters: Päästeamet, via Maa- ja Ruumiamet.",
+    "Addresses: Maa- ja Ruumiamet, address data system (ADS)."
+  ],
+  "map": {
+    "file": "maps/ee.pmtiles",
+    "bounds": [
+      21.3,
+      57.45,
+      28.3,
+      59.9
+    ],
+    "center": [
+      25.0,
+      58.65
+    ],
+    "zoom": 6.5,
+    "maxzoom": 15,
+    "size": 310471836,
+    "build": "20261126"
+  },
+  "routing": {
+    "file": "maps/ee.graph",
+    "size": 35877298,
+    "source": "https://download.geofabrik.de/europe/estonia/estonia-261124.osm.pbf"
+  },
+  "places": {
+    "file": "maps/ee.places",
+    "size": 9932329,
+    "source": "vv17_20261120_004740.zip"
+  },
+  "pois": [
+    {
+      "id": "shelter",
+      "file": "pois/shelter.geojson",
+      "label": {
+        "en": "Public shelters",
+        "et": "Avalikud varjumiskohad"
+      },
+      "color": "#4e342e",
+      "count": 303,
+      "default": true
+    },
+    {
+      "id": "hospital",
+      "file": "pois/hospital.geojson",
+      "label": {
+        "en": "Hospitals",
+        "et": "Haiglad"
+      },
+      "color": "#c62828",
+      "count": 58,
+      "default": true
+    },
+    {
+      "id": "pharmacy",
+      "file": "pois/pharmacy.geojson",
+      "label": {
+        "en": "Pharmacies",
+        "et": "Apteegid"
+      },
+      "color": "#2e7d32",
+      "count": 480,
+      "default": false
+    },
+    {
+      "id": "water",
+      "file": "pois/water.geojson",
+      "label": {
+        "en": "Drinking water",
+        "et": "Joogivesi"
+      },
+      "color": "#1565c0",
+      "count": 320,
+      "default": true
+    },
+    {
+      "id": "spring",
+      "file": "pois/spring.geojson",
+      "label": {
+        "en": "Springs (boil before drinking)",
+        "et": "Allikad (keeda enne joomist)"
+      },
+      "color": "#00838f",
+      "count": 184,
+      "default": false
+    },
+    {
+      "id": "clinic",
+      "file": "pois/clinic.geojson",
+      "label": {
+        "en": "Clinics and family doctors",
+        "et": "Kliinikud ja perearstid"
+      },
+      "color": "#d84315",
+      "count": 169,
+      "default": false
+    },
+    {
+      "id": "fuel",
+      "file": "pois/fuel.geojson",
+      "label": {
+        "en": "Fuel stations",
+        "et": "Tanklad"
+      },
+      "color": "#ef6c00",
+      "count": 516,
+      "default": false
+    },
+    {
+      "id": "food",
+      "file": "pois/food.geojson",
+      "label": {
+        "en": "Grocery stores",
+        "et": "Toidupoed"
+      },
+      "color": "#6a1b9a",
+      "count": 1226,
+      "default": false
+    },
+    {
+      "id": "police",
+      "file": "pois/police.geojson",
+      "label": {
+        "en": "Police",
+        "et": "Politsei"
+      },
+      "color": "#283593",
+      "count": 62,
+      "default": false
+    },
+    {
+      "id": "rescue",
+      "file": "pois/rescue.geojson",
+      "label": {
+        "en": "Rescue stations",
+        "et": "Päästekomandod"
+      },
+      "color": "#ad1457",
+      "count": 99,
+      "default": false
+    },
+    {
+      "id": "border",
+      "file": "pois/border.geojson",
+      "label": {
+        "en": "Border crossings",
+        "et": "Piiripunktid"
+      },
+      "color": "#37474f",
+      "count": 33,
+      "default": false
+    }
+  ],
+  "library": [],
+  "documents": []
+}

@@ -1,0 +1,1155 @@
+{
+  "situations": [
+    {
+      "id": "power",
+      "et": {
+        "title": "Elektrikatkestus",
+        "steps": [
+          "Kasuta valgustamiseks taskulampi või patareilampi, mitte küünlaid.",
+          "Ära kasuta elektrigeneraatorit siseruumis.",
+          "Lülita elektriseadmed välja.",
+          "Kui katkestusest pole teatatud, helista Elektrilevi rikkenumbrile 1343 või oma võrguettevõttele.",
+          "Säästa telefoni akut: sulge äpid, lülita andmeside välja ja kasuta akusäästurežiimi.",
+          "Ava külmkappi ja sügavkülmikut võimalikult harva, nii säilib toit kauem.",
+          "Kuula uudiseid patarei- või autoraadiost; autos saab ka telefoni laadida.",
+          "Kui kodus hakkama ei saa, mine lähedaste juurde või küsi abi vallalt või linnalt."
+        ]
+      },
+      "en": {
+        "title": "Power cut",
+        "steps": [
+          "Use a torch or battery lamp for light, not candles.",
+          "Never run a generator indoors.",
+          "Switch off your electrical appliances.",
+          "If the cut hasn't been announced, call Elektrilevi's fault line 1343 or your network operator.",
+          "Save phone battery: close apps, turn off mobile data and use power-saving mode.",
+          "Open the fridge and freezer as little as possible so food keeps longer.",
+          "Listen to news on a battery or car radio; the car can charge your phone.",
+          "If you can't cope at home, go to relatives or ask your municipality for help."
+        ]
+      },
+      "topics": [
+        "power",
+        "communication"
+      ],
+      "sources": [
+        {
+          "title": "kriis.ee – Elektrikatkestus",
+          "url": "https://www.kriis.ee/elekter"
+        },
+        {
+          "title": "kriis.ee – Mida teha, kui elekter läheb ära (lihtsas keeles)",
+          "url": "https://www.kriis.ee/elekter-lihtsas-keeles"
+        },
+        {
+          "title": "kriis.ee – Power outage",
+          "url": "https://www.kriis.ee/en/elektricity"
+        },
+        {
+          "title": "kriis.ee – Kuidas käituda tormi korral?",
+          "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kuidas-saan-ise-kriisideks-valmistuda/kuidas-kaituda-tormi-korral"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 12–13",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ],
+      "radio": true
+    },
+    {
+      "id": "water",
+      "et": {
+        "title": "Veekatkestus",
+        "steps": [
+          "Lase torudesse jäänud vesi kohe kraanidest puhastesse nõudesse.",
+          "Jälgi ametlikke teateid, kus ja millal jagatakse joogivett.",
+          "Joomiseks ja toiduks kasuta ainult puhast vett: varutud, pudeli- või keedetud vett.",
+          "Keeda looduslikust veekogust võetud või kaua seisnud vett enne kasutamist 3–5 minutit.",
+          "Keetmise asemel võid vee puhastada ka veepuhastustablettidega.",
+          "Kasuta vett säästlikult ja jäta ära kõik, mis pole hädavajalik.",
+          "Kui tualett ei tööta, vooderda pott mitme prügikotiga ja lisa saepuru või ajalehti.",
+          "Hoia käed puhtad niiskete salvrätikute ja käte desinfitseerimisvahendiga."
+        ]
+      },
+      "en": {
+        "title": "No tap water",
+        "steps": [
+          "Straight away, run the water left in the pipes into clean containers.",
+          "Watch official announcements on where and when drinking water is handed out.",
+          "For drinking and cooking, use only clean water: stored, bottled or boiled.",
+          "Boil lake, river or long-stored water for 3–5 minutes before use.",
+          "Instead of boiling, you can also clean water with purification tablets.",
+          "Use water sparingly and skip anything that isn't essential.",
+          "If the toilet fails, line it with several bin bags and add sawdust or newspaper.",
+          "Keep your hands clean with wet wipes and hand sanitiser."
+        ]
+      },
+      "map": "water",
+      "topics": [
+        "water",
+        "hygiene"
+      ],
+      "sources": [
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 18–19",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        },
+        {
+          "title": "Terviseamet – Joogivesi",
+          "url": "https://terviseamet.ee/keskkonnatervis/vesi/joogivesi"
+        },
+        {
+          "title": "kriis.ee – Elektrikatkestus",
+          "url": "https://www.kriis.ee/elekter"
+        }
+      ]
+    },
+    {
+      "id": "heat",
+      "et": {
+        "title": "Küttekatkestus",
+        "steps": [
+          "Riietu soojalt ja ole koos perega ühes toas – iga inimene annab sooja.",
+          "Sule uksed, aknad ja tuulutusavad ning tõmba ööseks kardinad ette.",
+          "Küta ahju või kaminat ainult ärkvel olles ja kustuta tuli enne magamaminekut.",
+          "Ära sule ahjusiibrit liiga vara – tekib eluohtlik vingugaas.",
+          "Tuuluta tuba lühidalt, kui kasutad soojaks küünlaid või kaminat.",
+          "Lase aeg-ajalt kraanist vett joosta, et torud ära ei külmuks.",
+          "Hoia ühendust üksi elavate eakate lähedaste ja naabritega.",
+          "Kui kodus on liiga külm, mine lähedaste juurde või küsi abi vallalt või linnalt."
+        ]
+      },
+      "en": {
+        "title": "No heating",
+        "steps": [
+          "Dress warmly and stay in one room with your family – every person adds warmth.",
+          "Close doors, windows and vents, and draw the curtains at night.",
+          "Only light the stove or fireplace while awake; put it out before bed.",
+          "Don't close the stove damper too early – it creates deadly carbon monoxide.",
+          "Air the room briefly if you use candles or a fireplace for warmth.",
+          "Let the tap run a little now and then so the pipes don't freeze.",
+          "Keep in touch with elderly relatives and neighbours who live alone.",
+          "If it's too cold at home, go to relatives or ask your municipality for help."
+        ]
+      },
+      "topics": [
+        "heat",
+        "hazards"
+      ],
+      "sources": [
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 16–17, 42",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        },
+        {
+          "title": "Päästeamet – Pakane",
+          "url": "https://www.rescue.ee/et/juhend/ilmastikust-tingitud-haedaolukorrad/pakane"
+        },
+        {
+          "title": "Päästeamet ja TTJA – vingugaas.ee",
+          "url": "https://www.vingugaas.ee/"
+        }
+      ]
+    },
+    {
+      "id": "communication",
+      "et": {
+        "title": "Sidekatkestus",
+        "steps": [
+          "Hädaabi vajades helista 112 ka siis, kui telefonil pole levi.",
+          "Kui kõne ei õnnestu, mine õue või kõrgemasse kohta.",
+          "Seejärel eemalda SIM-kaart või taaskäivita telefon ja helista 112 PIN-koodi sisestamata.",
+          "Kui helistada ei saa, saada 112-le SMS aadressi ja abivajaduse kirjeldusega.",
+          "Kui side puudub, mine abi saamiseks lähimasse päästekomandosse, politseisse või kiirabisse.",
+          "Säästa akut: lülita WiFi, mobiilne andmeside ja Bluetooth välja.",
+          "Kuula raadiost uudiseid täistundidel; raadio töötab ka autos.",
+          "Kui lähedastega ühendust ei saa, mine kokkulepitud kohtumispaika."
+        ]
+      },
+      "en": {
+        "title": "Phone and internet down",
+        "steps": [
+          "If you need emergency help, call 112 even if your phone shows no signal.",
+          "If the call fails, go outside or to higher ground.",
+          "Then remove the SIM card or restart the phone, and call 112 without the PIN.",
+          "If you can't call, text 112 with the address and what help is needed.",
+          "If there's no connection at all, go to the nearest rescue, police or ambulance station.",
+          "Save battery: turn off Wi-Fi, mobile data and Bluetooth.",
+          "Listen to the radio news on the hour; a car radio works too.",
+          "If you can't reach your family, go to your agreed meeting place."
+        ]
+      },
+      "map": "rescue",
+      "topics": [
+        "communication"
+      ],
+      "sources": [
+        {
+          "title": "kriis.ee – Sidekatkestus",
+          "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kriisideks-valmistumine-eestis/sidekatkestus"
+        },
+        {
+          "title": "Häirekeskus – Aita ennast ja teisi",
+          "url": "https://www.112.ee/et/juhend/aita-ennast-ja-teisi"
+        },
+        {
+          "title": "Häirekeskus – Hädaabinumber 112",
+          "url": "https://www.112.ee/et/juhend/hadaabinumber-112"
+        },
+        {
+          "title": "Häirekeskus – SMS-112",
+          "url": "https://www.112.ee/et/juhend/arendused/sms-112"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 20–21",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ],
+      "radio": true
+    },
+    {
+      "id": "warning",
+      "et": {
+        "title": "Ohuteade ja sireen",
+        "steps": [
+          "Kui kuuled sireeni, mine kohe lähimasse hoonesse.",
+          "Sule uksed, aknad ja ventilatsioon.",
+          "Alles siis otsi infot raadiost, ERR-ist, kriis.ee-st või infotelefonilt 1247.",
+          "Loe EE-ALARMi sõnum läbi ja tee täpselt nii, nagu seal öeldakse.",
+          "Kahtlase hoiatuse ehtsust kontrolli kriis.ee-st või muust ametlikust kanalist.",
+          "Anna hoiatusest teada ka teistele ohualas viibijatele.",
+          "Püsi siseruumis, kuni saad teate, et oht on möödas.",
+          "Pea meeles: ohusireen on minutipikkune tõusev ja langev heli, mis kordub vähemalt kolm korda."
+        ]
+      },
+      "en": {
+        "title": "Siren or public warning",
+        "steps": [
+          "If you hear a siren, go into the nearest building at once.",
+          "Close doors, windows and ventilation.",
+          "Only then look for information: radio, ERR, kriis.ee or the 1247 helpline.",
+          "Read the EE-ALARM message and do exactly what it says.",
+          "Check a doubtful warning on kriis.ee or another official channel.",
+          "Pass the warning on to others in the danger area.",
+          "Stay indoors until you are told the danger has passed.",
+          "Remember: the siren is a one-minute rising and falling tone, repeated at least three times."
+        ]
+      },
+      "map": "shelter",
+      "topics": [
+        "civil-protection"
+      ],
+      "sources": [
+        {
+          "title": "kriis.ee – Ohuteavitus (EE-ALARM)",
+          "url": "https://www.kriis.ee/ohuteavitus"
+        },
+        {
+          "title": "kriis.ee – Threat alert (EE-ALARM)",
+          "url": "https://www.kriis.ee/en/preparing-possible-crisis/prepraring-possible-crisis-estonia/threat-alert"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 26–27",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ],
+      "radio": true
+    },
+    {
+      "id": "shelter",
+      "et": {
+        "title": "Varjumine",
+        "steps": [
+          "Kodus või tööl jää hoonesse ja mine keldrisse või akendeta ruumi.",
+          "Tänaval mine lähimasse hoonesse või varjumiskohta (oranž silt sinise kolmnurgaga).",
+          "Vali ruum, kus sinu ja välisõhu vahel on vähemalt kaks seina.",
+          "Sule uksed, aknad ja ventilatsioon.",
+          "Hoia akendest eemale; vajadusel poe klaasikildude eest laua alla.",
+          "Võta kaasa patareiraadio ja telefon koos laadija või akupangaga.",
+          "Kui hoonesse ei jõua, kükita või heida pikali millegi taha või lohku.",
+          "Püsi varjus ja järgi juhiseid, kuni teatatakse, et oht on möödas."
+        ]
+      },
+      "en": {
+        "title": "Taking shelter",
+        "steps": [
+          "At home or work, stay inside and go to a basement or windowless room.",
+          "On the street, go to the nearest building or public shelter (orange sign, blue triangle).",
+          "Pick a room with at least two walls between you and the outside.",
+          "Close doors, windows and ventilation.",
+          "Keep away from windows; if needed, get under a table to shield you from glass.",
+          "Take a battery radio and your phone with a charger or power bank.",
+          "If you can't get inside, crouch or lie down behind something or in a dip.",
+          "Stay sheltered and follow instructions until you are told the danger is over."
+        ]
+      },
+      "map": "shelter",
+      "topics": [
+        "shelter",
+        "civil-protection"
+      ],
+      "sources": [
+        {
+          "title": "kriis.ee – Varjumine ja varjumiskohad",
+          "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kriisideks-valmistumine-eestis/varjumine-ja-varjumiskohad"
+        },
+        {
+          "title": "Päästeamet – Avalikud varjumiskohad",
+          "url": "https://www.rescue.ee/et/juhend/avalikud-varjumiskohad"
+        },
+        {
+          "title": "kriis.ee – Threat alert (EE-ALARM)",
+          "url": "https://www.kriis.ee/en/preparing-possible-crisis/prepraring-possible-crisis-estonia/threat-alert"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 32–33",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ],
+      "radio": true
+    },
+    {
+      "id": "evacuation",
+      "et": {
+        "title": "Evakueerimine",
+        "steps": [
+          "Järgi ametkondade juhiseid ja sõida ainult teid mööda, mida politsei lubab.",
+          "Kui saad, peatu lähedaste juures – lemmikloomi evakuatsioonikohta ei lubata.",
+          "Võta kaasa enda ja laste dokumendid, pangakaart, sularaha ning telefon laadijaga.",
+          "Paki ravimid, vesi ja valmistamist mittevajav toit vähemalt üheks ööpäevaks.",
+          "Üle 12 tunni kestva evakuatsiooni puhul võta ka magamisasjad, lisariided ja kuni kolme päeva toit.",
+          "Lahkudes lülita elekter välja, sulge aknad ja lukusta uksed.",
+          "Teavita naabreid ja paku neile abi; kui ise abi vajad, ütle evakueerijatele.",
+          "Ära mine koju tagasi enne ametlikku teadet, et see on ohutu."
+        ]
+      },
+      "en": {
+        "title": "Evacuation",
+        "steps": [
+          "Follow the authorities' instructions and use only roads the police allow.",
+          "If you can, stay with relatives – pets are not allowed in evacuation centres.",
+          "Take your and your children's ID, a bank card, cash and your phone with charger.",
+          "Pack medicines, water and ready-to-eat food for at least one day.",
+          "For over 12 hours away, also take bedding, spare clothes and up to three days' food.",
+          "When you leave, switch off the electricity, close the windows and lock the doors.",
+          "Tell your neighbours and offer help; if you need help yourself, tell the evacuation staff.",
+          "Don't go home until officials say it is safe."
+        ]
+      },
+      "topics": [
+        "civil-protection"
+      ],
+      "sources": [
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 28–31",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "et": {
+        "title": "Tulekahju kodus",
+        "steps": [
+          "Lahku kohe hoonest ja vii teised kaasa.",
+          "Helista 112 esimesel võimalusel.",
+          "Suitsus liigu põranda lähedal ja kata suu ja nina märja riidega.",
+          "Ära kasuta lifti.",
+          "Ära hakka suurt tuld kustutama ega asju päästma – elu on tähtsam.",
+          "Kui trepikoda on suitsu täis, jää korterisse ja sule uks.",
+          "Topi ukse praod riietega kinni ja anna aknast või rõdult endast märku.",
+          "Õues olles ütle päästjatele, kas hoonesse jäi veel inimesi."
+        ]
+      },
+      "en": {
+        "title": "Fire at home",
+        "steps": [
+          "Get out of the building at once and take others with you.",
+          "Call 112 as soon as you can.",
+          "In smoke, stay low and cover your mouth and nose with a wet cloth.",
+          "Don't use the lift.",
+          "Don't fight a big fire or save belongings – your life matters more.",
+          "If the stairwell is full of smoke, stay in your flat and close the door.",
+          "Stuff clothes into the gaps around the door and signal from a window or balcony.",
+          "Once outside, tell the rescuers whether anyone is still inside."
+        ]
+      },
+      "topics": [
+        "hazards",
+        "first-aid"
+      ],
+      "sources": [
+        {
+          "title": "Päästeamet, kodutuleohutuks.ee – Kuidas tulekahju korral käituda",
+          "url": "https://kodutuleohutuks.ee/kaitumine-tulekahju-korral/"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 50–51",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        },
+        {
+          "title": "Päästeamet – Suitsuandur",
+          "url": "https://www.rescue.ee/et/suitsuandur"
+        }
+      ]
+    },
+    {
+      "id": "co",
+      "et": {
+        "title": "Vingugaas",
+        "steps": [
+          "Ava kohe aknad ja uksed ning tuuluta põhjalikult.",
+          "Vii kõik inimesed värske õhu kätte.",
+          "Kui kellelgi on peavalu, pearinglus, iiveldus või oksendamine, helista 112.",
+          "Lülita välja kõik kütust põletavad seadmed või ava ahjusiiber.",
+          "Enne seadme uuesti kasutamist lase spetsialistil rike leida ja kõrvaldada.",
+          "Pea meeles: vingugaasil pole lõhna, maitset ega värvi.",
+          "Ära kasuta generaatorit siseruumis ega sule ahjusiibrit liiga vara.",
+          "Paigalda vingugaasiandur, kui kodus on ahi, kamin või gaasiseade."
+        ]
+      },
+      "en": {
+        "title": "Carbon monoxide",
+        "steps": [
+          "Open windows and doors at once and air the place thoroughly.",
+          "Get everyone out into fresh air.",
+          "If anyone has a headache, dizziness, nausea or is vomiting, call 112.",
+          "Turn off everything that burns fuel, or open the stove damper.",
+          "Before using the appliance again, have a qualified technician find and fix the fault.",
+          "Remember: carbon monoxide has no smell, taste or colour.",
+          "Never run a generator indoors or close the stove damper too early.",
+          "Fit a carbon monoxide alarm if you have a stove, fireplace or gas appliance."
+        ]
+      },
+      "topics": [
+        "hazards",
+        "heat"
+      ],
+      "sources": [
+        {
+          "title": "Päästeamet ja TTJA – vingugaas.ee",
+          "url": "https://www.vingugaas.ee/"
+        },
+        {
+          "title": "Päästeamet, kodutuleohutuks.ee – Nähtamatu vaenlane – vingugaas",
+          "url": "https://kodutuleohutuks.ee/vingugaas/"
+        },
+        {
+          "title": "Päästeamet – Pakane",
+          "url": "https://www.rescue.ee/et/juhend/ilmastikust-tingitud-haedaolukorrad/pakane"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 12",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ]
+    },
+    {
+      "id": "storm",
+      "et": {
+        "title": "Torm",
+        "steps": [
+          "Korja õuest kokku asjad, mida tuul võib minema viia.",
+          "Pargi auto lagedale või garaaži, mitte suurte puude alla.",
+          "Lae telefon ja akupank täis ning varu joogivett ja toitu.",
+          "Sule uksed ja aknad ning püsi koos lemmikloomadega toas.",
+          "Ära sõida autoga, kui see pole vältimatu.",
+          "Hoia eemale mahakukkunud elektriliinidest ja teata neist numbril 1343.",
+          "Elektri kadudes kasuta taskulampi, mitte küünlaid.",
+          "Vigastuste või otsese ohu korral helista 112, muude küsimustega 1247."
+        ]
+      },
+      "en": {
+        "title": "Storm",
+        "steps": [
+          "Bring in anything from the yard that the wind could blow away.",
+          "Park the car in the open or in a garage, not under big trees.",
+          "Charge your phone and power bank, and store drinking water and food.",
+          "Close doors and windows and stay indoors with your pets.",
+          "Don't drive unless you really must.",
+          "Keep away from fallen power lines and report them on 1343.",
+          "If the power goes, use a torch, not candles.",
+          "Call 112 for injuries or immediate danger; call 1247 for other questions."
+        ]
+      },
+      "topics": [
+        "hazards",
+        "power"
+      ],
+      "sources": [
+        {
+          "title": "kriis.ee – Kuidas käituda tormi korral?",
+          "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kuidas-saan-ise-kriisideks-valmistuda/kuidas-kaituda-tormi-korral"
+        },
+        {
+          "title": "Päästeamet – Torm",
+          "url": "https://www.rescue.ee/et/juhend/ilmastikust-tingitud-haedaolukorrad"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 40–41",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ]
+    },
+    {
+      "id": "flood",
+      "et": {
+        "title": "Üleujutus",
+        "steps": [
+          "Lahku enne, kui vesi sinu koduni jõuab, ja kasuta kuivi teid.",
+          "Lülita elekter välja, kui vesi võib jõuda elektrisüsteemini.",
+          "Vii väärtuslikud asjad ja kemikaalid maapinnast kõrgemale.",
+          "Kui vesi tungib majja, mine ülemisele korrusele, pööningule või katusele.",
+          "Võta kaasa telefon, patareiraadio, tekid, ravimid, toit ja joogivesi.",
+          "Ära kõnni ega sõida üleujutatud alale ja hoia eemale elektrikaablitest.",
+          "Abi vajades helista 112 ja tee end päästjatele nähtavaks või kuuldavaks.",
+          "Pärast üleujutust ära söö toitu, mis sai üleujutuses kahjustada."
+        ]
+      },
+      "en": {
+        "title": "Flood",
+        "steps": [
+          "Leave before the water reaches your home, using roads that are still dry.",
+          "Switch off the electricity if water could reach the wiring.",
+          "Move valuables and chemicals up off the ground.",
+          "If water gets into the house, go upstairs, to the attic or onto the roof.",
+          "Take your phone, a battery radio, blankets, medicines, food and drinking water.",
+          "Don't walk or drive into flooded areas, and keep away from electric cables.",
+          "If you need help, call 112 and make sure rescuers can see or hear you.",
+          "After the flood, don't eat food that was damaged by the water."
+        ]
+      },
+      "topics": [
+        "hazards",
+        "water"
+      ],
+      "sources": [
+        {
+          "title": "Päästeamet – Üleujutus",
+          "url": "https://www.rescue.ee/et/juhend/ilmastikust-tingitud-haedaolukorrad/uleujutus"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 46–49",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        }
+      ],
+      "radio": true
+    },
+    {
+      "id": "lost",
+      "et": {
+        "title": "Metsas eksimine",
+        "steps": [
+          "Kui oled eksinud, helista 112 – kahtluse korral helista ikkagi.",
+          "Kirjelda oma asukohta nii täpselt, kui suudad.",
+          "Lülita telefonis asukohateenus sisse ja loe koordinaadid päästekorraldajale ette.",
+          "Järgi päästekorraldaja juhiseid ja ära katkesta kõnet enne luba.",
+          "Kui levi pole, mine kõrgemale kohale või eemalda SIM-kaart.",
+          "Säästa telefoni akut ja hoia liin vaba, et sulle saaks tagasi helistada.",
+          "Pimedas suuna telefoni ekraan või taskulamp taeva poole, et kopter või droon sind näeks.",
+          "Metsa minnes võta alati kaasa täis laetud telefon."
+        ]
+      },
+      "en": {
+        "title": "Lost in the woods",
+        "steps": [
+          "If you are lost, call 112 – if in doubt, call anyway.",
+          "Describe where you are as precisely as you can.",
+          "Turn on location on your phone and read your coordinates to the dispatcher.",
+          "Follow the dispatcher's instructions and don't hang up until told.",
+          "If there's no signal, go to higher ground or remove the SIM card.",
+          "Save phone battery and keep the line free so you can be called back.",
+          "In the dark, shine your phone screen or torch at the sky for helicopters and drones.",
+          "When you go into the forest, always take a fully charged phone."
+        ]
+      },
+      "topics": [
+        "navigation"
+      ],
+      "sources": [
+        {
+          "title": "Politsei- ja Piirivalveamet – PPA kopterimeeskond leidis metsa eksinud mehe (05.09.2025)",
+          "url": "https://www.politsei.ee/et/uudised/ppa-kopterimeeskond-leidis-metsa-eksinud-mehe-12939"
+        },
+        {
+          "title": "Häirekeskus – Hädaabinumber 112",
+          "url": "https://www.112.ee/et/juhend/hadaabinumber-112"
+        },
+        {
+          "title": "Häirekeskus – Kuidas määrata oma asukohta",
+          "url": "https://www.112.ee/et/juhend/aita-ennast-ja-teisi/kuidas-maarata-oma-asukohta"
+        },
+        {
+          "title": "kriis.ee – Sidekatkestus",
+          "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kriisideks-valmistumine-eestis/sidekatkestus"
+        }
+      ]
+    },
+    {
+      "id": "call-112",
+      "et": {
+        "title": "Abi kutsumine (112)",
+        "steps": [
+          "Veendu esmalt, et sa ise ohtu ei satu.",
+          "Helista kõigepealt 112 või palu kõrvalseisjal helistada.",
+          "Ütle kohe alguses, mis juhtus ja kas keegi on viga saanud.",
+          "Anna võimalikult täpne aadress või kirjelda, kus sa oled.",
+          "Vasta küsimustele lühidalt – abi saadetakse teele juba kõne ajal.",
+          "Ära katkesta kõnet enne, kui päästekorraldaja seda lubab.",
+          "Lülita telefon valjuhääldile ja aita kannatanut päästekorraldaja juhiste järgi.",
+          "Pärast kõnet hoia liin vaba; kui olukord muutub, helista uuesti."
+        ]
+      },
+      "en": {
+        "title": "Calling for help (112)",
+        "steps": [
+          "First make sure you are not putting yourself in danger.",
+          "Call 112 before anyone else, or ask someone nearby to call.",
+          "Say straight away what happened and whether anyone is hurt.",
+          "Give the exact address, or describe where you are.",
+          "Answer the questions briefly – help is sent while you are still talking.",
+          "Don't hang up until the dispatcher says you can.",
+          "Put the phone on speaker and help the person as the dispatcher tells you.",
+          "Afterwards keep the line free; if things change, call 112 again."
+        ]
+      },
+      "map": "hospital",
+      "topics": [
+        "first-aid"
+      ],
+      "sources": [
+        {
+          "title": "Häirekeskus – Hädaabinumber 112",
+          "url": "https://www.112.ee/et/juhend/hadaabinumber-112"
+        },
+        {
+          "title": "Häirekeskus – Aita ennast ja teisi",
+          "url": "https://www.112.ee/et/juhend/aita-ennast-ja-teisi"
+        },
+        {
+          "title": "Päästeamet, kodutuleohutuks.ee – Helistamine hädaabinumbrile",
+          "url": "https://kodutuleohutuks.ee/helistamine-hadaabinumbrile/"
+        },
+        {
+          "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 34–37",
+          "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+        },
+        {
+          "title": "Terviseamet – Esmaabi",
+          "url": "https://terviseamet.ee/tervishoiukorraldus/esmaabi"
+        }
+      ]
+    }
+  ],
+  "supplies": {
+    "days": 7,
+    "et": {
+      "title": "Kodune varu",
+      "intro": "Varu end nii, et saaksid nädal aega iseseisvalt hakkama: kriisis võivad elekter, vesi, side ja poed katkeda ning abi võib tulla hiljem. Uuenda varusid regulaarselt ja jälgi säilivusaegu."
+    },
+    "en": {
+      "title": "Home supplies",
+      "intro": "Be ready to cope on your own for a week: in a crisis, power, water, phones and shops may stop and help may come late. Refresh your supplies regularly and check expiry dates."
+    },
+    "groups": [
+      {
+        "id": "water",
+        "et": "Vesi",
+        "en": "Water",
+        "items": [
+          {
+            "id": "water-drink",
+            "et": "Joogivesi: 2 liitrit inimese kohta päevas",
+            "en": "Drinking water: 2 litres per person per day"
+          },
+          {
+            "id": "water-cook",
+            "et": "Vesi toiduks: lisaks 1 liiter inimese kohta päevas",
+            "en": "Water for cooking: another 1 litre per person per day"
+          },
+          {
+            "id": "water-week",
+            "et": "Kokku nädalaks: 21 liitrit inimese kohta",
+            "en": "For a week: 21 litres per person in total"
+          },
+          {
+            "id": "water-containers",
+            "et": "Puhtad suletavad nõud kraanivee varumiseks",
+            "en": "Clean containers with lids for storing tap water"
+          },
+          {
+            "id": "water-tablets",
+            "et": "Veepuhastustabletid või veefilter",
+            "en": "Water purification tablets or a water filter"
+          }
+        ]
+      },
+      {
+        "id": "food",
+        "et": "Toit",
+        "en": "Food",
+        "items": [
+          {
+            "id": "food-week",
+            "et": "Toiduvaru kogu perele vähemalt nädalaks",
+            "en": "Food for the whole household for at least a week"
+          },
+          {
+            "id": "food-nocook",
+            "et": "Vähemalt pool toidust ei tohiks vajada külmkappi ega soojendamist",
+            "en": "At least half the food should need no fridge or cooking"
+          },
+          {
+            "id": "food-tins",
+            "et": "Konservid: kala, liha, köögivili, puuvili, supid",
+            "en": "Tins: fish, meat, vegetables, fruit, soups"
+          },
+          {
+            "id": "food-dry",
+            "et": "Kuivikud, küpsised, pähklid, kuivatatud puuviljad",
+            "en": "Crackers, biscuits, nuts, dried fruit"
+          },
+          {
+            "id": "food-quick",
+            "et": "Pakisupid, püreepulbrid ja helbed",
+            "en": "Packet soups, instant mash and flakes"
+          },
+          {
+            "id": "food-sweet",
+            "et": "Halvaa, kommid, mesi ja müslibatoonid",
+            "en": "Halva, sweets, honey and cereal bars"
+          },
+          {
+            "id": "food-baby",
+            "et": "Beebitoit, kui peres on väikelaps",
+            "en": "Baby food, if you have a small child"
+          },
+          {
+            "id": "food-pet",
+            "et": "Lemmikloomatoit",
+            "en": "Pet food"
+          }
+        ]
+      },
+      {
+        "id": "medicine",
+        "et": "Ravimid ja esmaabi",
+        "en": "Medicines and first aid",
+        "items": [
+          {
+            "id": "med-rx",
+            "et": "Retseptiravimid vähemalt üheks kuuks",
+            "en": "Prescription medicines for at least one month"
+          },
+          {
+            "id": "med-pain",
+            "et": "Valuvaigistid ja palavikualandajad nädalaks",
+            "en": "Painkillers and fever reducers for a week"
+          },
+          {
+            "id": "med-other",
+            "et": "Allergia-, külmetus- ja seedehäirete ravimid nädalaks",
+            "en": "Allergy, cold and stomach medicines for a week"
+          },
+          {
+            "id": "med-kit",
+            "et": "Esmaabikomplekt: sidemed, plaastrid, haavade ja põletuste vahendid",
+            "en": "First-aid kit: bandages, plasters, wound and burn care"
+          },
+          {
+            "id": "med-mask",
+            "et": "Tolmumask hingamisteede kaitseks",
+            "en": "Dust mask to protect your breathing"
+          }
+        ]
+      },
+      {
+        "id": "light",
+        "et": "Valgus, raadio ja side",
+        "en": "Light, radio and phone",
+        "items": [
+          {
+            "id": "torch",
+            "et": "Taskulamp ja varupatareid",
+            "en": "Torch and spare batteries"
+          },
+          {
+            "id": "lamp",
+            "et": "Patareilamp või latern toa valgustamiseks",
+            "en": "Battery lamp or lantern to light a room"
+          },
+          {
+            "id": "candles",
+            "et": "Küünlad ja tikud",
+            "en": "Candles and matches"
+          },
+          {
+            "id": "radio",
+            "et": "Raadio, mis töötab patareide, vända või päikesepaneeliga",
+            "en": "Radio that runs on batteries, a crank or solar power"
+          },
+          {
+            "id": "powerbank",
+            "et": "Täis laetud akupank",
+            "en": "Fully charged power bank"
+          },
+          {
+            "id": "car-charger",
+            "et": "Telefoni autolaadija",
+            "en": "Car charger for your phone"
+          },
+          {
+            "id": "phone-list",
+            "et": "Tähtsad telefoninumbrid paberil",
+            "en": "Important phone numbers written on paper"
+          }
+        ]
+      },
+      {
+        "id": "heat",
+        "et": "Soojus ja söögitegemine",
+        "en": "Heat and cooking without power",
+        "items": [
+          {
+            "id": "stove",
+            "et": "Matkapliit või priimus koos kütusega vee ja toidu soojendamiseks",
+            "en": "Camping stove with fuel to heat water and food"
+          },
+          {
+            "id": "heater",
+            "et": "Vähemalt üks elektrist sõltumatu kütteseade",
+            "en": "At least one heater that works without electricity"
+          },
+          {
+            "id": "heating-fuel",
+            "et": "Küttematerjal vähemalt üheks nädalaks",
+            "en": "Heating fuel for at least a week"
+          },
+          {
+            "id": "dishes",
+            "et": "Ühekordsed nõud ja konserviavaja",
+            "en": "Disposable plates and cups and a tin opener"
+          },
+          {
+            "id": "extinguisher",
+            "et": "Tulekustuti ja tulekustutustekk",
+            "en": "Fire extinguisher and fire blanket"
+          },
+          {
+            "id": "alarms",
+            "et": "Töökorras suitsuandur; ahju, kamina või gaasiseadme korral ka vingugaasiandur",
+            "en": "Working smoke alarm; with a stove, fireplace or gas appliance also a carbon monoxide alarm"
+          }
+        ]
+      },
+      {
+        "id": "hygiene",
+        "et": "Hügieen",
+        "en": "Hygiene",
+        "items": [
+          {
+            "id": "soap",
+            "et": "Seep ja käte desinfitseerimisvahend",
+            "en": "Soap and hand sanitiser"
+          },
+          {
+            "id": "wipes",
+            "et": "Niisked salvrätikud",
+            "en": "Wet wipes"
+          },
+          {
+            "id": "paper",
+            "et": "Tualett- ja majapidamispaber",
+            "en": "Toilet paper and kitchen roll"
+          },
+          {
+            "id": "bin-bags",
+            "et": "Suured prügikotid (50 l), ka kuivkäimla jaoks",
+            "en": "Large bin bags (50 l), also for a makeshift toilet"
+          },
+          {
+            "id": "absorbent",
+            "et": "Saepuru, turvas või ajalehed kuivkäimla jaoks",
+            "en": "Sawdust, peat or newspaper for a makeshift toilet"
+          },
+          {
+            "id": "special-hygiene",
+            "et": "Laste, eakate ja erivajadustega pereliikmete hügieenitarbed",
+            "en": "Hygiene items for children, older or disabled family members"
+          }
+        ]
+      },
+      {
+        "id": "other",
+        "et": "Raha ja muu",
+        "en": "Cash and other",
+        "items": [
+          {
+            "id": "cash",
+            "et": "Sularaha nädala hädavajalikeks kuludeks",
+            "en": "Cash for a week of essential spending"
+          },
+          {
+            "id": "car-fuel",
+            "et": "Auto kütusepaak vähemalt pooleldi täis",
+            "en": "Car fuel tank at least half full"
+          },
+          {
+            "id": "tools",
+            "et": "Taskunuga, käärid, kleeplint ja kile",
+            "en": "Pocket knife, scissors, tape and plastic sheeting"
+          },
+          {
+            "id": "documents",
+            "et": "Kehtivad dokumendid – uuenda need aegsasti",
+            "en": "Valid ID documents – renew them in good time"
+          }
+        ]
+      },
+      {
+        "id": "go-bag",
+        "et": "Evakuatsioonikott",
+        "en": "Grab bag",
+        "items": [
+          {
+            "id": "bag-docs",
+            "et": "Isikut tõendavad dokumendid, ka laste omad",
+            "en": "ID documents, including the children's"
+          },
+          {
+            "id": "bag-money",
+            "et": "Pangakaart ja sularaha",
+            "en": "Bank card and cash"
+          },
+          {
+            "id": "bag-phone",
+            "et": "Telefon, laadija ja akupank",
+            "en": "Phone, charger and power bank"
+          },
+          {
+            "id": "bag-food",
+            "et": "Vesi ja valmistamist mittevajav toit vähemalt üheks ööpäevaks",
+            "en": "Water and ready-to-eat food for at least one day"
+          },
+          {
+            "id": "bag-med",
+            "et": "Ravimid ja esmaabivahendid",
+            "en": "Medicines and first-aid supplies"
+          },
+          {
+            "id": "bag-light",
+            "et": "Taskulamp, kaasaskantav raadio ja varupatareid",
+            "en": "Torch, portable radio and spare batteries"
+          },
+          {
+            "id": "bag-sleep",
+            "et": "Magamiskott või tekk ning ilmale sobivad riided",
+            "en": "Sleeping bag or blanket and clothes for the weather"
+          },
+          {
+            "id": "bag-hygiene",
+            "et": "Hambahari ja muud hügieenitarbed",
+            "en": "Toothbrush and other toiletries"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 18–19, 22–25, 28–31",
+        "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+      },
+      {
+        "title": "kriis.ee – Kuidas saan ise kriisideks valmistuda?",
+        "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kuidas-saan-ise-kriisideks-valmistuda"
+      },
+      {
+        "title": "kriis.ee – How can I prepare for possible crises?",
+        "url": "https://www.kriis.ee/en/security-situation-europe/preparing-possible-crises/how-can-i-prepare-possible-crises"
+      },
+      {
+        "title": "kriis.ee – Elektrikatkestus",
+        "url": "https://www.kriis.ee/elekter"
+      },
+      {
+        "title": "kriis.ee – Mida teha, kui elekter läheb ära (lihtsas keeles)",
+        "url": "https://www.kriis.ee/elekter-lihtsas-keeles"
+      },
+      {
+        "title": "kriis.ee – Maksed ja sularaha",
+        "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kriisideks-valmistumine-eestis/maksed-ja-sularaha"
+      },
+      {
+        "title": "kriis.ee – Sidekatkestus",
+        "url": "https://www.kriis.ee/kriisideks-valmistumine-eestis/kriisideks-valmistumine-eestis/sidekatkestus"
+      },
+      {
+        "title": "Päästeamet – Suitsuandur",
+        "url": "https://www.rescue.ee/et/suitsuandur"
+      },
+      {
+        "title": "Päästeamet ja TTJA – vingugaas.ee",
+        "url": "https://www.vingugaas.ee/"
+      }
+    ]
+  },
+  "radio": {
+    "et": {
+      "title": "Raadio",
+      "intro": "Kui elekter või side kaob, jagab riik ametlikku infot ERR-i kanalites. Kuula Vikerraadiot (eesti keeles) või Raadio 4 (vene keeles) patarei-, vända- või autoraadiost. Vali lähima saatja sagedus; kui see ei kosta, proovi järgmist."
+    },
+    "en": {
+      "title": "Radio",
+      "intro": "If power or phones go down, the state shares official information on ERR's channels. Listen to Vikerraadio (in Estonian) or Raadio 4 (in Russian) on a battery, wind-up or car radio. Pick the nearest transmitter; if it can't be heard, try the next one."
+    },
+    "stations": [
+      {
+        "name": "Vikerraadio",
+        "lang": {
+          "et": "eesti keeles",
+          "en": "in Estonian"
+        },
+        "as_of": "2026-10",
+        "sites": [
+          [
+            "Tallinn",
+            "Harjumaa",
+            104.1
+          ],
+          [
+            "Koeru",
+            "Järvamaa",
+            105.1
+          ],
+          [
+            "Valgjärve",
+            "Põlvamaa",
+            106.1
+          ],
+          [
+            "Tartu",
+            "Tartumaa",
+            106.7
+          ],
+          [
+            "Pärnu",
+            "Pärnumaa",
+            104.8
+          ],
+          [
+            "Kohtla-Nõmme",
+            "Ida-Virumaa",
+            105.4
+          ],
+          [
+            "Sauvere",
+            "Saaremaa",
+            105.6
+          ],
+          [
+            "Narva",
+            "Ida-Virumaa",
+            104.7
+          ],
+          [
+            "Viiratsi",
+            "Viljandimaa",
+            107.0
+          ],
+          [
+            "Haapsalu",
+            "Läänemaa",
+            105.3
+          ],
+          [
+            "Kõrgessaare",
+            "Hiiumaa",
+            91.2
+          ],
+          [
+            "Orissaare",
+            "Saaremaa",
+            105.9
+          ],
+          [
+            "Märjamaa",
+            "Raplamaa",
+            95.7
+          ],
+          [
+            "Pehka",
+            "Lääne-Virumaa",
+            106.0
+          ],
+          [
+            "Sõrve",
+            "Saaremaa",
+            92.1
+          ],
+          [
+            "Sillamäe",
+            "Ida-Virumaa",
+            92.3
+          ],
+          [
+            "Nõva, Dirhami, Osmussaare",
+            "Läänemaa",
+            91.7
+          ]
+        ]
+      },
+      {
+        "name": "Raadio 4",
+        "lang": {
+          "et": "vene keeles",
+          "en": "in Russian"
+        },
+        "as_of": "2019-09",
+        "areas": [
+          [
+            "Tallinn",
+            94.5
+          ],
+          [
+            "Ida-Virumaa",
+            95.3
+          ],
+          [
+            "Narva",
+            100.9
+          ],
+          [
+            "Tartumaa",
+            94.4
+          ],
+          [
+            "Jõgevamaa",
+            93.4
+          ],
+          [
+            "Pärnumaa",
+            94.8
+          ],
+          [
+            "Valgamaa",
+            92.5
+          ]
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "ERR – Vikerraadio sagedused",
+        "url": "https://eestiraadio.err.ee/vikerraadio/1610166142"
+      },
+      {
+        "title": "ERR – Raadio 4 sagedused (2019)",
+        "url": "https://eestiraadio.err.ee/ru/raadio4/976118/jetoj-osenju-na-radio-4"
+      },
+      {
+        "title": "Siseministeerium ja Riigikantselei – Käitumisjuhised kriisiolukordadeks (2018), lk 26",
+        "url": "https://siseministeerium.ee/sites/default/files/documents/2021-01/K%C3%A4itumisjuhised%20kriisiolukordadeks.pdf"
+      }
+    ]
+  }
+}

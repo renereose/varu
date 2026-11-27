@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varu</title>
+<style>
+  :root { color-scheme: light dark; --bg: #fffdf8; --ink: #1b2420; --muted: #5d6762; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1a211e; --ink: #e8ece9; --muted: #a3ada8; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; box-sizing: border-box;
+    background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, sans-serif; text-align: center; }
+  p { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <img id="icon" width="72" height="72" alt="">
+  <h1 id="title">Starting Varu…</h1>
+  <p id="note"></p>
+  <p><a id="back">Install Varu instead</a></p>
+</main>
+<script>
+// The online Varu: sw.js, registered for live/, answers every page there
+// with the launcher reading the site's data. Until it does, this page,
+// both as live/index.html and as the site's 404.html, so a link to any
+// page under live/ starts Varu and then opens that page.
+const $ = (id) => document.getElementById(id);
+const path = location.pathname;
+const at = path.indexOf("/live/");
+const root = at >= 0 ? path.slice(0, at + 1) : `/${path.split("/")[1]}/`; // "/varu/"
+const et = /^et\b/.test(navigator.language);
+$("icon").src = `${root}icon-192.png`;
+$("back").href = root;
+if (et) {
+  document.documentElement.lang = "et";
+  $("title").textContent = "Varu käivitub…";
+  $("back").textContent = "Paigalda Varu hoopis";
+}
+const fail = () => {
+  $("title").textContent = et ? "See brauser ei saa Varut käivitada" : "This browser can't start Varu";
+  $("note").textContent = et ? "Proovi uut Safari, Chrome'i, Edge'i või Firefoxi." : "Try a recent Safari, Chrome, Edge or Firefox.";
+};
+const once = () => {
+  // Reload once; if this page comes back right away, Varu did not take over.
+  try {
+    if (Date.now() - Number(sessionStorage.getItem("varu.liveStart")) < 10000) return fail();
+    sessionStorage.setItem("varu.liveStart", String(Date.now()));
+  } catch { /* private mode: reload anyway */ }
+  location.reload();
+};
+if (at < 0) {
+  $("title").textContent = et ? "Lehte ei leitud" : "Page not found";
+  $("back").textContent = et ? "Ava Varu" : "Open Varu";
+} else if (!("serviceWorker" in navigator)) fail();
+else navigator.serviceWorker.register(`${root}sw.js`, { scope: `${root}live/` })
+  .then(() => navigator.serviceWorker.ready)
+  .then(once, fail);
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+// The emergency guide: what to do (guides.json), radio frequencies, a
+// tickable list of home supplies, and the family's own plan, one section at
+// a time (#situations, #situation-<id>, #radio, #supplies, #plan). The
+// ticks and the plan live in this browser's localStorage and nowhere else.
+//
+// Known limit: localStorage belongs to one origin (address and port). If the
+// launcher ever starts on another port, the saved plan is not seen there, so
+// printing it is the backup.
+
+import {
+  applyStrings, currentLanguage, loadManifest, pick, plural, store, stored, t,
+} from "./common.js";
+import { icon } from "./icons.js";
+import { initShell } from "./shell.js";
+
+const SUPPLIES_KEY = "varu.supplies";
+const PLAN_KEY = "varu.plan";
+
+const [manifest, guides, topics] = await Promise.all([
+  loadManifest(),
+  fetch("guides.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
+  fetch("topics.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
+]);
+const lang = currentLanguage(manifest);
+applyStrings(lang);
+initShell(manifest, lang);
+document.title = t(lang, "guideTitle");
+const $ = (id) => document.getElementById(id);
+
+const el = (tag, props = {}, ...children) => {
+  const node = Object.assign(document.createElement(tag), props);
+  node.append(...children);
+  return node;
+};
+const readJson = (key, fallback) => {
+  try { return JSON.parse(stored(key) ?? "null") ?? fallback; } catch { return fallback; }
+};
+const sourceLinks = (sources) => (sources ?? []).flatMap((s, i) => [
+  ...(i ? [" · "] : []),
+  el("a", { href: s.url, textContent: s.title || s.url, target: "_blank", rel: "noopener" }),
+]);
+
+// ---------- When it happens ----------
+
+// Each situation's icon, by its id in guides.json.
+const ICONS = {
+  power: "zap-off", water: "droplet-off", heat: "thermometer-snowflake", communication: "wifi-off",
+  warning: "siren", shelter: "shield", evacuation: "log-out", fire: "flame", co: "cloud-fog",
+  storm: "cloud-lightning", flood: "waves", lost: "trees", "call-112": "phone",
+};
+const situations = guides.situations ?? [];
+const textOf = (s) => s[lang] ?? s.en ?? Object.values(s).find((v) => v?.title) ?? {};
+$("no-guides").hidden = situations.length > 0;
+$("situation-count").textContent = situations.length || "";
+const pois = manifest.pois ?? [];
+// Same rule as the library page: topics.json names a book without its edition
+// month, and a topic is only worth a link if one of its books is on this drive.
+const books = await fetch("api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []);
+const editions = new Set((Array.isArray(books) ? books : []).map((b) => String(b.id).replace(/_\d{4}-\d{2}$/, "")));
+const topicOnDrive = (topic) => (topic.articles ?? []).some((a) => editions.has(a.book));
+const topicById = Object.fromEntries((topics.topics ?? []).map((topic) => [topic.id, topic]));
+
+$("situation-list").replaceChildren(...situations.map((s) => el("li", {},
+  el("a", { href: `#situation-${s.id}` }, el("span", { className: "sit-icon" }, icon(ICONS[s.id] ?? "life-buoy")),
+    el("span", { textContent: textOf(s).title }), icon("chevron-right", "chev")))));
+
+function showSituation(s) {
+  const text = textOf(s);
+  const links = [];
+  const layer = s.map && manifest.map ? pois.find((p) => p.id === s.map) : null;
+  if (layer) {
+    links.push(el("a", { className: "btn btn-primary", href: `map.html?nearest=${encodeURIComponent(layer.id)}` },
+      icon("map"), t(lang, "readyNearest").replace("{name}", pick(lang, layer.label) || layer.id)));
+  }
+  if (s.radio && guides.radio) links.push(el("a", { className: "btn", href: "#radio" }, icon("radio"), t(lang, "readyRadioLink")));
+  for (const id of s.topics ?? []) {
+    const topic = topicById[id];
+    if (!topic || !topicOnDrive(topic)) continue;
+    links.push(el("a", { className: "btn", href: `library/#topic-${encodeURIComponent(id)}` },
+      icon("book-open"), t(lang, "readyMore").replace("{topic}", topic[lang] ?? topic.en)));
+  }
+  const steps = text.steps ?? [];
+  $("situation").replaceChildren(
+    el("a", { className: "back-link", href: "#situations" }, icon("arrow-left"), t(lang, "readyWhen")),
+    el("div", { className: "section-head" }, el("span", { className: "head-icon" }, icon(ICONS[s.id] ?? "life-buoy")),
+      el("div", {}, el("h2", { textContent: text.title }), el("p", { textContent: plural(lang, "steps", steps.length) }))),
+    el("ol", { className: "steps" }, ...steps.map((step) => el("li", { textContent: step }))),
+    ...(links.length ? [el("p", { className: "actions no-print" }, ...links)] : []),
+    ...(s.sources?.length ? [el("div", { className: "sources-box" }, el("p", { className: "label", textContent: t(lang, "sources") }),
+      el("p", { className: "sources" }, ...sourceLinks(s.sources)))] : []));
+  for (const a of $("situation-list").querySelectorAll("a")) {
+    if (a.hash === `#situation-${s.id}`) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+  }
+}
+
+// One section at a time. On a wide screen the list and the open situation
+// sit side by side (the first one open); on a phone, one after the other.
+function route() {
+  const hash = decodeURIComponent(location.hash.slice(1));
+  const chosen = hash.startsWith("situation-") ? situations.find((s) => `situation-${s.id}` === hash) : null;
+  const section = chosen || !["radio", "supplies", "plan"].includes(hash) || $(hash).hidden ? "situations" : hash;
+  for (const part of document.querySelectorAll(".guide-section")) part.classList.toggle("is-current", part.id === section);
+  for (const a of document.querySelectorAll(".guide-nav a")) {
+    if (a.hash === `#${section}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+  document.body.classList.toggle("has-situation", Boolean(chosen));
+  if (situations.length) showSituation(chosen ?? situations[0]);
+  if (chosen || section !== "situations") window.scrollTo(0, 0);
+}
+
+// ---------- Radio ----------
+
+const radio = guides.radio;
+if (radio) {
+  $("radio").hidden = false;
+  document.querySelector('.guide-nav a[href="#radio"]').hidden = false;
+  const text = radio[lang] ?? radio.en ?? {};
+  const stations = radio.stations ?? [];
+  $("radio-title").textContent = text.title ?? t(lang, "readyRadio");
+  $("radio-sub").textContent = t(lang, "radioSub")
+    .replace("{stations}", new Intl.ListFormat(lang, { type: "conjunction" }).format(stations.map((s) => s.name)));
+  $("radio-intro").textContent = text.intro ?? "";
+  const mhz = (f) => f.toLocaleString(lang, { minimumFractionDigits: 1 });
+  const byName = (a, b) => a.localeCompare(b, "et");
+  $("radio-stations").replaceChildren(...stations.map((station) => {
+    // Transmitters by county, so people find theirs; areas as the source names them.
+    // On a phone the transmitter goes under its county, in the <small>.
+    const rows = station.sites
+      ? [...station.sites].sort((a, b) => byName(a[1], b[1]) || byName(a[0], b[0]))
+        .map(([site, county, f]) => el("tr", {}, el("td", {}, county, el("small", { textContent: site })),
+          el("td", { className: "site", textContent: site }), el("td", { textContent: mhz(f) })))
+      : (station.areas ?? []).map(([area, f]) => el("tr", {}, el("td", { textContent: area }), el("td", { textContent: mhz(f) })));
+    const head = station.sites
+      ? [t(lang, "radioCounty"), t(lang, "radioSite"), "MHz"]
+      : [t(lang, "radioArea"), "MHz"];
+    return el("div", { className: "radio-station" },
+      el("h3", {}, station.name, el("span", { textContent: pick(lang, station.lang) })),
+      el("table", { className: "radio-table" },
+        el("thead", {}, el("tr", {}, ...head.map((h, i) => el("th", { scope: "col", textContent: h, className: i === 1 && station.sites ? "site" : "" })))),
+        el("tbody", {}, ...rows)),
+      el("p", { className: "as-of", textContent: t(lang, "radioAsOf").replace("{date}",
+        new Date(`${station.as_of}-01T12:00`).toLocaleDateString(lang, { year: "numeric", month: "long" })) }));
+  }));
+  $("radio-sources").append(...sourceLinks(radio.sources));
+}
+
+// ---------- Home supplies ----------
+
+const supplies = guides.supplies;
+if (supplies) {
+  $("supplies").hidden = false;
+  document.querySelector('.guide-nav a[href="#supplies"]').hidden = false;
+  const text = supplies[lang] ?? supplies.en ?? {};
+  document.getElementById("supplies-title").textContent = text.title ?? t(lang, "readySupplies");
+  document.getElementById("supplies-intro").textContent = (text.intro ?? "").replace("{days}", supplies.days ?? "");
+
+  const saved = readJson(SUPPLIES_KEY, []);
+  const ticked = new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : []);
+  const boxes = [];
+  const count = document.getElementById("supplies-count");
+  const refresh = () => {
+    count.textContent = t(lang, "suppliesCount")
+      .replace("{n}", boxes.filter((b) => b.checked).length).replace("{total}", boxes.length);
+  };
+
+  document.getElementById("supply-groups").replaceChildren(...(supplies.groups ?? []).map((group) =>
+    el("fieldset", { className: "supply-group" },
+      el("legend", { textContent: group[lang] ?? group.en }),
+      ...group.items.map((item) => {
+        const box = el("input", { type: "checkbox", checked: ticked.has(item.id) });
+        boxes.push(box);
+        box.addEventListener("change", () => {
+          if (box.checked) ticked.add(item.id); else ticked.delete(item.id);
+          store(SUPPLIES_KEY, JSON.stringify([...ticked]));
+          refresh();
+        });
+        return el("label", {}, box, el("span", { textContent: item[lang] ?? item.en }));
+      }))));
+  refresh();
+
+  document.getElementById("supplies-clear").addEventListener("click", () => {
+    if (!confirm(t(lang, "clearConfirm"))) return;
+    ticked.clear();
+    store(SUPPLIES_KEY, "[]");
+    for (const box of boxes) box.checked = false;
+    refresh();
+  });
+  if (supplies.sources?.length) {
+    $("supplies-sources-box").hidden = false;
+    $("supplies-sources").append(...sourceLinks(supplies.sources));
+  }
+}
+
+// ---------- My plan ----------
+
+const rawPlan = readJson(PLAN_KEY, {});
+const plan = rawPlan && typeof rawPlan === "object" && !Array.isArray(rawPlan) ? rawPlan : {};
+plan.contacts = Array.isArray(plan.contacts)
+  ? plan.contacts.filter((c) => c && typeof c === "object" && !Array.isArray(c)) : [];
+const save = () => store(PLAN_KEY, JSON.stringify(plan));
+
+for (const field of document.querySelectorAll("[data-key]")) {
+  const value = plan[field.dataset.key];
+  field.value = typeof value === "string" ? value : "";
+  field.addEventListener("input", () => { plan[field.dataset.key] = field.value; save(); renderPrintCopy(); });
+}
+
+// Browsers print an input or textarea at its on-screen size and cut off the
+// rest, so the printout uses a plain-text copy of the fields instead.
+const printCopy = document.getElementById("plan-print");
+function renderPrintCopy() {
+  printCopy.replaceChildren(...[...document.querySelectorAll("[data-key]")].map((field) =>
+    el("div", { className: "plan-print-field" },
+      el("strong", { textContent: field.closest("label").querySelector("span").textContent }),
+      el("p", { textContent: field.value }))));
+}
+renderPrintCopy();
+window.addEventListener("beforeprint", renderPrintCopy);
+
+const contactList = document.getElementById("contacts");
+function contactRow(contact) {
+  const name = el("input", { value: typeof contact.name === "string" ? contact.name : "", placeholder: t(lang, "planName"), autocomplete: "off" });
+  const phone = el("input", { value: typeof contact.phone === "string" ? contact.phone : "", placeholder: t(lang, "planPhone"), type: "tel", autocomplete: "off" });
+  name.setAttribute("aria-label", t(lang, "planName"));
+  phone.setAttribute("aria-label", t(lang, "planPhone"));
+  const remove = el("button", { type: "button", className: "btn no-print", textContent: "×" });
+  remove.setAttribute("aria-label", t(lang, "planRemove"));
+  const row = el("div", { className: "contact" }, name, phone, remove);
+  name.addEventListener("input", () => { contact.name = name.value; save(); });
+  phone.addEventListener("input", () => { contact.phone = phone.value; save(); });
+  remove.addEventListener("click", () => {
+    plan.contacts.splice(plan.contacts.indexOf(contact), 1);
+    row.remove();
+    save();
+  });
+  return row;
+}
+function addContact(focus) {
+  const contact = { name: "", phone: "" };
+  plan.contacts.push(contact);
+  const row = contactRow(contact);
+  contactList.append(row);
+  if (focus) row.querySelector("input").focus();
+}
+contactList.replaceChildren(...plan.contacts.map(contactRow));
+// One empty row to start from; it is saved once something is typed.
+if (!plan.contacts.length) addContact(false);
+document.getElementById("add-contact").addEventListener("click", () => addContact(true));
+
+// Printing gives the radio frequencies, the supplies and the plan, whichever section is open.
+const print = () => {
+  // The Android app's WebView ignores window.print(); its bridge prints instead.
+  renderPrintCopy();
+  if (window.VaruAndroid?.print) window.VaruAndroid.print(); else window.print();
+};
+$("print").addEventListener("click", print);
+$("print-side").addEventListener("click", print);
+
+route();
+window.addEventListener("hashchange", route);

@@ -1,0 +1,5032 @@
+{
+ "region": "ee",
+ "name": {
+  "en": "Estonia",
+  "et": "Eesti"
+ },
+ "partSize": 50331648,
+ "files": [
+  {
+   "path": "app/assets/fonts/Noto Sans Devanagari Regular v1/62720-62975.pbf",
+   "size": 48635,
+   "hash": "a0a09f66e93e2bb5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Devanagari Regular v1/62976-63231.pbf",
+   "size": 110300,
+   "hash": "be7f98b6c4901402",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Devanagari Regular v1/63232-63487.pbf",
+   "size": 117596,
+   "hash": "6b378bfde50aa44c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Devanagari Regular v1/63488-63743.pbf",
+   "size": 115454,
+   "hash": "2f3c6b937839e3e4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/0-255.pbf",
+   "size": 79344,
+   "hash": "43edfca91c285ba1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/1024-1279.pbf",
+   "size": 128015,
+   "hash": "9c3f67dce1f538ee",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/10240-10495.pbf",
+   "size": 28,
+   "hash": "026988ebab3c1637",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/10496-10751.pbf",
+   "size": 28,
+   "hash": "a31f2ae380fbd1a5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/10752-11007.pbf",
+   "size": 28,
+   "hash": "0ceddd393ac20b7f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/11008-11263.pbf",
+   "size": 28,
+   "hash": "83f3075113b10985",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/11264-11519.pbf",
+   "size": 14820,
+   "hash": "13c0c590bd5844ac",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/11520-11775.pbf",
+   "size": 5185,
+   "hash": "92ca296571538164",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/11776-12031.pbf",
+   "size": 29520,
+   "hash": "606e59a4cf8513ca",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/12032-12287.pbf",
+   "size": 28,
+   "hash": "fb26bdfb9e45a185",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/12288-12543.pbf",
+   "size": 28,
+   "hash": "8ee910ecd75aaabb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/12544-12799.pbf",
+   "size": 28,
+   "hash": "d77d86d029a499a6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/1280-1535.pbf",
+   "size": 26727,
+   "hash": "12c88da54998281f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/12800-13055.pbf",
+   "size": 28,
+   "hash": "7f53cd6dcec66301",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/13056-13311.pbf",
+   "size": 28,
+   "hash": "b5061b383bf8a58b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/13312-13567.pbf",
+   "size": 28,
+   "hash": "597cb5066444dbc1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/13568-13823.pbf",
+   "size": 28,
+   "hash": "dcfbbb30615e77f8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/13824-14079.pbf",
+   "size": 28,
+   "hash": "2a78957329f78453",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/14080-14335.pbf",
+   "size": 28,
+   "hash": "9a9174e52eb10402",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/14336-14591.pbf",
+   "size": 28,
+   "hash": "9171c6e090dfa9c5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/14592-14847.pbf",
+   "size": 28,
+   "hash": "0efd523b91507a24",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/14848-15103.pbf",
+   "size": 28,
+   "hash": "e4dc017d74447aaa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/15104-15359.pbf",
+   "size": 28,
+   "hash": "f6423d42feb3db8c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/1536-1791.pbf",
+   "size": 26,
+   "hash": "130f950ea1de6040",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/15360-15615.pbf",
+   "size": 28,
+   "hash": "6314ac962838b24c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/15616-15871.pbf",
+   "size": 28,
+   "hash": "1ce37a84bbf8eb69",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/15872-16127.pbf",
+   "size": 28,
+   "hash": "a2202796bacbf425",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/16128-16383.pbf",
+   "size": 28,
+   "hash": "bc1814cfb401c6b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/16384-16639.pbf",
+   "size": 28,
+   "hash": "d90d05f59ce85aa7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/16640-16895.pbf",
+   "size": 28,
+   "hash": "21b9a0ad147441ac",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/16896-17151.pbf",
+   "size": 28,
+   "hash": "71014a3b756f3722",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/17152-17407.pbf",
+   "size": 28,
+   "hash": "2e08b6fde104cd16",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/17408-17663.pbf",
+   "size": 28,
+   "hash": "4fe58ef2f81620b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/17664-17919.pbf",
+   "size": 28,
+   "hash": "fcb14a0d7920f699",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/1792-2047.pbf",
+   "size": 26,
+   "hash": "64efeb5aafbe4c9b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/17920-18175.pbf",
+   "size": 28,
+   "hash": "b1a61a5672a5b2ce",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/18176-18431.pbf",
+   "size": 28,
+   "hash": "839300df7eb733e4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/18432-18687.pbf",
+   "size": 28,
+   "hash": "75069397577c8518",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/18688-18943.pbf",
+   "size": 28,
+   "hash": "bc7337ece0eb8442",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/18944-19199.pbf",
+   "size": 28,
+   "hash": "fed4c596e0886cc4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/19200-19455.pbf",
+   "size": 28,
+   "hash": "6276fb6ab2db90a0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/19456-19711.pbf",
+   "size": 28,
+   "hash": "3261fecbef25d315",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/19712-19967.pbf",
+   "size": 28,
+   "hash": "109dff6ed4841add",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/19968-20223.pbf",
+   "size": 28,
+   "hash": "0f2a586280363cad",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/20224-20479.pbf",
+   "size": 28,
+   "hash": "2af5979cbcd183ec",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/2048-2303.pbf",
+   "size": 26,
+   "hash": "6a83a80f3d880aea",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/20480-20735.pbf",
+   "size": 28,
+   "hash": "2f652b12834931b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/20736-20991.pbf",
+   "size": 28,
+   "hash": "7eadf08598b838d5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/20992-21247.pbf",
+   "size": 28,
+   "hash": "4fa2ea3eb158e873",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/21248-21503.pbf",
+   "size": 28,
+   "hash": "ee3d9d81ed251527",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/21504-21759.pbf",
+   "size": 28,
+   "hash": "b4a92a7f97197bb5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/21760-22015.pbf",
+   "size": 28,
+   "hash": "ec01d892b55e31e1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/22016-22271.pbf",
+   "size": 28,
+   "hash": "b47e070ceda128f6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/22272-22527.pbf",
+   "size": 28,
+   "hash": "ec0e9067615d9b42",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/22528-22783.pbf",
+   "size": 28,
+   "hash": "8c6e49319916366b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/22784-23039.pbf",
+   "size": 28,
+   "hash": "a729f8a6f10f1e10",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/2304-2559.pbf",
+   "size": 26,
+   "hash": "5c30617db7672b91",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/23040-23295.pbf",
+   "size": 28,
+   "hash": "e493be6917dc8055",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/23296-23551.pbf",
+   "size": 28,
+   "hash": "e6a9f98c9439dbb4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/23552-23807.pbf",
+   "size": 28,
+   "hash": "737a5a5a78a0f086",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/23808-24063.pbf",
+   "size": 28,
+   "hash": "7f5abda91d25046a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/24064-24319.pbf",
+   "size": 28,
+   "hash": "032bf169fa570a81",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/24320-24575.pbf",
+   "size": 28,
+   "hash": "539955d7a032d43d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/24576-24831.pbf",
+   "size": 28,
+   "hash": "7fd5fe9665eea158",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/24832-25087.pbf",
+   "size": 28,
+   "hash": "e10e74eeb783a6f0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/25088-25343.pbf",
+   "size": 28,
+   "hash": "a7ffb862f9635d61",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/25344-25599.pbf",
+   "size": 28,
+   "hash": "2b4cfe598275c855",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/256-511.pbf",
+   "size": 132976,
+   "hash": "a6f9f6574c86a4a2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/2560-2815.pbf",
+   "size": 26,
+   "hash": "bf22af4b1d8c4be2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/25600-25855.pbf",
+   "size": 28,
+   "hash": "f955e217f83becc1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/25856-26111.pbf",
+   "size": 28,
+   "hash": "cd8865408f3f57d4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/26112-26367.pbf",
+   "size": 28,
+   "hash": "b578c282442775ea",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/26368-26623.pbf",
+   "size": 28,
+   "hash": "2f20704394b63829",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/26624-26879.pbf",
+   "size": 28,
+   "hash": "023b915eb1b73a89",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/26880-27135.pbf",
+   "size": 28,
+   "hash": "db4f3d3a6fc81d4c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/27136-27391.pbf",
+   "size": 28,
+   "hash": "ab384bc04aaab2bb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/27392-27647.pbf",
+   "size": 28,
+   "hash": "f04337f9e6805408",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/27648-27903.pbf",
+   "size": 28,
+   "hash": "f8ee8448261b6b30",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/27904-28159.pbf",
+   "size": 28,
+   "hash": "573933d91dc7b8a9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/2816-3071.pbf",
+   "size": 26,
+   "hash": "e7e9ca23ff12b407",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/28160-28415.pbf",
+   "size": 28,
+   "hash": "417c74c651310a07",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/28416-28671.pbf",
+   "size": 28,
+   "hash": "c7bbcb94fe152d26",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/28672-28927.pbf",
+   "size": 28,
+   "hash": "8b660e5b794e4f6b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/28928-29183.pbf",
+   "size": 28,
+   "hash": "b90070e412233782",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/29184-29439.pbf",
+   "size": 28,
+   "hash": "a10135cf3c27cae4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/29440-29695.pbf",
+   "size": 28,
+   "hash": "32e80f12744b31da",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/29696-29951.pbf",
+   "size": 28,
+   "hash": "3ee1081873e755a5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/29952-30207.pbf",
+   "size": 28,
+   "hash": "507a800ae7aa629e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/30208-30463.pbf",
+   "size": 28,
+   "hash": "cc7b67634b4c42ae",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/30464-30719.pbf",
+   "size": 28,
+   "hash": "82f814a505cd7eb4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/3072-3327.pbf",
+   "size": 26,
+   "hash": "eae528960f208103",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/30720-30975.pbf",
+   "size": 28,
+   "hash": "efdd20743b9f9f1a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/30976-31231.pbf",
+   "size": 28,
+   "hash": "998f84084b63e851",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/31232-31487.pbf",
+   "size": 28,
+   "hash": "ab44a0690445a9fc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/31488-31743.pbf",
+   "size": 28,
+   "hash": "ce7feb5e9dcd2805",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/31744-31999.pbf",
+   "size": 28,
+   "hash": "d6e4dd4daabdc138",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/32000-32255.pbf",
+   "size": 28,
+   "hash": "ebf9e1f26cb108c1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/32256-32511.pbf",
+   "size": 28,
+   "hash": "7090a6b2909916b8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/32512-32767.pbf",
+   "size": 28,
+   "hash": "13952c05f893fe46",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/32768-33023.pbf",
+   "size": 28,
+   "hash": "cbf2a7f84f46c4c3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/33024-33279.pbf",
+   "size": 28,
+   "hash": "883dec0f5af099e3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/3328-3583.pbf",
+   "size": 26,
+   "hash": "fc6cd0c3fcddb19f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/33280-33535.pbf",
+   "size": 28,
+   "hash": "6e58aa700e186c16",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/33536-33791.pbf",
+   "size": 28,
+   "hash": "2ac356a0a96dabc7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/33792-34047.pbf",
+   "size": 28,
+   "hash": "6c8f47741e85022b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/34048-34303.pbf",
+   "size": 28,
+   "hash": "5a001d8b20da841c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/34304-34559.pbf",
+   "size": 28,
+   "hash": "3d1c80ac319c2757",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/34560-34815.pbf",
+   "size": 28,
+   "hash": "02ac5a7c019de01f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/34816-35071.pbf",
+   "size": 28,
+   "hash": "b4da314262a57858",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/35072-35327.pbf",
+   "size": 28,
+   "hash": "b49a52866071a8a0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/35328-35583.pbf",
+   "size": 28,
+   "hash": "bc40b2c0283ab611",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/35584-35839.pbf",
+   "size": 28,
+   "hash": "b7efee312578c678",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/3584-3839.pbf",
+   "size": 26,
+   "hash": "f51db9d3d1830489",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/35840-36095.pbf",
+   "size": 28,
+   "hash": "787ea53acca3ad00",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/36096-36351.pbf",
+   "size": 28,
+   "hash": "f68bf1de139f31be",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/36352-36607.pbf",
+   "size": 28,
+   "hash": "f633035ea1f48acb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/36608-36863.pbf",
+   "size": 28,
+   "hash": "be9d0b7416c0068a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/36864-37119.pbf",
+   "size": 28,
+   "hash": "b546ecb56774de42",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/37120-37375.pbf",
+   "size": 28,
+   "hash": "e61cb21f12d363db",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/37376-37631.pbf",
+   "size": 28,
+   "hash": "87c42afe38acec27",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/37632-37887.pbf",
+   "size": 28,
+   "hash": "d03878c9d123fde1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/37888-38143.pbf",
+   "size": 28,
+   "hash": "eaf0363ade26d7e1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/38144-38399.pbf",
+   "size": 28,
+   "hash": "cb8897f7be050c40",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/3840-4095.pbf",
+   "size": 26,
+   "hash": "6b4292518f10a3a8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/38400-38655.pbf",
+   "size": 28,
+   "hash": "0c42eda0aa766270",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/38656-38911.pbf",
+   "size": 28,
+   "hash": "4684d0380e44153a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/38912-39167.pbf",
+   "size": 28,
+   "hash": "49e58d8057a555fa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/39168-39423.pbf",
+   "size": 28,
+   "hash": "bdb7c0da90d8663e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/39424-39679.pbf",
+   "size": 28,
+   "hash": "7b46292a990938a6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/39680-39935.pbf",
+   "size": 28,
+   "hash": "f9cf12a4855d3d37",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/39936-40191.pbf",
+   "size": 28,
+   "hash": "2b9c3ae6c8762bc7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/40192-40447.pbf",
+   "size": 28,
+   "hash": "2715cb5ab733f546",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/40448-40703.pbf",
+   "size": 28,
+   "hash": "9d3b7b27474b8bd5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/40704-40959.pbf",
+   "size": 28,
+   "hash": "8e505f08a2e199b5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/4096-4351.pbf",
+   "size": 26,
+   "hash": "de6973edeab19903",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/40960-41215.pbf",
+   "size": 28,
+   "hash": "a5ab49dc92fc230b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/41216-41471.pbf",
+   "size": 28,
+   "hash": "7840003c792ef19f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/41472-41727.pbf",
+   "size": 28,
+   "hash": "8105062fc3babcbf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/41728-41983.pbf",
+   "size": 28,
+   "hash": "279b1c542e586eb0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/41984-42239.pbf",
+   "size": 28,
+   "hash": "b46d56c8e4af3821",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/42240-42495.pbf",
+   "size": 28,
+   "hash": "727246ad8a4b47e1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/42496-42751.pbf",
+   "size": 46635,
+   "hash": "986be8437fc2429c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/42752-43007.pbf",
+   "size": 101489,
+   "hash": "829b74b163dafe11",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/43008-43263.pbf",
+   "size": 28,
+   "hash": "4a2fb91386a13676",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/43264-43519.pbf",
+   "size": 202,
+   "hash": "4e43a91d74539917",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/4352-4607.pbf",
+   "size": 26,
+   "hash": "b34aa4504b34c696",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/43520-43775.pbf",
+   "size": 28,
+   "hash": "9767f7af71ec6510",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/43776-44031.pbf",
+   "size": 24815,
+   "hash": "2c219b4753416378",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/44032-44287.pbf",
+   "size": 28,
+   "hash": "2cd076d0720114ba",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/44288-44543.pbf",
+   "size": 28,
+   "hash": "c0bfb8b40e7999ce",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/44544-44799.pbf",
+   "size": 28,
+   "hash": "38987f9c942671e1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/44800-45055.pbf",
+   "size": 28,
+   "hash": "b3fa924646bac027",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/45056-45311.pbf",
+   "size": 28,
+   "hash": "bce3b166be6f12ae",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/45312-45567.pbf",
+   "size": 28,
+   "hash": "44259ebfca960533",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/45568-45823.pbf",
+   "size": 28,
+   "hash": "a3835c4c063c835a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/45824-46079.pbf",
+   "size": 28,
+   "hash": "9a647473004d3c09",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/4608-4863.pbf",
+   "size": 26,
+   "hash": "e1bee26b3838f2e8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/46080-46335.pbf",
+   "size": 28,
+   "hash": "94a2921c41cf8bbd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/46336-46591.pbf",
+   "size": 28,
+   "hash": "fe823abf8e4794b1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/46592-46847.pbf",
+   "size": 28,
+   "hash": "d48b7f097fa2bd27",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/46848-47103.pbf",
+   "size": 28,
+   "hash": "c62c3a312d0e9a58",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/47104-47359.pbf",
+   "size": 28,
+   "hash": "1fba6ff16f138eba",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/47360-47615.pbf",
+   "size": 28,
+   "hash": "9dd4ea1002844b75",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/47616-47871.pbf",
+   "size": 28,
+   "hash": "12932bcc026381af",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/47872-48127.pbf",
+   "size": 28,
+   "hash": "d6949da55ed86d07",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/48128-48383.pbf",
+   "size": 28,
+   "hash": "57d88a767fb5007c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/48384-48639.pbf",
+   "size": 28,
+   "hash": "99550f3d08ebab3e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/4864-5119.pbf",
+   "size": 26,
+   "hash": "e2497c567ac25470",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/48640-48895.pbf",
+   "size": 28,
+   "hash": "8a589811b213d331",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/48896-49151.pbf",
+   "size": 28,
+   "hash": "f9ee4b35b68d1ca2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/49152-49407.pbf",
+   "size": 28,
+   "hash": "957dc5cd7c373f2a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/49408-49663.pbf",
+   "size": 28,
+   "hash": "758b3bf4610055a3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/49664-49919.pbf",
+   "size": 28,
+   "hash": "4c99bc215df71ea6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/49920-50175.pbf",
+   "size": 28,
+   "hash": "9c4524a6e128b48b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/50176-50431.pbf",
+   "size": 28,
+   "hash": "7348f7b02266e188",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/50432-50687.pbf",
+   "size": 28,
+   "hash": "3b3945d8d9fe8c4f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/50688-50943.pbf",
+   "size": 28,
+   "hash": "2ad9b4165b7c0f57",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/50944-51199.pbf",
+   "size": 28,
+   "hash": "02f77ef8fe0faf75",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/512-767.pbf",
+   "size": 96460,
+   "hash": "5849298255f12639",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/5120-5375.pbf",
+   "size": 26,
+   "hash": "ea0a8e5e9e21e83d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/51200-51455.pbf",
+   "size": 28,
+   "hash": "0f73e7e29c1b97cd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/51456-51711.pbf",
+   "size": 28,
+   "hash": "45cb7c7587f021da",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/51712-51967.pbf",
+   "size": 28,
+   "hash": "0f47a741360d5a1f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/51968-52223.pbf",
+   "size": 28,
+   "hash": "b78afe80fb22fdc0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/52224-52479.pbf",
+   "size": 28,
+   "hash": "c5fd14604cc3b3eb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/52480-52735.pbf",
+   "size": 28,
+   "hash": "7b10ef38580ae50c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/52736-52991.pbf",
+   "size": 28,
+   "hash": "34d2dfc71bfc8755",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/52992-53247.pbf",
+   "size": 28,
+   "hash": "54c461ec2c020ff6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/53248-53503.pbf",
+   "size": 28,
+   "hash": "bdcf185c97557b2c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/53504-53759.pbf",
+   "size": 28,
+   "hash": "cd35423e477d0d4d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/5376-5631.pbf",
+   "size": 26,
+   "hash": "a5a4163fe7d60a14",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/53760-54015.pbf",
+   "size": 28,
+   "hash": "2a569cc5706dbac9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/54016-54271.pbf",
+   "size": 28,
+   "hash": "8ab07fc13d3e17f7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/54272-54527.pbf",
+   "size": 28,
+   "hash": "72c1eef2d85496b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/54528-54783.pbf",
+   "size": 28,
+   "hash": "59c53d40e8afc32a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/54784-55039.pbf",
+   "size": 28,
+   "hash": "9191b588b21c041d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/55040-55295.pbf",
+   "size": 28,
+   "hash": "229afccaae52cb8c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/55296-55551.pbf",
+   "size": 28,
+   "hash": "13b1dd11058a6e16",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/55552-55807.pbf",
+   "size": 28,
+   "hash": "4e8d22fa4d897b14",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/55808-56063.pbf",
+   "size": 28,
+   "hash": "48c8be4e174a7490",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/56064-56319.pbf",
+   "size": 28,
+   "hash": "626a2d40c7763af7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/5632-5887.pbf",
+   "size": 26,
+   "hash": "3474c687737131f7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/56320-56575.pbf",
+   "size": 28,
+   "hash": "de1317d6009b02a6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/56576-56831.pbf",
+   "size": 28,
+   "hash": "32acf5910cf8324f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/56832-57087.pbf",
+   "size": 28,
+   "hash": "ec1ab45abf857e7a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/57088-57343.pbf",
+   "size": 28,
+   "hash": "fed5976eebb796b2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/57344-57599.pbf",
+   "size": 28,
+   "hash": "5ba440b5eb911b57",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/57600-57855.pbf",
+   "size": 28,
+   "hash": "5651ee07b56ab176",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/57856-58111.pbf",
+   "size": 28,
+   "hash": "656234ee545f3672",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/58112-58367.pbf",
+   "size": 28,
+   "hash": "c5c645878905b54e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/58368-58623.pbf",
+   "size": 28,
+   "hash": "83462fe34b5d49d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/58624-58879.pbf",
+   "size": 28,
+   "hash": "ae7c062f2b878e8b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/5888-6143.pbf",
+   "size": 26,
+   "hash": "d85016436b6f7b3c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/58880-59135.pbf",
+   "size": 28,
+   "hash": "c4c7d513ef6f0f26",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/59136-59391.pbf",
+   "size": 28,
+   "hash": "d98c04d79cfe5817",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/59392-59647.pbf",
+   "size": 28,
+   "hash": "fe9c15289a50a731",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/59648-59903.pbf",
+   "size": 28,
+   "hash": "011180fc148dce5f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/59904-60159.pbf",
+   "size": 28,
+   "hash": "14409160f284411b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/60160-60415.pbf",
+   "size": 28,
+   "hash": "0559b923c30baecf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/60416-60671.pbf",
+   "size": 28,
+   "hash": "98ea7f3c250d9a2a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/60672-60927.pbf",
+   "size": 28,
+   "hash": "f3272b132d7541da",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/60928-61183.pbf",
+   "size": 28,
+   "hash": "0b42c7d6db700111",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/61184-61439.pbf",
+   "size": 28,
+   "hash": "776c00e558b9b94a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/6144-6399.pbf",
+   "size": 26,
+   "hash": "6779abada184ab57",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/61440-61695.pbf",
+   "size": 28,
+   "hash": "c98c7d83f42e7289",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/61696-61951.pbf",
+   "size": 28,
+   "hash": "298e2beffb459107",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/61952-62207.pbf",
+   "size": 28,
+   "hash": "d76bbbf1299bab7d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/62208-62463.pbf",
+   "size": 28,
+   "hash": "cb6c7de34b200608",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/62464-62719.pbf",
+   "size": 28,
+   "hash": "41dd830ccd52af81",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/62720-62975.pbf",
+   "size": 28,
+   "hash": "666cf3e66a58a06f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/62976-63231.pbf",
+   "size": 28,
+   "hash": "487437997a35b847",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/63232-63487.pbf",
+   "size": 28,
+   "hash": "41b04a9a76a623a6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/63488-63743.pbf",
+   "size": 28,
+   "hash": "51bec19ec8ae7561",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/63744-63999.pbf",
+   "size": 28,
+   "hash": "bbf4be8164a789b9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/6400-6655.pbf",
+   "size": 26,
+   "hash": "bed6b31c0fff328d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/64000-64255.pbf",
+   "size": 28,
+   "hash": "e29b44f0a70390a0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/64256-64511.pbf",
+   "size": 5569,
+   "hash": "28053b052ca01162",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/64512-64767.pbf",
+   "size": 28,
+   "hash": "60180c36826f261b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/64768-65023.pbf",
+   "size": 28,
+   "hash": "1bab52740de5f0ee",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/65024-65279.pbf",
+   "size": 2551,
+   "hash": "6c9650e1ed03a49c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/65280-65535.pbf",
+   "size": 1637,
+   "hash": "7d23ed8dd29eddca",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/6656-6911.pbf",
+   "size": 5059,
+   "hash": "e5f0f0dc497feab5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/6912-7167.pbf",
+   "size": 26,
+   "hash": "ad27e0b00ebf5563",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/7168-7423.pbf",
+   "size": 4045,
+   "hash": "e37840d608ee7885",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/7424-7679.pbf",
+   "size": 72455,
+   "hash": "60b6be0a82dad85e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/768-1023.pbf",
+   "size": 71308,
+   "hash": "52bfd64775b91f78",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/7680-7935.pbf",
+   "size": 141117,
+   "hash": "781d61c4e6c2634d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/7936-8191.pbf",
+   "size": 125395,
+   "hash": "ab16bfd7fc5fd467",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/8192-8447.pbf",
+   "size": 52891,
+   "hash": "5dc4e6680116fef0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/8448-8703.pbf",
+   "size": 49772,
+   "hash": "c5ac063bb324f783",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/8704-8959.pbf",
+   "size": 140,
+   "hash": "75cc4874fa546304",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/8960-9215.pbf",
+   "size": 26,
+   "hash": "144c3961da5af441",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/9216-9471.pbf",
+   "size": 26,
+   "hash": "9fcd7ff8b6c5d8b0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/9472-9727.pbf",
+   "size": 370,
+   "hash": "945b8a029ce2dbb7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/9728-9983.pbf",
+   "size": 26,
+   "hash": "0b0749d9fa740ebe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Italic/9984-10239.pbf",
+   "size": 27,
+   "hash": "63fd0d6f3a490031",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/0-255.pbf",
+   "size": 77628,
+   "hash": "ba2f0118dd024e30",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/1024-1279.pbf",
+   "size": 128608,
+   "hash": "1fd3385560bae824",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/10240-10495.pbf",
+   "size": 28,
+   "hash": "24a760879eff968f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/10496-10751.pbf",
+   "size": 715,
+   "hash": "55d8f738f9de22cc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/10752-11007.pbf",
+   "size": 28,
+   "hash": "4e5ebbcdbdf3c175",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/11008-11263.pbf",
+   "size": 28,
+   "hash": "342b23b716c7e69f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/11264-11519.pbf",
+   "size": 14675,
+   "hash": "009f73646f39e23e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/11520-11775.pbf",
+   "size": 73861,
+   "hash": "1ffa4fb1f5fc1fff",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/11776-12031.pbf",
+   "size": 28687,
+   "hash": "8ea91450306ef356",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/12032-12287.pbf",
+   "size": 28,
+   "hash": "e0adc33792832c51",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/12288-12543.pbf",
+   "size": 28,
+   "hash": "19287a6c02b7805a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/12544-12799.pbf",
+   "size": 28,
+   "hash": "2fe355a7a03d3ae2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/1280-1535.pbf",
+   "size": 86131,
+   "hash": "655ca6c720bba0bb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/12800-13055.pbf",
+   "size": 28,
+   "hash": "ab8ae8857cdb74cd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/13056-13311.pbf",
+   "size": 28,
+   "hash": "c60a99c0133836ae",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/13312-13567.pbf",
+   "size": 28,
+   "hash": "eb2ab894f97aa616",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/13568-13823.pbf",
+   "size": 28,
+   "hash": "6d796a0e50bb8dad",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/13824-14079.pbf",
+   "size": 28,
+   "hash": "ea208fe6dcecf349",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/14080-14335.pbf",
+   "size": 28,
+   "hash": "998cf2d256778209",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/14336-14591.pbf",
+   "size": 28,
+   "hash": "96765a084bbcc4e1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/14592-14847.pbf",
+   "size": 28,
+   "hash": "49bd5f0bd4c00251",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/14848-15103.pbf",
+   "size": 28,
+   "hash": "d36f3d42255616bf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/15104-15359.pbf",
+   "size": 28,
+   "hash": "d646d3f04fc69b62",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/1536-1791.pbf",
+   "size": 115002,
+   "hash": "e998806d6e6b4c03",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/15360-15615.pbf",
+   "size": 28,
+   "hash": "37a75a0ef445e691",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/15616-15871.pbf",
+   "size": 28,
+   "hash": "8b36114defce5c24",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/15872-16127.pbf",
+   "size": 28,
+   "hash": "e4804f3c057680f9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/16128-16383.pbf",
+   "size": 28,
+   "hash": "848e45e5a3bcfc0c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/16384-16639.pbf",
+   "size": 28,
+   "hash": "bf510f73f33ab980",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/16640-16895.pbf",
+   "size": 28,
+   "hash": "8a1e57478868465b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/16896-17151.pbf",
+   "size": 28,
+   "hash": "04ed88320dc230f2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/17152-17407.pbf",
+   "size": 28,
+   "hash": "7f730896e5c36771",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/17408-17663.pbf",
+   "size": 28,
+   "hash": "bc135db307bf3073",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/17664-17919.pbf",
+   "size": 28,
+   "hash": "0e810483a734acda",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/1792-2047.pbf",
+   "size": 49721,
+   "hash": "220dc297746615eb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/17920-18175.pbf",
+   "size": 28,
+   "hash": "0c23bb270ef24363",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/18176-18431.pbf",
+   "size": 28,
+   "hash": "a70f62e8d2db4a9d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/18432-18687.pbf",
+   "size": 28,
+   "hash": "5ee59df9295c9972",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/18688-18943.pbf",
+   "size": 28,
+   "hash": "f3baceb09531a1e6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/18944-19199.pbf",
+   "size": 28,
+   "hash": "e5ec5025800d8f18",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/19200-19455.pbf",
+   "size": 28,
+   "hash": "e4105fef0cdf2abe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/19456-19711.pbf",
+   "size": 28,
+   "hash": "7a0b0c40e52bd20c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/19712-19967.pbf",
+   "size": 28,
+   "hash": "1ae0f1c7ece879b3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/19968-20223.pbf",
+   "size": 28,
+   "hash": "9c5ac12921cb7bc6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/20224-20479.pbf",
+   "size": 28,
+   "hash": "112374f16ccec7f5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/2048-2303.pbf",
+   "size": 27711,
+   "hash": "09d48ade5250b8f3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/20480-20735.pbf",
+   "size": 28,
+   "hash": "e4a2f0e4c940a6fc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/20736-20991.pbf",
+   "size": 28,
+   "hash": "6a4ddc350a36c167",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/20992-21247.pbf",
+   "size": 28,
+   "hash": "efc74bb3e7e2683b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/21248-21503.pbf",
+   "size": 28,
+   "hash": "2fecb5ac05dabc91",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/21504-21759.pbf",
+   "size": 28,
+   "hash": "9465dacaafe77af5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/21760-22015.pbf",
+   "size": 28,
+   "hash": "b7c4fa008b571bb0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/22016-22271.pbf",
+   "size": 28,
+   "hash": "f46c87d61890bc2c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/22272-22527.pbf",
+   "size": 28,
+   "hash": "119b55a60b4b6ff3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/22528-22783.pbf",
+   "size": 28,
+   "hash": "4dcd7af4a9deed93",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/22784-23039.pbf",
+   "size": 28,
+   "hash": "c01f3dc6792e98c2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/2304-2559.pbf",
+   "size": 101684,
+   "hash": "04a4c128e9138195",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/23040-23295.pbf",
+   "size": 28,
+   "hash": "f90f67655e341031",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/23296-23551.pbf",
+   "size": 28,
+   "hash": "9d9c35a71c96df5b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/23552-23807.pbf",
+   "size": 28,
+   "hash": "36076ede30750747",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/23808-24063.pbf",
+   "size": 28,
+   "hash": "9cebc87a8d241e77",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/24064-24319.pbf",
+   "size": 28,
+   "hash": "85094797891735b7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/24320-24575.pbf",
+   "size": 28,
+   "hash": "1a3155bc787ca8c1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/24576-24831.pbf",
+   "size": 28,
+   "hash": "d0335f8044c511d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/24832-25087.pbf",
+   "size": 28,
+   "hash": "4f879bc6a581f74a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/25088-25343.pbf",
+   "size": 28,
+   "hash": "bb2cc604f1be7147",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/25344-25599.pbf",
+   "size": 28,
+   "hash": "c5bf27e7f0ffcd56",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/256-511.pbf",
+   "size": 129635,
+   "hash": "d5e801a1a5b1d409",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/2560-2815.pbf",
+   "size": 73316,
+   "hash": "07cd3ad7dc6331af",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/25600-25855.pbf",
+   "size": 28,
+   "hash": "627e41c3f3f719c2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/25856-26111.pbf",
+   "size": 28,
+   "hash": "d4a50ec6644d1844",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/26112-26367.pbf",
+   "size": 28,
+   "hash": "754fa23b61c62a7e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/26368-26623.pbf",
+   "size": 28,
+   "hash": "67c119da62fcafbe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/26624-26879.pbf",
+   "size": 28,
+   "hash": "2d451e86b8a9e75a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/26880-27135.pbf",
+   "size": 28,
+   "hash": "469f97a16854774f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/27136-27391.pbf",
+   "size": 28,
+   "hash": "27d553409dd7010d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/27392-27647.pbf",
+   "size": 28,
+   "hash": "438d826e02f73176",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/27648-27903.pbf",
+   "size": 28,
+   "hash": "491654a8a6e14e3e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/27904-28159.pbf",
+   "size": 28,
+   "hash": "9c60a89ee6e4fe28",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/2816-3071.pbf",
+   "size": 52808,
+   "hash": "7d35ea2175708b51",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/28160-28415.pbf",
+   "size": 28,
+   "hash": "87b25f179c31b66f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/28416-28671.pbf",
+   "size": 28,
+   "hash": "2885004477284e02",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/28672-28927.pbf",
+   "size": 28,
+   "hash": "7829d86b909238db",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/28928-29183.pbf",
+   "size": 28,
+   "hash": "76d6dad114f419af",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/29184-29439.pbf",
+   "size": 28,
+   "hash": "2ca20261c84c90ab",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/29440-29695.pbf",
+   "size": 28,
+   "hash": "bc1ca569969f1652",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/29696-29951.pbf",
+   "size": 28,
+   "hash": "073a4d6142d82ab3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/29952-30207.pbf",
+   "size": 28,
+   "hash": "d1a17f1296a3299f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/30208-30463.pbf",
+   "size": 28,
+   "hash": "d373c0e9fdf11b3f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/30464-30719.pbf",
+   "size": 28,
+   "hash": "38ec3a1a8e8a79f4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/3072-3327.pbf",
+   "size": 96806,
+   "hash": "68138f48e428b3c0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/30720-30975.pbf",
+   "size": 28,
+   "hash": "810885f8e3748eaf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/30976-31231.pbf",
+   "size": 28,
+   "hash": "fdb96bfb9e0e4e24",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/31232-31487.pbf",
+   "size": 28,
+   "hash": "3a2c5d0bc96803fc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/31488-31743.pbf",
+   "size": 28,
+   "hash": "02065e52fdcc46a1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/31744-31999.pbf",
+   "size": 28,
+   "hash": "f4ed297fad44331c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/32000-32255.pbf",
+   "size": 28,
+   "hash": "9445f145394a4cfc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/32256-32511.pbf",
+   "size": 28,
+   "hash": "588dc9e5d60212a2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/32512-32767.pbf",
+   "size": 28,
+   "hash": "11a65afcf28ae4e5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/32768-33023.pbf",
+   "size": 28,
+   "hash": "10773eccd690b0b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/33024-33279.pbf",
+   "size": 28,
+   "hash": "e80ec04397a06a7f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/3328-3583.pbf",
+   "size": 131571,
+   "hash": "33e611a94d7257cf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/33280-33535.pbf",
+   "size": 28,
+   "hash": "c6d0e951b175af48",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/33536-33791.pbf",
+   "size": 28,
+   "hash": "6364cda2e2114b0d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/33792-34047.pbf",
+   "size": 28,
+   "hash": "f499e4d815bbfbdf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/34048-34303.pbf",
+   "size": 28,
+   "hash": "81fd443fee3f7be6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/34304-34559.pbf",
+   "size": 28,
+   "hash": "f891be25a0d6162b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/34560-34815.pbf",
+   "size": 28,
+   "hash": "8d18dc5978114019",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/34816-35071.pbf",
+   "size": 28,
+   "hash": "9ebfa2e89dec1963",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/35072-35327.pbf",
+   "size": 28,
+   "hash": "1dbca8b26abb76bd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/35328-35583.pbf",
+   "size": 28,
+   "hash": "a5ec193f14057859",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/35584-35839.pbf",
+   "size": 28,
+   "hash": "23dc371ca5543b9f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/3584-3839.pbf",
+   "size": 58660,
+   "hash": "b0369e98743aa59c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/35840-36095.pbf",
+   "size": 28,
+   "hash": "5d923c0a4efe622c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/36096-36351.pbf",
+   "size": 28,
+   "hash": "c7e82ce5bb3b196e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/36352-36607.pbf",
+   "size": 28,
+   "hash": "92d1022d071fd307",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/36608-36863.pbf",
+   "size": 28,
+   "hash": "24cd4aa17cd51951",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/36864-37119.pbf",
+   "size": 28,
+   "hash": "ec507d1d918b50d1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/37120-37375.pbf",
+   "size": 28,
+   "hash": "d74ae059c7843b9b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/37376-37631.pbf",
+   "size": 28,
+   "hash": "545878d5e4783ee2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/37632-37887.pbf",
+   "size": 28,
+   "hash": "b722beaefe8c878a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/37888-38143.pbf",
+   "size": 28,
+   "hash": "5cd48057097fb81a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/38144-38399.pbf",
+   "size": 28,
+   "hash": "bad58fc42c0f6b97",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/3840-4095.pbf",
+   "size": 26,
+   "hash": "721045c6ce264a93",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/38400-38655.pbf",
+   "size": 28,
+   "hash": "07148014d4f2b7a5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/38656-38911.pbf",
+   "size": 28,
+   "hash": "df869ed78ca0f122",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/38912-39167.pbf",
+   "size": 28,
+   "hash": "255bbcad4d50442b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/39168-39423.pbf",
+   "size": 28,
+   "hash": "81c30708d1834bf2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/39424-39679.pbf",
+   "size": 28,
+   "hash": "370ec4c0a9e05773",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/39680-39935.pbf",
+   "size": 28,
+   "hash": "6311b8324bbd3df6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/39936-40191.pbf",
+   "size": 28,
+   "hash": "2abf21cf687f3ba7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/40192-40447.pbf",
+   "size": 28,
+   "hash": "235c6e1342ceb043",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/40448-40703.pbf",
+   "size": 28,
+   "hash": "1455f40cae476c8a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/40704-40959.pbf",
+   "size": 28,
+   "hash": "eec0dc9fe17fab12",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/4096-4351.pbf",
+   "size": 122876,
+   "hash": "08b5ec865c28a4b1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/40960-41215.pbf",
+   "size": 28,
+   "hash": "509f0f6e38913311",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/41216-41471.pbf",
+   "size": 28,
+   "hash": "d12e5134cd84c4be",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/41472-41727.pbf",
+   "size": 28,
+   "hash": "369087ebf2c98ec8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/41728-41983.pbf",
+   "size": 28,
+   "hash": "aafaebea5dc73b4e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/41984-42239.pbf",
+   "size": 28,
+   "hash": "b665318725ca4cd9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/42240-42495.pbf",
+   "size": 28,
+   "hash": "4386d94a8f49ec97",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/42496-42751.pbf",
+   "size": 46876,
+   "hash": "7e687a4032b9ab8f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/42752-43007.pbf",
+   "size": 99638,
+   "hash": "1c7a7b57e4bfb8f0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/43008-43263.pbf",
+   "size": 12271,
+   "hash": "8dc4a24258ea7e8d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/43264-43519.pbf",
+   "size": 18714,
+   "hash": "a12def1569ebceae",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/4352-4607.pbf",
+   "size": 26,
+   "hash": "644b73cc0951e507",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/43520-43775.pbf",
+   "size": 74413,
+   "hash": "e425a2b4ee8ee5cd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/43776-44031.pbf",
+   "size": 77666,
+   "hash": "db61fbcbd9c7554d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/44032-44287.pbf",
+   "size": 28,
+   "hash": "0361c6aa7c8898a0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/44288-44543.pbf",
+   "size": 28,
+   "hash": "74de448b98b80f47",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/44544-44799.pbf",
+   "size": 28,
+   "hash": "23df637eac1d88aa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/44800-45055.pbf",
+   "size": 28,
+   "hash": "d06fe59c698e07d6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/45056-45311.pbf",
+   "size": 28,
+   "hash": "e81f9bbe770ed0d8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/45312-45567.pbf",
+   "size": 28,
+   "hash": "6137edb481d87752",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/45568-45823.pbf",
+   "size": 28,
+   "hash": "59d9ba6c84bd0771",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/45824-46079.pbf",
+   "size": 28,
+   "hash": "b8884c03977a0b88",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/4608-4863.pbf",
+   "size": 130918,
+   "hash": "5fa496cac0141079",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/46080-46335.pbf",
+   "size": 28,
+   "hash": "f6bc779a0f695bc4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/46336-46591.pbf",
+   "size": 28,
+   "hash": "e588723904452a53",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/46592-46847.pbf",
+   "size": 28,
+   "hash": "52c7f4fbc3304b2b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/46848-47103.pbf",
+   "size": 28,
+   "hash": "de02f1e2c15da2d9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/47104-47359.pbf",
+   "size": 28,
+   "hash": "ee4b519e27d73479",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/47360-47615.pbf",
+   "size": 28,
+   "hash": "b0d95f6387880a91",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/47616-47871.pbf",
+   "size": 28,
+   "hash": "780079fe1e4ec5be",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/47872-48127.pbf",
+   "size": 28,
+   "hash": "0e2c9c931babcec3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/48128-48383.pbf",
+   "size": 28,
+   "hash": "a69776423f987fd4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/48384-48639.pbf",
+   "size": 28,
+   "hash": "230aa289a3d79f8c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/4864-5119.pbf",
+   "size": 127330,
+   "hash": "4cd8c84d36305bb3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/48640-48895.pbf",
+   "size": 28,
+   "hash": "a614762b00c7f0d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/48896-49151.pbf",
+   "size": 28,
+   "hash": "b43a9d75125b8542",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/49152-49407.pbf",
+   "size": 28,
+   "hash": "f198595fe56a0404",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/49408-49663.pbf",
+   "size": 28,
+   "hash": "4ecb78e337829c5b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/49664-49919.pbf",
+   "size": 28,
+   "hash": "0726d56d8b05ee46",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/49920-50175.pbf",
+   "size": 28,
+   "hash": "1ed521d378467878",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/50176-50431.pbf",
+   "size": 28,
+   "hash": "279f7cb58cfaa51f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/50432-50687.pbf",
+   "size": 28,
+   "hash": "4530ded574a69abe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/50688-50943.pbf",
+   "size": 28,
+   "hash": "fbbe07b41e02f694",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/50944-51199.pbf",
+   "size": 28,
+   "hash": "0ac4ef8225ef0913",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/512-767.pbf",
+   "size": 96169,
+   "hash": "985e56060887a8e7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/5120-5375.pbf",
+   "size": 26,
+   "hash": "0975ceaff976f951",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/51200-51455.pbf",
+   "size": 28,
+   "hash": "ab0a13acbce55b61",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/51456-51711.pbf",
+   "size": 28,
+   "hash": "cd0157aa07be3d11",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/51712-51967.pbf",
+   "size": 28,
+   "hash": "9ba2c45d20fe8f48",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/51968-52223.pbf",
+   "size": 28,
+   "hash": "a97280cb01d81f99",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/52224-52479.pbf",
+   "size": 28,
+   "hash": "8ac4ab143bf284a1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/52480-52735.pbf",
+   "size": 28,
+   "hash": "3cbc50f63ebc498b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/52736-52991.pbf",
+   "size": 28,
+   "hash": "2084f5bffc7318e0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/52992-53247.pbf",
+   "size": 28,
+   "hash": "b9bf9145dbb1ec15",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/53248-53503.pbf",
+   "size": 28,
+   "hash": "02d36362b3a15ecb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/53504-53759.pbf",
+   "size": 28,
+   "hash": "f4cf257c365942be",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/5376-5631.pbf",
+   "size": 26,
+   "hash": "ca62289dbdade154",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/53760-54015.pbf",
+   "size": 28,
+   "hash": "27bf5172c4564d90",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/54016-54271.pbf",
+   "size": 28,
+   "hash": "98d1ffd416d54e69",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/54272-54527.pbf",
+   "size": 28,
+   "hash": "9751a03d06705632",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/54528-54783.pbf",
+   "size": 28,
+   "hash": "f503aab2c3ab86b3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/54784-55039.pbf",
+   "size": 28,
+   "hash": "13c60a07beb01dbf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/55040-55295.pbf",
+   "size": 28,
+   "hash": "437d844d2f26ee5e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/55296-55551.pbf",
+   "size": 28,
+   "hash": "342b7db7de178e46",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/55552-55807.pbf",
+   "size": 28,
+   "hash": "2e09c91f92020161",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/55808-56063.pbf",
+   "size": 28,
+   "hash": "e519f1d6844b8c5b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/56064-56319.pbf",
+   "size": 28,
+   "hash": "640682ea09361369",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/5632-5887.pbf",
+   "size": 26,
+   "hash": "99bf5607b3c1dc0a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/56320-56575.pbf",
+   "size": 28,
+   "hash": "9e16fe006206ae29",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/56576-56831.pbf",
+   "size": 28,
+   "hash": "ccacd64be5f50514",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/56832-57087.pbf",
+   "size": 28,
+   "hash": "f355117f5c1990bb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/57088-57343.pbf",
+   "size": 28,
+   "hash": "4a947fcee6e0c0f2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/57344-57599.pbf",
+   "size": 28,
+   "hash": "caec67928329e8c6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/57600-57855.pbf",
+   "size": 28,
+   "hash": "7c1e68290ec76458",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/57856-58111.pbf",
+   "size": 28,
+   "hash": "99e959810b96d9cb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/58112-58367.pbf",
+   "size": 28,
+   "hash": "9a9c4a9e50aed241",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/58368-58623.pbf",
+   "size": 28,
+   "hash": "e7ec5ec357ec6122",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/58624-58879.pbf",
+   "size": 28,
+   "hash": "4fbbe6fd94a7833d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/5888-6143.pbf",
+   "size": 44377,
+   "hash": "d6375f98af305dec",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/58880-59135.pbf",
+   "size": 28,
+   "hash": "13ca17a126e7e571",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/59136-59391.pbf",
+   "size": 28,
+   "hash": "048acbe24bf05374",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/59392-59647.pbf",
+   "size": 28,
+   "hash": "632522508b0cc6d8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/59648-59903.pbf",
+   "size": 28,
+   "hash": "9e87151a632b3bdb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/59904-60159.pbf",
+   "size": 28,
+   "hash": "10afaebfee4efbd2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/60160-60415.pbf",
+   "size": 28,
+   "hash": "7c6c8fdabe79f128",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/60416-60671.pbf",
+   "size": 28,
+   "hash": "5a4bffb88cc9d42f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/60672-60927.pbf",
+   "size": 28,
+   "hash": "65996a26468e80d9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/60928-61183.pbf",
+   "size": 28,
+   "hash": "0d0e678974f6c782",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/61184-61439.pbf",
+   "size": 28,
+   "hash": "b6421edc97468686",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/6144-6399.pbf",
+   "size": 26,
+   "hash": "48144c74eb504f03",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/61440-61695.pbf",
+   "size": 28,
+   "hash": "79d7bef548835f37",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/61696-61951.pbf",
+   "size": 28,
+   "hash": "56ddc0cab81cc772",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/61952-62207.pbf",
+   "size": 28,
+   "hash": "d5aa4d2fb7aef7b3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/62208-62463.pbf",
+   "size": 28,
+   "hash": "22e7649847ec47c4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/62464-62719.pbf",
+   "size": 28,
+   "hash": "3d89954fe401930d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/62720-62975.pbf",
+   "size": 28,
+   "hash": "1036a457cc298fa8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/62976-63231.pbf",
+   "size": 28,
+   "hash": "b009c3a78ce381de",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/63232-63487.pbf",
+   "size": 28,
+   "hash": "e2dd36a913ee6666",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/63488-63743.pbf",
+   "size": 28,
+   "hash": "eaded9be8f34a365",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/63744-63999.pbf",
+   "size": 28,
+   "hash": "9358aa2a399fd121",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/6400-6655.pbf",
+   "size": 30047,
+   "hash": "bddd768fd2ac8478",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/64000-64255.pbf",
+   "size": 28,
+   "hash": "3a3bee375625ed4b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/64256-64511.pbf",
+   "size": 109181,
+   "hash": "1bf32ff4dfc08579",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/64512-64767.pbf",
+   "size": 211307,
+   "hash": "f74914be534dc804",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/64768-65023.pbf",
+   "size": 242838,
+   "hash": "efb1fba4d5e48982",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/65024-65279.pbf",
+   "size": 69691,
+   "hash": "f24c9ca288019e1a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/65280-65535.pbf",
+   "size": 1637,
+   "hash": "b97ca992c30adc2d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/6656-6911.pbf",
+   "size": 5140,
+   "hash": "993fd78570515cbe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/6912-7167.pbf",
+   "size": 26,
+   "hash": "22366aeb03fadd2a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/7168-7423.pbf",
+   "size": 36929,
+   "hash": "b9d29388b37f215b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/7424-7679.pbf",
+   "size": 71927,
+   "hash": "31960d2d6057c9ab",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/768-1023.pbf",
+   "size": 71160,
+   "hash": "4b92939b4d3779b2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/7680-7935.pbf",
+   "size": 138316,
+   "hash": "21c35a285f8abc65",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/7936-8191.pbf",
+   "size": 132164,
+   "hash": "94ffb3ec3bd75c52",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/8192-8447.pbf",
+   "size": 65101,
+   "hash": "cc38e4956207f0ed",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/8448-8703.pbf",
+   "size": 77027,
+   "hash": "9579816ed2c7765b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/8704-8959.pbf",
+   "size": 381,
+   "hash": "5cbe43d01ef89f5b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/8960-9215.pbf",
+   "size": 45172,
+   "hash": "a3d613d19628bc2e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/9216-9471.pbf",
+   "size": 103707,
+   "hash": "e79a6aaae603b2c2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/9472-9727.pbf",
+   "size": 370,
+   "hash": "d88b0f96092ac04d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/9728-9983.pbf",
+   "size": 74574,
+   "hash": "cc4d59fe90284f04",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Medium/9984-10239.pbf",
+   "size": 22921,
+   "hash": "1d0a65f3030934e7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/0-255.pbf",
+   "size": 76044,
+   "hash": "62c6d49b15fa836e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/1024-1279.pbf",
+   "size": 125320,
+   "hash": "302231023f7048d9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/10240-10495.pbf",
+   "size": 93939,
+   "hash": "1da0b72fe3162d5e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/10496-10751.pbf",
+   "size": 2305,
+   "hash": "6347c9022dd32a3c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/10752-11007.pbf",
+   "size": 29,
+   "hash": "a65f0e3f3a214010",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/11008-11263.pbf",
+   "size": 111048,
+   "hash": "9c5f49e7722a6538",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/11264-11519.pbf",
+   "size": 111994,
+   "hash": "45db1a35259aa476",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/11520-11775.pbf",
+   "size": 98137,
+   "hash": "59d1bc7f5596128a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/11776-12031.pbf",
+   "size": 28029,
+   "hash": "b5116c9fc6da03bd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/12032-12287.pbf",
+   "size": 29,
+   "hash": "d20fcaeb933bd769",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/12288-12543.pbf",
+   "size": 6939,
+   "hash": "4d776ca89b51ab5e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/12544-12799.pbf",
+   "size": 29,
+   "hash": "aee1638239383152",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/1280-1535.pbf",
+   "size": 84434,
+   "hash": "34345ffc1a3c6748",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/12800-13055.pbf",
+   "size": 29,
+   "hash": "72fd36bcb45552cc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/13056-13311.pbf",
+   "size": 29,
+   "hash": "81a9f556ab27a86f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/13312-13567.pbf",
+   "size": 29,
+   "hash": "c7e1d5f3cb450497",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/13568-13823.pbf",
+   "size": 29,
+   "hash": "0825ab4169243126",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/13824-14079.pbf",
+   "size": 29,
+   "hash": "7a807d99bea17a1d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/14080-14335.pbf",
+   "size": 29,
+   "hash": "3d2b7e1566df1bd5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/14336-14591.pbf",
+   "size": 29,
+   "hash": "63f421e6ed783aea",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/14592-14847.pbf",
+   "size": 29,
+   "hash": "7642c500ed64cc28",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/14848-15103.pbf",
+   "size": 29,
+   "hash": "2bcf1d2d8202e46d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/15104-15359.pbf",
+   "size": 29,
+   "hash": "9c89fadc85ac76a4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/1536-1791.pbf",
+   "size": 110716,
+   "hash": "f46850e6574d817d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/15360-15615.pbf",
+   "size": 29,
+   "hash": "09c37d55101109e7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/15616-15871.pbf",
+   "size": 29,
+   "hash": "e4dec6816cb040b7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/15872-16127.pbf",
+   "size": 29,
+   "hash": "7cd2a629de72f6c6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/16128-16383.pbf",
+   "size": 29,
+   "hash": "d297ac28df027479",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/16384-16639.pbf",
+   "size": 29,
+   "hash": "df40ddbe73f05978",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/16640-16895.pbf",
+   "size": 29,
+   "hash": "b462fafbcf6d4f09",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/16896-17151.pbf",
+   "size": 29,
+   "hash": "00f0f71a3ed4e8b6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/17152-17407.pbf",
+   "size": 29,
+   "hash": "af8b1669db283da3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/17408-17663.pbf",
+   "size": 29,
+   "hash": "53844562d2c4fed5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/17664-17919.pbf",
+   "size": 29,
+   "hash": "0f527f5676e1bc1e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/1792-2047.pbf",
+   "size": 93383,
+   "hash": "43ed9f47288d5b73",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/17920-18175.pbf",
+   "size": 29,
+   "hash": "b196f9a5e6bdf149",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/18176-18431.pbf",
+   "size": 29,
+   "hash": "58da2026e344c32a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/18432-18687.pbf",
+   "size": 29,
+   "hash": "de3009669516b415",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/18688-18943.pbf",
+   "size": 29,
+   "hash": "947be195d7b48ce9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/18944-19199.pbf",
+   "size": 29,
+   "hash": "988d91507aa446fe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/19200-19455.pbf",
+   "size": 29,
+   "hash": "1b4a67ac1988001d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/19456-19711.pbf",
+   "size": 29,
+   "hash": "58eb8dc0e59ced03",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/19712-19967.pbf",
+   "size": 46239,
+   "hash": "725d0f7a3401eeb9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/19968-20223.pbf",
+   "size": 29,
+   "hash": "dfd5002c61cc6afd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/20224-20479.pbf",
+   "size": 29,
+   "hash": "7c4b050ed41e695d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/2048-2303.pbf",
+   "size": 48166,
+   "hash": "1eb84ceb75d74dff",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/20480-20735.pbf",
+   "size": 29,
+   "hash": "a1436e49fe423d2e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/20736-20991.pbf",
+   "size": 29,
+   "hash": "9e087f0d53fe910e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/20992-21247.pbf",
+   "size": 29,
+   "hash": "9a4911e22bdaed23",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/21248-21503.pbf",
+   "size": 29,
+   "hash": "6de246c4013767b6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/21504-21759.pbf",
+   "size": 29,
+   "hash": "93a65f88426bd180",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/21760-22015.pbf",
+   "size": 29,
+   "hash": "b7a94f2f8313d651",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/22016-22271.pbf",
+   "size": 29,
+   "hash": "151e21624556bf12",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/22272-22527.pbf",
+   "size": 29,
+   "hash": "9028aa769838601d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/22528-22783.pbf",
+   "size": 29,
+   "hash": "993a93ef1f94d2d8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/22784-23039.pbf",
+   "size": 29,
+   "hash": "2ee75a039b051dac",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/2304-2559.pbf",
+   "size": 99704,
+   "hash": "bb028d993a032312",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/23040-23295.pbf",
+   "size": 29,
+   "hash": "1a6f09bfcdc8ad3c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/23296-23551.pbf",
+   "size": 29,
+   "hash": "07e4766a40a1f2cb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/23552-23807.pbf",
+   "size": 29,
+   "hash": "8052279e93d9088e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/23808-24063.pbf",
+   "size": 29,
+   "hash": "78dd5777201f7e9e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/24064-24319.pbf",
+   "size": 29,
+   "hash": "9b8ef1a672355411",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/24320-24575.pbf",
+   "size": 29,
+   "hash": "82208e285614cf0f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/24576-24831.pbf",
+   "size": 29,
+   "hash": "ab37d5cc723702f4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/24832-25087.pbf",
+   "size": 29,
+   "hash": "27cd82ec69c17f8d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/25088-25343.pbf",
+   "size": 29,
+   "hash": "48de62efc3a509aa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/25344-25599.pbf",
+   "size": 29,
+   "hash": "eda19744369b343d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/256-511.pbf",
+   "size": 127726,
+   "hash": "2eca7561f9f566bc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/2560-2815.pbf",
+   "size": 71738,
+   "hash": "e582c1e206bfbbbb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/25600-25855.pbf",
+   "size": 29,
+   "hash": "501843871e801415",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/25856-26111.pbf",
+   "size": 29,
+   "hash": "8d1fbbebd72ff27d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/26112-26367.pbf",
+   "size": 29,
+   "hash": "a2ddc56fd92bc7bc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/26368-26623.pbf",
+   "size": 29,
+   "hash": "e2a78099c1f14ad4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/26624-26879.pbf",
+   "size": 29,
+   "hash": "39d9df3cdadb24c3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/26880-27135.pbf",
+   "size": 29,
+   "hash": "56291e192b16ee9f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/27136-27391.pbf",
+   "size": 29,
+   "hash": "1b7c5c02a8cf04f5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/27392-27647.pbf",
+   "size": 29,
+   "hash": "a5b14c854cadd923",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/27648-27903.pbf",
+   "size": 29,
+   "hash": "332dad31336eaccd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/27904-28159.pbf",
+   "size": 29,
+   "hash": "af28d026fabb987e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/2816-3071.pbf",
+   "size": 92064,
+   "hash": "5c4b252599d37abc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/28160-28415.pbf",
+   "size": 29,
+   "hash": "fd206d2095c92ab0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/28416-28671.pbf",
+   "size": 29,
+   "hash": "558af1f7ad2306b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/28672-28927.pbf",
+   "size": 29,
+   "hash": "14df9ded738f8ed2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/28928-29183.pbf",
+   "size": 29,
+   "hash": "8e72e59cb905a642",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/29184-29439.pbf",
+   "size": 29,
+   "hash": "e727f9c2e7d4ecd3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/29440-29695.pbf",
+   "size": 29,
+   "hash": "ec9e5f69e1da5692",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/29696-29951.pbf",
+   "size": 29,
+   "hash": "05e1cc2daca41d71",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/29952-30207.pbf",
+   "size": 29,
+   "hash": "2ee4f9f63c899c8b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/30208-30463.pbf",
+   "size": 29,
+   "hash": "bcb363dbd929a7d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/30464-30719.pbf",
+   "size": 29,
+   "hash": "845b8777c8c3f151",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/3072-3327.pbf",
+   "size": 94239,
+   "hash": "5f23baec0f56279e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/30720-30975.pbf",
+   "size": 29,
+   "hash": "dfc22f41cdbe0b58",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/30976-31231.pbf",
+   "size": 29,
+   "hash": "281e9b1160cab22a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/31232-31487.pbf",
+   "size": 29,
+   "hash": "b49aa8e385b3d3dc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/31488-31743.pbf",
+   "size": 29,
+   "hash": "baec65e2ee8cf179",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/31744-31999.pbf",
+   "size": 29,
+   "hash": "b34761e3360032b3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/32000-32255.pbf",
+   "size": 29,
+   "hash": "9cb2689542633010",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/32256-32511.pbf",
+   "size": 29,
+   "hash": "caf6695527f5a32b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/32512-32767.pbf",
+   "size": 29,
+   "hash": "71dd80fc363012fe",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/32768-33023.pbf",
+   "size": 29,
+   "hash": "57727b3190f27b4a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/33024-33279.pbf",
+   "size": 29,
+   "hash": "bb96c7f95f2e853a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/3328-3583.pbf",
+   "size": 128820,
+   "hash": "15a543a488990a16",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/33280-33535.pbf",
+   "size": 29,
+   "hash": "5b43c783b575169c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/33536-33791.pbf",
+   "size": 29,
+   "hash": "ac8002af35b3f64c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/33792-34047.pbf",
+   "size": 29,
+   "hash": "7e83978e68f5115a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/34048-34303.pbf",
+   "size": 29,
+   "hash": "9f88b3eac1912793",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/34304-34559.pbf",
+   "size": 29,
+   "hash": "6c4f53b6ac5f4ad8",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/34560-34815.pbf",
+   "size": 29,
+   "hash": "46008ab1c7c1d0ea",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/34816-35071.pbf",
+   "size": 29,
+   "hash": "51086745ae2c573e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/35072-35327.pbf",
+   "size": 29,
+   "hash": "1abe21bba34f7195",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/35328-35583.pbf",
+   "size": 29,
+   "hash": "8fa8e7ee4af6664c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/35584-35839.pbf",
+   "size": 29,
+   "hash": "c34e257a6edc3505",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/3584-3839.pbf",
+   "size": 57363,
+   "hash": "6ddbd10873186e1b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/35840-36095.pbf",
+   "size": 29,
+   "hash": "00192c0e6fecd436",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/36096-36351.pbf",
+   "size": 29,
+   "hash": "8be108c27756bf0c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/36352-36607.pbf",
+   "size": 29,
+   "hash": "6eaee8c09b55c0c1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/36608-36863.pbf",
+   "size": 29,
+   "hash": "f5d8a0e7623d0926",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/36864-37119.pbf",
+   "size": 29,
+   "hash": "33f1f77bc872b2c1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/37120-37375.pbf",
+   "size": 29,
+   "hash": "3c342a42d19e9b19",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/37376-37631.pbf",
+   "size": 29,
+   "hash": "3341bd8668e21a58",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/37632-37887.pbf",
+   "size": 29,
+   "hash": "b195854b9f6591c9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/37888-38143.pbf",
+   "size": 29,
+   "hash": "9b405be50ae8be52",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/38144-38399.pbf",
+   "size": 29,
+   "hash": "68ab0b7288857da1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/3840-4095.pbf",
+   "size": 100425,
+   "hash": "d5a6f6e24c0f7df4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/38400-38655.pbf",
+   "size": 29,
+   "hash": "bc8138c344efe03e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/38656-38911.pbf",
+   "size": 29,
+   "hash": "cd35337f1c988c71",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/38912-39167.pbf",
+   "size": 29,
+   "hash": "f21f13a0a5a090d0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/39168-39423.pbf",
+   "size": 29,
+   "hash": "3ac09c6467a30604",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/39424-39679.pbf",
+   "size": 29,
+   "hash": "bfb45e9a671e84f6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/39680-39935.pbf",
+   "size": 29,
+   "hash": "86a6873c4aa845be",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/39936-40191.pbf",
+   "size": 29,
+   "hash": "9f16c696e6e37b18",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/40192-40447.pbf",
+   "size": 29,
+   "hash": "dd1ef39395ee8655",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/40448-40703.pbf",
+   "size": 29,
+   "hash": "a8d653fc0450a123",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/40704-40959.pbf",
+   "size": 29,
+   "hash": "93d1bfe7a7c09b13",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/4096-4351.pbf",
+   "size": 121596,
+   "hash": "f08764a2e60f5d2e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/40960-41215.pbf",
+   "size": 112917,
+   "hash": "65fd9471c541cfc1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/41216-41471.pbf",
+   "size": 110240,
+   "hash": "afa23254aacc6f8b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/41472-41727.pbf",
+   "size": 110347,
+   "hash": "f0caed68493f940a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/41728-41983.pbf",
+   "size": 110815,
+   "hash": "cd68992ab1f21a86",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/41984-42239.pbf",
+   "size": 100179,
+   "hash": "1ac4c99b1b701b9d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/42240-42495.pbf",
+   "size": 128664,
+   "hash": "06f7bd4865e2c38e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/42496-42751.pbf",
+   "size": 105622,
+   "hash": "aecb3ad3d72f6577",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/42752-43007.pbf",
+   "size": 98009,
+   "hash": "41535ef7ee71ee2a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/43008-43263.pbf",
+   "size": 94786,
+   "hash": "7395f6e576cc1380",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/43264-43519.pbf",
+   "size": 113485,
+   "hash": "6f00901c7245adce",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/4352-4607.pbf",
+   "size": 27,
+   "hash": "df8ad307184b12b4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/43520-43775.pbf",
+   "size": 122524,
+   "hash": "b31c0cb868c3c8ab",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/43776-44031.pbf",
+   "size": 101304,
+   "hash": "890d3f5d59020bae",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/44032-44287.pbf",
+   "size": 29,
+   "hash": "2893ef9f7985599e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/44288-44543.pbf",
+   "size": 29,
+   "hash": "48e0b33e4761cf96",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/44544-44799.pbf",
+   "size": 29,
+   "hash": "1a2add176685113c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/44800-45055.pbf",
+   "size": 29,
+   "hash": "609e5858fccb724f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/45056-45311.pbf",
+   "size": 29,
+   "hash": "a1b6bdcb793e0fd0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/45312-45567.pbf",
+   "size": 29,
+   "hash": "3e07f3c7dc716323",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/45568-45823.pbf",
+   "size": 29,
+   "hash": "405a9a717d16482e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/45824-46079.pbf",
+   "size": 29,
+   "hash": "0260a57fe753da05",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/4608-4863.pbf",
+   "size": 129971,
+   "hash": "b1d483974b29b969",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/46080-46335.pbf",
+   "size": 29,
+   "hash": "fd90bb38f67745af",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/46336-46591.pbf",
+   "size": 29,
+   "hash": "57dab310ce6ed729",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/46592-46847.pbf",
+   "size": 29,
+   "hash": "cf38d5c20edb71dc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/46848-47103.pbf",
+   "size": 29,
+   "hash": "eb59d679f0abfc60",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/47104-47359.pbf",
+   "size": 29,
+   "hash": "fb4c345ea6996cc0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/47360-47615.pbf",
+   "size": 29,
+   "hash": "e03f5fae7d5fe27e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/47616-47871.pbf",
+   "size": 29,
+   "hash": "e4ac971115532e7b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/47872-48127.pbf",
+   "size": 29,
+   "hash": "df52bf349310e63d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/48128-48383.pbf",
+   "size": 29,
+   "hash": "49efc2974b88f12d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/48384-48639.pbf",
+   "size": 29,
+   "hash": "8ad0c206adfe94db",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/4864-5119.pbf",
+   "size": 124982,
+   "hash": "c376bee145caf991",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/48640-48895.pbf",
+   "size": 29,
+   "hash": "78f7c8394b25163f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/48896-49151.pbf",
+   "size": 29,
+   "hash": "a05bcc162e83d1d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/49152-49407.pbf",
+   "size": 29,
+   "hash": "240e216a227e05c2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/49408-49663.pbf",
+   "size": 29,
+   "hash": "75d27f0c4e3fdea5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/49664-49919.pbf",
+   "size": 29,
+   "hash": "04011aea7795c6db",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/49920-50175.pbf",
+   "size": 29,
+   "hash": "47121a967c11fdb9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/50176-50431.pbf",
+   "size": 29,
+   "hash": "b52a607aca0435e7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/50432-50687.pbf",
+   "size": 29,
+   "hash": "8d0a9b7d803f2cde",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/50688-50943.pbf",
+   "size": 29,
+   "hash": "8cfe755940c68400",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/50944-51199.pbf",
+   "size": 29,
+   "hash": "85846204806870e0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/512-767.pbf",
+   "size": 94728,
+   "hash": "6abc80badad0e823",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/5120-5375.pbf",
+   "size": 131973,
+   "hash": "257eb7c087fd78f7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/51200-51455.pbf",
+   "size": 29,
+   "hash": "e28d7bbad65a1409",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/51456-51711.pbf",
+   "size": 29,
+   "hash": "9273a371180c60f7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/51712-51967.pbf",
+   "size": 29,
+   "hash": "edac2bf65a740384",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/51968-52223.pbf",
+   "size": 29,
+   "hash": "a61f7fd8cb61f1a6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/52224-52479.pbf",
+   "size": 29,
+   "hash": "102fd57af5aef747",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/52480-52735.pbf",
+   "size": 29,
+   "hash": "cb9c8bf5ff53703f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/52736-52991.pbf",
+   "size": 29,
+   "hash": "db8569fc365ce46e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/52992-53247.pbf",
+   "size": 29,
+   "hash": "a4b36a7b5a75b062",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/53248-53503.pbf",
+   "size": 29,
+   "hash": "45e30c186b1122e9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/53504-53759.pbf",
+   "size": 29,
+   "hash": "5be6b6ad6ff80eb4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/5376-5631.pbf",
+   "size": 132754,
+   "hash": "770cfd04f4d9eb85",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/53760-54015.pbf",
+   "size": 29,
+   "hash": "f9e1c552c839fa3a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/54016-54271.pbf",
+   "size": 29,
+   "hash": "ae913a38fbc44432",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/54272-54527.pbf",
+   "size": 29,
+   "hash": "aa3323616d16b7b9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/54528-54783.pbf",
+   "size": 29,
+   "hash": "777e9c302cd6fb12",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/54784-55039.pbf",
+   "size": 29,
+   "hash": "df491be02575b94f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/55040-55295.pbf",
+   "size": 29,
+   "hash": "fef7d01cd5e70a49",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/55296-55551.pbf",
+   "size": 29,
+   "hash": "be10bde51202f1a0",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/55552-55807.pbf",
+   "size": 29,
+   "hash": "753799c9adfb8915",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/55808-56063.pbf",
+   "size": 29,
+   "hash": "62d4aa681931a119",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/56064-56319.pbf",
+   "size": 29,
+   "hash": "9ca4261af903cbfc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/5632-5887.pbf",
+   "size": 114939,
+   "hash": "7dd04ee5f2ae4a59",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/56320-56575.pbf",
+   "size": 29,
+   "hash": "491dd32cca6983e3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/56576-56831.pbf",
+   "size": 29,
+   "hash": "2a3f62cdd1fb473b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/56832-57087.pbf",
+   "size": 29,
+   "hash": "04226391ca5ebfec",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/57088-57343.pbf",
+   "size": 29,
+   "hash": "62e0032f18cd15a1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/57344-57599.pbf",
+   "size": 29,
+   "hash": "f3830583c8bd54f9",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/57600-57855.pbf",
+   "size": 29,
+   "hash": "999fa1d4c81038ee",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/57856-58111.pbf",
+   "size": 29,
+   "hash": "e789c488108123ee",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/58112-58367.pbf",
+   "size": 29,
+   "hash": "94953f4cbd03a3f3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/58368-58623.pbf",
+   "size": 29,
+   "hash": "36ed8143cfb24b51",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/58624-58879.pbf",
+   "size": 29,
+   "hash": "1f635a67faff6cac",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/5888-6143.pbf",
+   "size": 83701,
+   "hash": "18c51319b3c2c1d7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/58880-59135.pbf",
+   "size": 29,
+   "hash": "cf80e3899c59a068",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/59136-59391.pbf",
+   "size": 29,
+   "hash": "e38f7ca2b100cf65",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/59392-59647.pbf",
+   "size": 29,
+   "hash": "c2b3b42af4a8644c",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/59648-59903.pbf",
+   "size": 29,
+   "hash": "e61452e7164a2a61",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/59904-60159.pbf",
+   "size": 29,
+   "hash": "a4327d9d0329cdec",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/60160-60415.pbf",
+   "size": 29,
+   "hash": "1b74fbca9169fb66",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/60416-60671.pbf",
+   "size": 29,
+   "hash": "8cab2a0eedf4fe5a",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/60672-60927.pbf",
+   "size": 29,
+   "hash": "c59e89c8aad05ba5",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/60928-61183.pbf",
+   "size": 29,
+   "hash": "6a5e8922aa442cc7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/61184-61439.pbf",
+   "size": 29,
+   "hash": "d7a6662e29db6fe7",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/6144-6399.pbf",
+   "size": 112034,
+   "hash": "34741cfa53599213",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/61440-61695.pbf",
+   "size": 29,
+   "hash": "d6a59ea52dc02234",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/61696-61951.pbf",
+   "size": 29,
+   "hash": "5ae838461ca01741",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/61952-62207.pbf",
+   "size": 29,
+   "hash": "6fed631e9a5bc7ce",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/62208-62463.pbf",
+   "size": 29,
+   "hash": "193df6d7ddf55065",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/62464-62719.pbf",
+   "size": 29,
+   "hash": "cb7efc6626929a7e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/62720-62975.pbf",
+   "size": 29,
+   "hash": "e4e2e44e128b711d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/62976-63231.pbf",
+   "size": 29,
+   "hash": "b9e2b35191959871",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/63232-63487.pbf",
+   "size": 29,
+   "hash": "6247a0df4d2df36f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/63488-63743.pbf",
+   "size": 29,
+   "hash": "b71e23dedc8777bc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/63744-63999.pbf",
+   "size": 29,
+   "hash": "e7ad82e149920b49",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/6400-6655.pbf",
+   "size": 120515,
+   "hash": "df2cb27373f088cb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/64000-64255.pbf",
+   "size": 29,
+   "hash": "9288bac420d4385b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/64256-64511.pbf",
+   "size": 104778,
+   "hash": "f4de4e219fb88e48",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/64512-64767.pbf",
+   "size": 201612,
+   "hash": "22e42bbe87a8aacd",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/64768-65023.pbf",
+   "size": 232367,
+   "hash": "44087210f489a142",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/65024-65279.pbf",
+   "size": 68701,
+   "hash": "79839b70b48fa9c4",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/65280-65535.pbf",
+   "size": 7552,
+   "hash": "953b22dad634ed0e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/6656-6911.pbf",
+   "size": 76545,
+   "hash": "9793a475f554d97d",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/6912-7167.pbf",
+   "size": 135436,
+   "hash": "3f4719b7b540e572",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/7168-7423.pbf",
+   "size": 87875,
+   "hash": "7a4fe1fcea5fbbdb",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/7424-7679.pbf",
+   "size": 70362,
+   "hash": "68242b2365dfc894",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/768-1023.pbf",
+   "size": 77034,
+   "hash": "537ccbee79180f4f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/7680-7935.pbf",
+   "size": 135449,
+   "hash": "b9100ec886dff647",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/7936-8191.pbf",
+   "size": 128630,
+   "hash": "84b0edb31363531b",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/8192-8447.pbf",
+   "size": 64220,
+   "hash": "8ea977a587352fe3",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/8448-8703.pbf",
+   "size": 82014,
+   "hash": "125b49cccfe95ac2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/8704-8959.pbf",
+   "size": 1596,
+   "hash": "53a1af0471262493",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/8960-9215.pbf",
+   "size": 62922,
+   "hash": "e80c901ecd527d84",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/9216-9471.pbf",
+   "size": 124845,
+   "hash": "55810b3114332aad",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/9472-9727.pbf",
+   "size": 44509,
+   "hash": "f1400e476affd418",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/9728-9983.pbf",
+   "size": 142108,
+   "hash": "91f79cd7f4d83f19",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/Noto Sans Regular/9984-10239.pbf",
+   "size": 101495,
+   "hash": "bdb6b5deb10499a1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/fonts/OFL.txt",
+   "size": 4374,
+   "hash": "7713cfc8e3c36d5e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/black.json",
+   "size": 1267,
+   "hash": "ac20291dac76986f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/black.png",
+   "size": 5697,
+   "hash": "1d4e9829b8eb06cf",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/black@2x.json",
+   "size": 1276,
+   "hash": "74be4f748575cb62",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/black@2x.png",
+   "size": 6179,
+   "hash": "f527d467f2250b3e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/dark.json",
+   "size": 3549,
+   "hash": "bfac76cf7ed5c2aa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/dark.png",
+   "size": 16054,
+   "hash": "8920f68e8f9f7a41",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/dark@2x.json",
+   "size": 3579,
+   "hash": "1fb5b123fbe35d2e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/dark@2x.png",
+   "size": 28407,
+   "hash": "6e01b4e366d304f2",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/grayscale.json",
+   "size": 1267,
+   "hash": "ac20291dac76986f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/grayscale.png",
+   "size": 5560,
+   "hash": "245818d5aa6aaa8e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/grayscale@2x.json",
+   "size": 1276,
+   "hash": "74be4f748575cb62",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/grayscale@2x.png",
+   "size": 6187,
+   "hash": "4bb5f77cca2ee3fc",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/light.json",
+   "size": 3549,
+   "hash": "bfac76cf7ed5c2aa",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/light.png",
+   "size": 16174,
+   "hash": "b6a34640917bdc57",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/light@2x.json",
+   "size": 3579,
+   "hash": "1fb5b123fbe35d2e",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/light@2x.png",
+   "size": 28852,
+   "hash": "23f6e9df27c2e9a1",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/white.json",
+   "size": 1267,
+   "hash": "ac20291dac76986f",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/white.png",
+   "size": 5401,
+   "hash": "daddc5e45fbd20d6",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/white@2x.json",
+   "size": 1276,
+   "hash": "74be4f748575cb62",
+   "parts": 0
+  },
+  {
+   "path": "app/assets/sprites/v4/white@2x.png",
+   "size": 6182,
+   "hash": "db0e68f2a9c6bb6e",
+   "parts": 0
+  },
+  {
+   "path": "app/css/app.css",
+   "size": 49715,
+   "hash": "6c4c5c186ea32086",
+   "parts": 0
+  },
+  {
+   "path": "app/guides.json",
+   "size": 44877,
+   "hash": "d2e137fc77b9787e",
+   "parts": 0
+  },
+  {
+   "path": "app/index.html",
+   "size": 10351,
+   "hash": "8a55905d0933d614",
+   "parts": 0
+  },
+  {
+   "path": "app/js/common.js",
+   "size": 18142,
+   "hash": "1f72c84210e4ae33",
+   "parts": 0
+  },
+  {
+   "path": "app/js/home.js",
+   "size": 5090,
+   "hash": "437d148add55567d",
+   "parts": 0
+  },
+  {
+   "path": "app/js/icons.js",
+   "size": 10789,
+   "hash": "3c8ce20a66642b36",
+   "parts": 0
+  },
+  {
+   "path": "app/js/library-bar.js",
+   "size": 3175,
+   "hash": "81c341afd99abeed",
+   "parts": 0
+  },
+  {
+   "path": "app/js/library.js",
+   "size": 9474,
+   "hash": "514cd383b27816c7",
+   "parts": 0
+  },
+  {
+   "path": "app/js/map.js",
+   "size": 15642,
+   "hash": "ef83a9f90b3df5b9",
+   "parts": 0
+  },
+  {
+   "path": "app/js/nav.js",
+   "size": 8671,
+   "hash": "ee18b403f58888c7",
+   "parts": 0
+  },
+  {
+   "path": "app/js/ready.js",
+   "size": 13274,
+   "hash": "8814eb7455fbd1bc",
+   "parts": 0
+  },
+  {
+   "path": "app/js/route.js",
+   "size": 12094,
+   "hash": "8d7cbebf18bd6f50",
+   "parts": 0
+  },
+  {
+   "path": "app/js/search.js",
+   "size": 6234,
+   "hash": "599c09377dfc0031",
+   "parts": 0
+  },
+  {
+   "path": "app/js/share.js",
+   "size": 4220,
+   "hash": "218e699552ad7028",
+   "parts": 0
+  },
+  {
+   "path": "app/js/shell.js",
+   "size": 2919,
+   "hash": "b2fb17994d96fc17",
+   "parts": 0
+  },
+  {
+   "path": "app/js/theme.js",
+   "size": 483,
+   "hash": "7ed92f53bede3c43",
+   "parts": 0
+  },
+  {
+   "path": "app/library.html",
+   "size": 4412,
+   "hash": "61bbfadf2b5c8ff9",
+   "parts": 0
+  },
+  {
+   "path": "app/map.html",
+   "size": 6086,
+   "hash": "bd89a08bc2d2c161",
+   "parts": 0
+  },
+  {
+   "path": "app/ready.html",
+   "size": 6969,
+   "hash": "2e06c585f9fc9906",
+   "parts": 0
+  },
+  {
+   "path": "app/topics.json",
+   "size": 20223,
+   "hash": "46d5933341da2493",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/basemaps.mjs",
+   "size": 38226,
+   "hash": "9d6ee63bee82fd4a",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/maplibre-gl-shared.mjs",
+   "size": 0,
+   "hash": "e3b0c44298fc1c14",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/maplibre-gl-worker.mjs",
+   "size": 550754,
+   "hash": "c8564c4a4147326a",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/maplibre-gl.css",
+   "size": 71596,
+   "hash": "a90798a195301779",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/maplibre-gl.mjs",
+   "size": 1106041,
+   "hash": "01590c9875ea5bb0",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/pmtiles.js",
+   "size": 20229,
+   "hash": "caf981bc46f6327e",
+   "parts": 0
+  },
+  {
+   "path": "app/vendor/qrcode.mjs",
+   "size": 51907,
+   "hash": "ea91d7118a539528",
+   "parts": 0
+  },
+  {
+   "path": "manifest.json",
+   "size": 3611,
+   "hash": "b09a98ee53594cf4",
+   "parts": 0
+  },
+  {
+   "path": "maps/ee.graph",
+   "size": 35877298,
+   "hash": "766fbd8078a51307",
+   "parts": 0
+  },
+  {
+   "path": "maps/ee.places",
+   "size": 9932329,
+   "hash": "35a4059c379d211c",
+   "parts": 0
+  },
+  {
+   "path": "maps/ee.pmtiles",
+   "size": 310471836,
+   "hash": "84b423069dd92585",
+   "parts": 7
+  },
+  {
+   "path": "pois/border.geojson",
+   "size": 4907,
+   "hash": "3ea883784daaf8fc",
+   "parts": 0
+  },
+  {
+   "path": "pois/clinic.geojson",
+   "size": 37830,
+   "hash": "136b431217c14aec",
+   "parts": 0
+  },
+  {
+   "path": "pois/food.geojson",
+   "size": 313724,
+   "hash": "b995cdb1abf7d88a",
+   "parts": 0
+  },
+  {
+   "path": "pois/fuel.geojson",
+   "size": 127260,
+   "hash": "52f769e9302bfb50",
+   "parts": 0
+  },
+  {
+   "path": "pois/hospital.geojson",
+   "size": 12430,
+   "hash": "c843cadce843240f",
+   "parts": 0
+  },
+  {
+   "path": "pois/pharmacy.geojson",
+   "size": 134050,
+   "hash": "f9f77acb3da15a1e",
+   "parts": 0
+  },
+  {
+   "path": "pois/police.geojson",
+   "size": 12294,
+   "hash": "98200ac2aab4e0ec",
+   "parts": 0
+  },
+  {
+   "path": "pois/rescue.geojson",
+   "size": 22009,
+   "hash": "840a7f17a682eb8a",
+   "parts": 0
+  },
+  {
+   "path": "pois/shelter.geojson",
+   "size": 70994,
+   "hash": "d8d42e0a09183a92",
+   "parts": 0
+  },
+  {
+   "path": "pois/spring.geojson",
+   "size": 24558,
+   "hash": "8cb85b1068be0b48",
+   "parts": 0
+  },
+  {
+   "path": "pois/water.geojson",
+   "size": 40991,
+   "hash": "bd2d812f9eede8d6",
+   "parts": 0
+  },
+  {
+   "path": "varu.wasm",
+   "size": 11940531,
+   "hash": "045893482978cdfb",
+   "parts": 0
+  },
+  {
+   "path": "version",
+   "size": 8,
+   "hash": "b2f634c9b7bc5550",
+   "parts": 0
+  }
+ ]
+}

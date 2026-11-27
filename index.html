@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Varu</title>
+<meta name="description" content="Offline maps, shelters and emergency guidance, saved on your device.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+<script>
+// Before the page draws: the theme chosen on this device, as in the app
+// (viewer/js/theme.js). Light or dark; anything else follows the device.
+(function () {
+  var theme = (document.cookie.match(/(?:^|; )varu_theme=([^;]*)/) || [])[1];
+  if (theme === undefined) {
+    try { theme = localStorage.getItem("varu.theme"); } catch (e) { /* private mode */ }
+  }
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+})();
+</script>
+<style>
+/* The installer's look (installer/wizard.html), with the app's "Varu 2026" tokens. */
+:root {
+  --bg: #f3f0e8; --surface: #fffdf8; --surface-alt: #eae6dc; --ink: #1b2420; --muted: #56625c;
+  --line: #d9d4c7; --accent: #0b5d4b; --accent-soft: #e2efea; --accent-ink: #ffffff;
+  --alert: #b3261e; --alert-soft: #fcebe8; --warn: #8a5300; --warn-soft: #fdf1da;
+  --radius: 10px; --wrap: min(100% - 64px, 936px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #1a211e; --surface-alt: #232c28; --ink: #e9e6dd; --muted: #a3aea8;
+    --line: #2c3632; --accent: #74d3b6; --accent-soft: #173029; --accent-ink: #0d1512;
+    --alert: #ff8a80; --alert-soft: #3a1a17; --warn: #f3b34c; --warn-soft: #3a2a10;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #1a211e; --surface-alt: #232c28; --ink: #e9e6dd; --muted: #a3aea8;
+  --line: #2c3632; --accent: #74d3b6; --accent-soft: #173029; --accent-ink: #0d1512;
+  --alert: #ff8a80; --alert-soft: #3a1a17; --warn: #f3b34c; --warn-soft: #3a2a10;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+}
+main { flex: 1; width: var(--wrap); margin: 0 auto; padding: 28px 0 40px; }
+h1, h2 { margin: 0; line-height: 1.2; }
+h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+p { margin: 0; }
+.hint { color: var(--muted); }
+.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bar { width: var(--wrap); margin: 0 auto; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 16px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); font-weight: 600; text-decoration: none;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn.primary { padding: 10px 22px; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.btn.primary:disabled { opacity: 0.45; }
+
+/* Top bar */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.topbar .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #0b5d4b; color: #f3f0e8; }
+.logo .i { width: 22px; height: 22px; }
+.brand strong { font-size: 19px; font-weight: 750; letter-spacing: -0.02em; }
+.brand .sub { padding-left: 10px; border-left: 1px solid var(--line); color: var(--muted); font-weight: 500; line-height: 18px; }
+.bar-end { display: flex; align-items: center; gap: 10px; }
+.langs, .theme-switch { display: flex; padding: 3px; border-radius: 8px; background: var(--surface-alt); }
+.langs button { padding: 4px 10px; border: 0; border-radius: 6px; background: none; color: var(--muted); font-size: 13px; font-weight: 600; }
+.langs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+.theme-switch button, .theme-toggle {
+  display: grid; place-items: center; width: 30px; height: 24px; padding: 0;
+  border: 1px solid transparent; border-radius: 6px; background: none; color: var(--muted);
+}
+.theme-switch .i { width: 15px; height: 15px; }
+.theme-switch button[aria-pressed="true"] { background: var(--surface); border-color: var(--line); color: var(--accent); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+.theme-toggle { display: none; width: 28px; height: 28px; border-radius: 8px; background: var(--surface-alt); color: var(--ink); }
+
+/* The steps */
+.stepper { background: var(--surface); border-bottom: 1px solid var(--line); }
+.stepper .bar { padding: 16px 0; }
+.steps { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: flex; flex: 1; align-items: center; gap: 8px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+.steps li:first-child { flex: none; }
+.steps li:not(:first-child)::before { content: ""; flex: 1; height: 2px; margin-right: 4px; border-radius: 1px; background: var(--line); }
+.steps .dot { display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%; background: var(--surface-alt); color: var(--muted); font-size: 12px; font-weight: 700; }
+.steps .dot .i { width: 14px; height: 14px; }
+.steps [data-state="done"], .steps [data-state="now"] { color: var(--ink); }
+.steps [data-state="now"] { font-weight: 650; }
+.steps [data-state="done"]::before, .steps [data-state="now"]::before { background: var(--accent) !important; }
+.steps [data-state="done"] .dot, .steps [data-state="now"] .dot { background: var(--accent); color: var(--accent-ink); }
+.bars, .step-now { display: none; }
+
+/* A step on the left, "Your Varu" on the right */
+.setup { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: 28px; }
+.step { display: flex; flex-direction: column; gap: 20px; }
+.head { display: flex; flex-direction: column; gap: 6px; }
+.intro { display: flex; gap: 12px; padding: 16px; border-radius: 12px; background: var(--accent-soft); }
+.intro .i { width: 20px; height: 20px; margin-top: 2px; color: var(--accent); }
+.choices { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.card.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.off { opacity: 0.6; }
+.choice { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.choice input { width: 20px; height: 20px; margin: 0; flex: none; accent-color: var(--accent); }
+.choice > .i { width: 18px; height: 18px; color: var(--accent); }
+.card.off .choice > .i { color: var(--muted); }
+.choice .grow { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.choice strong { font-size: 16px; font-weight: 650; }
+.choice small { color: var(--muted); font-size: 13px; }
+.size { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.summary { display: flex; flex-direction: column; gap: 14px; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.summary h2 { font-size: 15px; font-weight: 700; }
+.facts { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.facts div { display: flex; gap: 10px; }
+.facts .i { margin-top: 2px; color: var(--accent); }
+.facts dt { color: var(--muted); font-size: 12px; }
+.facts dd { margin: 0; font-weight: 600; }
+.summary hr { width: 100%; margin: 0; border: 0; border-top: 1px solid var(--line); }
+.size-part { display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 13px; }
+.size-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.size-top strong { color: var(--ink); font-size: 15px; font-variant-numeric: tabular-nums; }
+.track { height: 8px; overflow: hidden; border-radius: 4px; background: var(--surface-alt); }
+.track span { display: block; height: 100%; min-width: 4px; border-radius: 4px; background: var(--accent); }
+.track.over span { background: var(--alert); }
+
+.box { display: flex; gap: 12px; padding: 14px 16px; border-radius: 10px; }
+.box > .i { width: 18px; height: 18px; margin-top: 2px; }
+.box.bad { background: var(--alert-soft); border: 1px solid var(--alert); }
+.box.bad > .i { color: var(--alert); }
+.box.warn { background: var(--warn-soft); }
+.box.warn > .i { color: var(--warn); }
+.box.soft { background: var(--accent-soft); }
+.box.soft > .i { color: var(--accent); }
+.box ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.box .share { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; }
+.review { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.review div { display: grid; grid-template-columns: 18px 150px minmax(0, 1fr); align-items: center; gap: 14px; padding: 12px 18px; }
+.review div + div { border-top: 1px solid var(--line); }
+.review .i { color: var(--accent); }
+.review dt { color: var(--muted); }
+.review dd { margin: 0; font-weight: 650; }
+
+.foot { position: sticky; bottom: 0; z-index: 2; background: var(--surface); border-top: 1px solid var(--line); }
+.foot .bar { display: flex; align-items: center; gap: 10px; padding: 14px 0; }
+.foot #next, .foot #install { margin-left: auto; }
+
+/* Installing and finished */
+.after { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin: 24px auto 0; }
+.after .track { height: 10px; }
+.progress-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; margin-top: -10px; }
+.progress-line span { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.parts { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 16px 18px; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--muted); }
+.parts li { display: flex; align-items: center; gap: 10px; }
+.parts li .size { margin-left: auto; font-size: 13px; }
+.parts .mark { display: grid; place-items: center; width: 20px; height: 20px; flex: none; border: 1.5px solid var(--line); border-radius: 50%; }
+.parts .mark .i { width: 12px; height: 12px; stroke-width: 3; }
+.parts [data-state="done"] { color: var(--ink); }
+.parts [data-state="done"] .mark { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.parts [data-state="now"] { color: var(--ink); font-weight: 650; }
+.parts [data-state="now"] .mark { border: 2px solid var(--accent); }
+.parts [data-state="now"] .mark::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.keep { display: flex; gap: 10px; color: var(--muted); }
+.keep .i { margin-top: 3px; }
+.done-head { display: flex; align-items: center; gap: 16px; }
+.done-head h1 { font-size: 28px; }
+.done-icon { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.done-icon .i { width: 24px; height: 24px; }
+.message .done-icon { background: var(--alert-soft); color: var(--alert); }
+.message { align-items: center; max-width: 520px; margin-top: 12vh; text-align: center; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.center { text-align: center; margin-top: 12vh; }
+
+@media (max-width: 719px) {
+  :root { --wrap: calc(100% - 40px); }
+  .wide { display: none; }
+  .topbar .bar { height: 56px; }
+  .logo { width: 28px; height: 28px; border-radius: 8px; }
+  .logo .i { width: 19px; height: 19px; }
+  .brand strong { font-size: 18px; }
+  .bar-end { gap: 8px; }
+  .langs button { padding: 3px 8px; font-size: 12px; }
+  .theme-switch { display: none; }
+  .theme-toggle { display: grid; }
+  .theme-toggle .i { width: 16px; height: 16px; }
+  .stepper .bar { padding: 4px 0 14px; }
+  .steps { display: none; }
+  .bars { display: flex; gap: 4px; margin-bottom: 8px; }
+  .bars span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .bars span.on { background: var(--accent); }
+  .step-now { display: block; color: var(--muted); font-size: 13px; }
+  .step-now strong { color: var(--ink); font-weight: 650; }
+  main { padding: 24px 0 28px; }
+  h1 { font-size: 24px; }
+  .setup { display: block; }
+  .summary { display: none; }
+  .intro { padding: 14px; }
+  .card { border-radius: 12px; }
+  .choice { padding: 16px; }
+  .review div { grid-template-columns: 18px minmax(0, 1fr); grid-template-areas: "icon label" "icon value"; gap: 0 12px; padding: 10px 12px; }
+  .review .i { grid-area: icon; }
+  .review dt { grid-area: label; font-size: 11px; }
+  .review dd { grid-area: value; }
+  .foot .bar { padding: 12px 0 max(env(safe-area-inset-bottom), 20px); }
+  .foot .btn { height: 50px; font-size: 16px; }
+  .foot #back { flex: 0 0 30%; }
+  .foot #next, .foot #install { flex: 1; margin-left: 0; }
+  .after { margin-top: 0; }
+  .message { margin-top: 18vh; }
+  .done-head { flex-direction: column; text-align: center; margin-top: 8vh; }
+  #done-text { text-align: center; color: var(--muted); }
+  .actions { flex-direction: column; }
+  .actions .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bar">
+    <div class="brand">
+      <span class="logo"><svg data-icon="pin"></svg></span>
+      <strong>Varu</strong><span class="sub wide" data-t="installer"></span>
+    </div>
+    <div class="bar-end">
+      <div class="langs" id="langs" role="group"></div>
+      <div class="theme-switch" role="group" data-tl="theme">
+        <button type="button" data-theme-choice="system" data-tl="themeSystem"><svg data-icon="monitor"></svg></button>
+        <button type="button" data-theme-choice="light" data-tl="themeLight"><svg data-icon="sun"></svg></button>
+        <button type="button" data-theme-choice="dark" data-tl="themeDark"><svg data-icon="moon"></svg></button>
+      </div>
+      <button type="button" class="theme-toggle" id="theme-toggle"></button>
+    </div>
+  </div>
+</header>
+
+<nav class="stepper" id="stepper" hidden>
+  <div class="bar">
+    <ol class="steps" id="steps"></ol>
+    <div class="bars" id="bars" aria-hidden="true"></div>
+    <p class="step-now"><span id="step-count"></span> <strong id="step-name"></strong></p>
+  </div>
+</nav>
+
+<main>
+  <p id="loading" class="hint center" data-t="loading"></p>
+
+  <!-- Nothing to install from: no internet, or a browser that cannot keep files. -->
+  <section id="notice" class="after message" hidden>
+    <span class="done-icon"><svg data-icon="wifi-off"></svg></span>
+    <h1 id="notice-title"></h1>
+    <p class="hint" id="notice-text"></p>
+    <button type="button" class="btn primary" id="retry"><svg data-icon="refresh-cw"></svg><span data-t="retry"></span></button>
+  </section>
+
+  <!-- iPhone and iPad in Safari: a Home Screen app keeps its own storage,
+       so it has to be added first and the download made from there. -->
+  <section id="ios-first" class="after" hidden>
+    <div class="done-head"><span class="done-icon"><svg data-icon="smartphone"></svg></span><h1 data-t="iosFirstTitle"></h1></div>
+    <p class="hint" data-t="lead"></p>
+    <div class="box soft"><svg data-icon="info"></svg>
+      <ol><li id="ios-step1"></li><li data-t="iosStep2"></li><li data-t="iosStep3"></li></ol>
+    </div>
+  </section>
+
+  <section id="setup" class="setup" hidden>
+    <div>
+      <div class="step" data-step="1">
+        <p class="intro"><svg data-icon="wifi-off"></svg><span data-t="lead"></span></p>
+        <div class="head"><h1 data-t="countryTitle"></h1><p class="hint" data-t="countryHint"></p></div>
+        <ul id="regions" class="choices" role="radiogroup"></ul>
+        <p class="hint"><a href="live/" data-t="tryLive"></a></p>
+      </div>
+
+      <div class="step" data-step="2">
+        <div class="head"><h1 data-t="includeTitle"></h1><p class="hint" data-t="includeHint"></p></div>
+        <ul id="contents" class="choices"></ul>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="head"><h1 data-t="reviewTitle"></h1><p class="hint" data-t="reviewHint"></p></div>
+        <div class="box bad" id="problem-box" hidden><svg data-icon="circle-alert"></svg><p id="problem"></p></div>
+        <div class="box warn" id="space-box" hidden><svg data-icon="triangle-alert"></svg><p id="space"></p></div>
+        <p class="box soft" id="update-note" hidden><svg data-icon="history"></svg><span data-t="updateNote"></span></p>
+        <dl class="review" id="review"></dl>
+        <p class="keep"><svg data-icon="info"></svg><span data-t="keepNote"></span></p>
+      </div>
+    </div>
+    <aside class="summary" id="summary" aria-live="polite"></aside>
+  </section>
+
+  <section id="progress" class="after" hidden aria-live="polite">
+    <div class="head"><h1 data-t="installing"></h1><p class="hint" data-t="installingHint"></p></div>
+    <div class="track" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="1"><span></span></div>
+    <p class="progress-line"><strong id="current"></strong><span id="amount"></span></p>
+    <ol class="parts" id="parts"></ol>
+    <p class="keep"><svg data-icon="info"></svg><span data-t="keepOpen"></span></p>
+  </section>
+
+  <section id="done" class="after" hidden>
+    <div class="done-head"><span class="done-icon"><svg data-icon="check"></svg></span><h1 id="done-title"></h1></div>
+    <p id="done-text"></p>
+    <p class="box soft" id="newer" hidden><svg data-icon="history"></svg><span data-t="newer"></span></p>
+    <p class="box warn" id="not-persisted" hidden><svg data-icon="triangle-alert"></svg><span data-t="notPersisted"></span></p>
+    <div class="actions">
+      <a class="btn primary" href="app/" id="open"><span data-t="open"></span><svg data-icon="arrow-right"></svg></a>
+      <button type="button" class="btn" id="add-app" hidden><svg data-icon="download"></svg><span data-t="addApp"></span></button>
+      <button type="button" class="btn" id="update" hidden><svg data-icon="refresh-cw"></svg><span data-t="update"></span></button>
+      <button type="button" class="btn" id="change"><svg data-icon="list-checks"></svg><span data-t="change"></span></button>
+      <button type="button" class="btn" id="remove"><svg data-icon="trash"></svg><span data-t="remove"></span></button>
+    </div>
+  </section>
+</main>
+
+<footer class="foot" id="foot" hidden>
+  <div class="bar">
+    <button type="button" class="btn" id="back"><svg data-icon="arrow-left"></svg><span data-t="back"></span></button>
+    <button type="button" class="btn primary" id="next"><span data-t="next"></span><svg data-icon="arrow-right"></svg></button>
+    <button type="button" class="btn primary" id="install"><svg data-icon="download"></svg><span data-t="install"></span></button>
+  </div>
+</footer>
+
+<script src="install.js"></script>
+</body>
+</html>
