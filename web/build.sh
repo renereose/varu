@@ -18,6 +18,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 
 rm -rf "$site"
 mkdir -p "$site"
+site=$(cd "$site" && pwd) # go build below runs in launcher/
 touch "$site/.nojekyll" # GitHub Pages: serve files as they are
 cp "$here"/index.html "$here"/install.js "$here"/download.js "$here"/sw.js \
   "$here"/manifest.webmanifest "$here"/*.png "$site"/
