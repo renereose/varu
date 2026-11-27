@@ -163,7 +163,7 @@ button:disabled { cursor: default; }
 /* Installing and finished */
 .after { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin: 24px auto 0; }
 .after .track { height: 10px; }
-.progress-line { display: flex; justify-content: space-between; gap: 16px; margin-top: -10px; }
+.progress-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; margin-top: -10px; }
 .progress-line span { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .parts { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 16px 18px; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--muted); }
 .parts li { display: flex; align-items: center; gap: 10px; }
@@ -319,6 +319,7 @@ button:disabled { cursor: default; }
       <a class="btn primary" href="app/" id="open"><span data-t="open"></span><svg data-icon="arrow-right"></svg></a>
       <button type="button" class="btn" id="add-app" hidden><svg data-icon="download"></svg><span data-t="addApp"></span></button>
       <button type="button" class="btn" id="update" hidden><svg data-icon="refresh-cw"></svg><span data-t="update"></span></button>
+      <button type="button" class="btn" id="change"><svg data-icon="list-checks"></svg><span data-t="change"></span></button>
       <button type="button" class="btn" id="remove"><svg data-icon="trash"></svg><span data-t="remove"></span></button>
     </div>
   </section>

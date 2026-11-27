@@ -97,13 +97,12 @@ func newSite(cfg Config) *site {
 	}
 
 	mux.HandleFunc("/manifest.json", func(w http.ResponseWriter, r *http.Request) {
-		path := filepath.Join(cfg.Root, "manifest.json")
-		if !isFile(path) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte("{}"))
-			return
+		w.Header().Set("Content-Type", "application/json")
+		raw, err := os.ReadFile(filepath.Join(cfg.Root, "manifest.json"))
+		if err != nil {
+			raw = []byte("{}")
 		}
-		http.ServeFile(w, r, path)
+		_, _ = w.Write(present(cfg.Root, raw))
 	})
 
 	mux.HandleFunc("/api/status", func(w http.ResponseWriter, r *http.Request) {
@@ -157,6 +156,54 @@ func newSite(cfg Config) *site {
 	}
 	sh.handler = commonHeaders(local(mux, true))
 	return &site{local: commonHeaders(local(hostGuard(mux), false)), share: sh}
+}
+
+// present leaves out the parts of a manifest whose files are missing (a
+// web app install without the map, say), so the pages offer only what is
+// there.
+func present(root string, raw []byte) []byte {
+	var m map[string]json.RawMessage
+	if json.Unmarshal(raw, &m) != nil {
+		return raw
+	}
+	has := func(part json.RawMessage) bool {
+		var p struct {
+			File string `json:"file"`
+		}
+		if json.Unmarshal(part, &p) != nil || p.File == "" {
+			return true // nothing to check
+		}
+		rel := filepath.FromSlash(p.File)
+		return filepath.IsLocal(rel) && isFile(filepath.Join(root, rel))
+	}
+	changed := false
+	for _, key := range []string{"map", "routing", "places"} {
+		if part, ok := m[key]; ok && !has(part) {
+			delete(m, key)
+			changed = true
+		}
+	}
+	var pois []json.RawMessage
+	if json.Unmarshal(m["pois"], &pois) == nil {
+		kept := pois[:0]
+		for _, poi := range pois {
+			if has(poi) {
+				kept = append(kept, poi)
+			}
+		}
+		if len(kept) != len(pois) {
+			m["pois"], _ = json.Marshal(kept)
+			changed = true
+		}
+	}
+	if !changed {
+		return raw
+	}
+	out, err := json.Marshal(m)
+	if err != nil {
+		return raw
+	}
+	return out
 }
 
 // sharer owns the optional listener on the local network. It is bound

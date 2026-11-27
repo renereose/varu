@@ -242,6 +242,10 @@ added to the home screen.
   switches over by rewriting `.state`, so Varu keeps working throughout and
   an interrupted download carries on. Files no longer named are removed the
   next time the app opens.
+- In step 2 people may leave out the street map (with its layers), address
+  search and directions; `.state` remembers it, so updates respect it. The
+  launcher's `/manifest.json` leaves out parts whose files are missing, so
+  the pages hide them. Small files download eight at a time.
 - `update.js` runs in the app's pages: when Varu opens with internet it
   compares `files.json` with what is saved. Up to 50 MB (new app code, a
   new road network) updates on its own with a small banner; a new map asks
