@@ -26,7 +26,8 @@ git add -A
 git -c user.name="$name" -c user.email="$email" commit -q -m "Web app $version"
 git push -q -f "$remote" gh-pages
 
-if ! gh api "repos/$slug/pages" >/dev/null 2>&1; then
-  gh api -X POST "repos/$slug/pages" -f "source[branch]=gh-pages" -f "source[path]=/" >/dev/null
-fi
+# Pushing gh-pages may turn Pages on by itself; otherwise ask for it.
+gh api "repos/$slug/pages" >/dev/null 2>&1 ||
+  gh api -X POST "repos/$slug/pages" -f "source[branch]=gh-pages" -f "source[path]=/" >/dev/null 2>&1 ||
+  gh api "repos/$slug/pages" >/dev/null
 echo "Published the web app: $(gh api "repos/$slug/pages" -q .html_url)"
