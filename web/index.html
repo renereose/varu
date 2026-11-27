@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Varu</title>
+  <meta name="description" content="Offline maps, shelters and emergency guidance, saved on your device.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#fffdf8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a211e" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f0e8; --surface: #fffdf8; --ink: #1b2420; --muted: #56625c; --line: #dcd6c8;
+      --accent: #0b5d4b; --accent-soft: #e2eeea; --accent-ink: #fff; --alert: #b3261e; --alert-soft: #fbe9e7;
+      --warn-soft: #fdf1dc; --radius: 10px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #121715; --surface: #1a211e; --ink: #e9e6dd; --muted: #a3aea8; --line: #2e3833;
+        --accent: #6fd3b4; --accent-soft: #19332b; --accent-ink: #0c1f19; --alert: #ff8a80; --alert-soft: #3a1f1c;
+        --warn-soft: #3a2e17;
+      }
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    header { background: var(--surface); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+    .bar, main { width: min(100% - 32px, 640px); margin: 0 auto; }
+    .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; }
+    .logo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #0b5d4b; color: #f3f0e8; }
+    .langs { display: flex; gap: 4px; }
+    .langs button { font: inherit; font-size: 14px; font-weight: 600; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: none; color: var(--muted); cursor: pointer; }
+    .langs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    main { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 20px; }
+    h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+    p { margin: 0; }
+    .muted { color: var(--muted); }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .region { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+    .region strong { font-size: 18px; }
+    ul.got { margin: 0; padding-left: 20px; color: var(--muted); }
+    .btn { font: inherit; font-weight: 600; display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 12px 20px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-decoration: none; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    progress { width: 100%; height: 10px; accent-color: var(--accent); }
+    .note { border-radius: var(--radius); padding: 14px 16px; background: var(--accent-soft); }
+    .note.warn { background: var(--warn-soft); }
+    .note.alert { background: var(--alert-soft); }
+    ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+    .share { display: inline-block; vertical-align: -3px; }
+    footer { color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <span class="brand"><span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>Varu</span>
+      <div class="langs" id="langs" role="group"></div>
+    </div>
+  </header>
+  <main>
+    <h1 data-t="title"></h1>
+    <p class="muted" data-t="intro"></p>
+
+    <!-- iPhone and iPad in Safari: a Home Screen app keeps its own storage,
+         so it has to be added first and the download made from there. -->
+    <div class="note" id="ios-first" hidden>
+      <p><strong data-t="iosFirstTitle"></strong></p>
+      <ol>
+        <li id="ios-step1"></li>
+        <li data-t="iosStep2"></li>
+        <li data-t="iosStep3"></li>
+      </ol>
+    </div>
+
+    <section class="card" id="choose" hidden>
+      <div class="region"><strong id="region-name"></strong><span class="muted" id="region-size"></span></div>
+      <ul class="got">
+        <li data-t="gotMap"></li>
+        <li data-t="gotRoute"></li>
+        <li data-t="gotGuide"></li>
+      </ul>
+      <p class="note warn" id="space" hidden></p>
+      <div class="actions"><button type="button" class="btn primary" id="install" data-t="install"></button></div>
+    </section>
+
+    <section class="card" id="progress-box" hidden>
+      <strong data-t="downloading"></strong>
+      <progress id="bar" max="1" value="0"></progress>
+      <p class="muted" id="progress-text"></p>
+      <p class="muted" data-t="keepOpen"></p>
+    </section>
+
+    <section class="card" id="ready" hidden>
+      <strong id="ready-title"></strong>
+      <p class="muted" id="ready-text"></p>
+      <p class="note warn" id="not-persisted" data-t="notPersisted" hidden></p>
+      <div class="actions">
+        <a class="btn primary" href="app/" id="open" data-t="open"></a>
+        <button type="button" class="btn" id="add-app" data-t="addApp" hidden></button>
+        <button type="button" class="btn" id="update" data-t="update" hidden></button>
+        <button type="button" class="btn" id="remove" data-t="remove"></button>
+      </div>
+    </section>
+
+    <p class="note alert" id="problem" role="alert" hidden></p>
+    <p class="note alert" id="unsupported" data-t="unsupported" hidden></p>
+
+    <footer data-t="footer"></footer>
+  </main>
+  <script src="install.js"></script>
+</body>
+</html>

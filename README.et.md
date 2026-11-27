@@ -79,9 +79,15 @@ ega kasutajakontosid ning internetti on vaja vaid üks kord, et kõik alla laadi
 | WikiMed, meditsiinientsüklopeedia (inglise keeles) | 2,0 GB |
 | Post Disaster Resource Library (inglise keeles) | 0,6 GB |
 
-> 💡 **iPhone?** iPhone'i äppi veel pole. iPhone'iga saab Varut kasutada
-> WiFi kaudu, kui arvuti või Android-telefon [seda jagab](#jagamine-teiste-telefonidega),
-> või [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi).
+> 💡 **iPhone või iPad?** App Store'is Varut pole, aga Varu saab paigaldada
+> veebilehelt: ava Safaris **[renereose.github.io/varu](https://renereose.github.io/varu/)**,
+> puuduta Jaga ja lisa see avakuvale, siis ava Varu avakuvalt ja laadi see
+> seal alla. Seal on kaart, otsing, teejuhised ja hädaolukorra juhend,
+> raamatukogu mitte. Veebirakendus on uus ega ole veel päris iPhone'is
+> proovitud. See töötab ka Chrome'is või Edge'is arvutis ja Android-telefonis.
+> iPhone'iga saab Varut kasutada ka WiFi kaudu, kui arvuti või Android-telefon
+> [seda jagab](#jagamine-teiste-telefonidega), või
+> [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi).
 
 ---
 
