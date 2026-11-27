@@ -17,6 +17,7 @@
   <a href="https://github.com/renereose/varu/releases/latest"><b>⬇&nbsp; Download Varu</b></a>
   &nbsp;·&nbsp; <a href="#-make-a-usb-stick-for-your-family">Make a USB stick</a>
   &nbsp;·&nbsp; <a href="#-install-on-an-android-phone">Android phone</a>
+  &nbsp;·&nbsp; <a href="#-install-from-the-browser">iPhone / browser</a>
   &nbsp;·&nbsp; <a href="#-questions-and-problems">Help</a>
 </p>
 
@@ -54,19 +55,21 @@ and needs the internet only once, to download everything.
 2. [Install on a computer](#-install-on-a-computer) (Mac, Windows, Linux)
 3. [Make a USB stick for your family](#-make-a-usb-stick-for-your-family)
 4. [Install on an Android phone](#-install-on-an-android-phone)
-5. [Using Varu](#-using-varu): the map, shelters, directions, the library
-6. [Opening the stick on another computer](#-opening-the-stick-on-another-computer)
-7. [Keeping Varu up to date](#-keeping-varu-up-to-date)
-8. [Raspberry Pi](#-raspberry-pi)
-9. [In an emergency](#-in-an-emergency)
-10. [Questions and problems](#-questions-and-problems)
-11. [Where the information comes from](#-where-the-information-comes-from)
+5. [Install from the browser](#-install-from-the-browser) (iPhone, iPad, any browser)
+6. [Using Varu](#-using-varu): the map, shelters, directions, the library
+7. [Opening the stick on another computer](#-opening-the-stick-on-another-computer)
+8. [Keeping Varu up to date](#-keeping-varu-up-to-date)
+9. [Raspberry Pi](#-raspberry-pi)
+10. [In an emergency](#-in-an-emergency)
+11. [Questions and problems](#-questions-and-problems)
+12. [Where the information comes from](#-where-the-information-comes-from)
 
 ---
 
 ## ✅ What you need
 
 - **A computer** (Mac, Windows or Linux) or **an Android phone** (Android 7 or newer).
+  On an iPhone or iPad, [install from the browser](#-install-from-the-browser).
 - **An internet connection, once**, to download Varu. After that, none.
 - **For a USB stick:** **16 GB** is a good size. Everything fits on 8 GB, but updating a library book briefly needs room for the old and the new copy.
 - **Time:** downloading takes from a few minutes (map only) to an hour or more (all library books on a slow connection).
@@ -79,15 +82,9 @@ and needs the internet only once, to download everything.
 | WikiMed medical encyclopedia (English) | 2.0 GB |
 | Post Disaster Resource Library (English) | 0.6 GB |
 
-> 💡 **iPhone or iPad?** There's no App Store app, but Varu installs from
-> its web page: open **[renereose.github.io/varu](https://renereose.github.io/varu/)**
-> in Safari, tap Share → Add to Home Screen, then open Varu from the Home
-> Screen and download it there. It has the map, search, directions and the
-> emergency guide, not the library. The web app is new and not yet tested on
-> a real iPhone. It also works in Chrome or Edge on a computer or Android
-> phone. An iPhone can also use Varu over Wi-Fi when a computer or Android
-> phone [shares it](#sharing-with-other-phones), or from a
-> [Raspberry Pi on your Wi-Fi](#-raspberry-pi).
+> 💡 An iPhone can also use the full Varu, library included, over Wi-Fi
+> when a computer or Android phone [shares it](#sharing-with-other-phones),
+> or from a [Raspberry Pi on your Wi-Fi](#-raspberry-pi).
 
 ---
 
@@ -196,7 +193,33 @@ nobody deletes them by accident.
    it to see the progress there. You can lock the phone or use other apps
    meanwhile; the download carries on. Afterwards Varu works in flight mode too.
 
-The **⋮** menu at the top has **Map**, and **Downloads**, which reopens the wizard.
+To change or update what's on the phone later, tap **Update maps and data** on the start page.
+
+---
+
+## 🌐 Install from the browser
+
+For iPhones and iPads, which have no App Store app, and for anyone who'd
+rather not install anything. Varu runs in the browser and keeps its data there.
+
+1. Open **[renereose.github.io/varu](https://renereose.github.io/varu/)**.
+   - **iPhone or iPad:** in Safari, first tap **Share → Add to Home Screen**,
+     then open Varu from the Home Screen and continue there. Safari keeps a
+     Home Screen app's storage separate from the browser's.
+   - **Chrome or Edge** (computer or Android): continue on the page.
+     **Install as an app** adds an icon.
+2. Choose what to include. **The app and the emergency guide** (about 26 MB)
+   is always there; the street map, address search and directions add up to
+   about 0.4 GB in all.
+3. Tap **Install** and stay on Wi-Fi. The page shows the speed and the time left.
+4. Tap **Open Varu**. From then on it works with no internet.
+
+When you open Varu while online, it checks for updates: small ones download
+by themselves, bigger ones ask first.
+
+The web app has the map, search, directions and the emergency guide, but not
+the library, and it can't share Varu with other phones. It's new and not yet
+tested on a real iPhone.
 
 ---
 
@@ -352,7 +375,7 @@ New versions bring new features, fresh maps and newer books. To update:
    copies don't take up space.
 
 To update a stick, plug it in and choose **Go → Install or update…**. On a
-phone, use **⋮ → Downloads**.
+phone, tap **Update maps and data** on the start page.
 
 > 💡 Update your stick every few months: shops close, roads change, and
 > new shelters are added.
@@ -510,7 +533,7 @@ right-click → **Start here** to say where you are.
 <summary><b>Map search, live directions or library search are missing after updating the phone app.</b></summary>
 
 These live in the downloaded data, not in the app. Open Varu and choose
-**Update** when asked, or use **⋮ → Downloads** → **Install**.
+**Update** when asked, or tap **Update maps and data** → **Install**.
 
 </details>
 

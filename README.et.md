@@ -17,6 +17,7 @@
   <a href="https://github.com/renereose/varu/releases/latest"><b>⬇&nbsp; Laadi Varu alla</b></a>
   &nbsp;·&nbsp; <a href="#-tee-perele-varu-mälupulk">Tee mälupulk</a>
   &nbsp;·&nbsp; <a href="#-paigalda-android-telefoni">Android-telefon</a>
+  &nbsp;·&nbsp; <a href="#-paigalda-brauserist">iPhone / brauser</a>
   &nbsp;·&nbsp; <a href="#-küsimused-ja-mured">Abi</a>
 </p>
 
@@ -54,19 +55,21 @@ ega kasutajakontosid ning internetti on vaja vaid üks kord, et kõik alla laadi
 2. [Paigalda arvutisse](#-paigalda-arvutisse) (Mac, Windows, Linux)
 3. [Tee perele Varu mälupulk](#-tee-perele-varu-mälupulk)
 4. [Paigalda Android-telefoni](#-paigalda-android-telefoni)
-5. [Varu kasutamine](#-varu-kasutamine): kaart, varjumiskohad, teejuhised, raamatukogu
-6. [Mälupulga avamine teises arvutis](#-mälupulga-avamine-teises-arvutis)
-7. [Varu uuendamine](#-varu-uuendamine)
-8. [Raspberry Pi](#-raspberry-pi)
-9. [Hädaolukorras](#-hädaolukorras)
-10. [Küsimused ja mured](#-küsimused-ja-mured)
-11. [Kust andmed pärinevad](#-kust-andmed-pärinevad)
+5. [Paigalda brauserist](#-paigalda-brauserist) (iPhone, iPad, iga brauser)
+6. [Varu kasutamine](#-varu-kasutamine): kaart, varjumiskohad, teejuhised, raamatukogu
+7. [Mälupulga avamine teises arvutis](#-mälupulga-avamine-teises-arvutis)
+8. [Varu uuendamine](#-varu-uuendamine)
+9. [Raspberry Pi](#-raspberry-pi)
+10. [Hädaolukorras](#-hädaolukorras)
+11. [Küsimused ja mured](#-küsimused-ja-mured)
+12. [Kust andmed pärinevad](#-kust-andmed-pärinevad)
 
 ---
 
 ## ✅ Mida on vaja
 
 - **Arvuti** (Mac, Windows või Linux) või **Android-telefon** (Android 7 või uuem).
+  iPhone'is või iPadis [paigalda brauserist](#-paigalda-brauserist).
 - **Internetiühendus üks kord**, et Varu alla laadida. Hiljem pole seda vaja.
 - **Mälupulga jaoks:** sobib **16 GB** pulk. Kõik mahub ka 8 GB pulgale, kuid raamatu uuendamisel on korraks vaja ruumi nii vanale kui ka uuele koopiale.
 - **Aega:** allalaadimine võtab mõnest minutist (ainult kaart) kuni tunni või rohkemani (kõik raamatud aeglase ühendusega).
@@ -79,15 +82,9 @@ ega kasutajakontosid ning internetti on vaja vaid üks kord, et kõik alla laadi
 | WikiMed, meditsiinientsüklopeedia (inglise keeles) | 2,0 GB |
 | Post Disaster Resource Library (inglise keeles) | 0,6 GB |
 
-> 💡 **iPhone või iPad?** App Store'is Varut pole, aga Varu saab paigaldada
-> veebilehelt: ava Safaris **[renereose.github.io/varu](https://renereose.github.io/varu/)**,
-> puuduta Jaga ja lisa see avakuvale, siis ava Varu avakuvalt ja laadi see
-> seal alla. Seal on kaart, otsing, teejuhised ja hädaolukorra juhend,
-> raamatukogu mitte. Veebirakendus on uus ega ole veel päris iPhone'is
-> proovitud. See töötab ka Chrome'is või Edge'is arvutis ja Android-telefonis.
-> iPhone'iga saab Varut kasutada ka WiFi kaudu, kui arvuti või Android-telefon
-> [seda jagab](#jagamine-teiste-telefonidega), või
-> [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi).
+> 💡 iPhone'iga saab kasutada ka täit Varut koos raamatukoguga WiFi kaudu,
+> kui arvuti või Android-telefon [seda jagab](#jagamine-teiste-telefonidega),
+> või [koduse WiFi kaudu Raspberry Pi pealt](#-raspberry-pi).
 
 ---
 
@@ -196,7 +193,33 @@ kogemata ära ei kustutaks.
    luba see, et edenemist seal näha. Vahepeal võid telefoni lukustada või teisi
    rakendusi kasutada, allalaadimine jätkub. Pärast seda töötab Varu ka lennukirežiimis.
 
-Ülal olevas menüüs **⋮** on **Kaart** ja **Allalaadimised**, mis avab viisardi uuesti.
+Et hiljem telefonis olevat muuta või uuendada, puuduta avalehel **Uuenda kaarte ja andmeid**.
+
+---
+
+## 🌐 Paigalda brauserist
+
+iPhone'ile ja iPadile, millele App Store'is Varut pole, ja kõigile, kes ei
+taha midagi paigaldada. Varu töötab brauseris ja hoiab oma andmeid seal.
+
+1. Ava **[renereose.github.io/varu](https://renereose.github.io/varu/)**.
+   - **iPhone või iPad:** puuduta Safaris kõigepealt **Jaga → Lisa
+     avakuvale**, siis ava Varu avakuvalt ja jätka seal. Safari hoiab
+     avakuvarakenduse andmeid brauserist eraldi.
+   - **Chrome või Edge** (arvuti või Android): jätka lehel.
+     **Paigalda rakendusena** lisab ikooni.
+2. Vali, mida kaasa võtta. **Rakendus ja hädaolukorra juhend** (umbes 26 MB)
+   on alati kaasas; tänavakaart, aadressiotsing ja teejuhised teevad kokku
+   umbes 0,4 GB.
+3. Puuduta **Paigalda** ja püsi WiFi-s. Leht näitab kiirust ja järelejäänud aega.
+4. Puuduta **Ava Varu**. Edaspidi töötab see ka ilma internetita.
+
+Kui avad Varu internetiühendusega, kontrollib see uuendusi: väikesed
+laaditakse alla ise, suuremate puhul küsitakse enne.
+
+Veebirakenduses on kaart, otsing, teejuhised ja hädaolukorra juhend, aga mitte
+raamatukogu, ja see ei saa Varut teistele telefonidele jagada. Veebirakendus on
+uus ega ole veel päris iPhone'is proovitud.
 
 ---
 
@@ -353,7 +376,7 @@ Uued versioonid toovad uusi võimalusi, värskeid kaarte ja uuemaid raamatuid. U
    koopiad ei võta ruumi.
 
 Mälupulga uuendamiseks ühenda see ja vali **Mine → Paigalda või uuenda…**.
-Telefonis kasuta **⋮ → Allalaadimised**.
+Telefonis puuduta avalehel **Uuenda kaarte ja andmeid**.
 
 > 💡 Uuenda pulka iga paari kuu tagant: poed suletakse, teed muutuvad ja
 > lisandub uusi varjumiskohti.
@@ -509,7 +532,7 @@ paremklõps → **Alusta siit**, et öelda, kus oled.
 <summary><b>Pärast telefoni äpi uuendamist puudub kaardiotsing, juhised teel või raamatukogu otsing.</b></summary>
 
 Need on allalaaditud andmetes, mitte äpis. Ava Varu ja vali küsimise peale
-**Uuenda** või kasuta **⋮ → Allalaadimised** → **Paigalda**.
+**Uuenda** või puuduta **Uuenda kaarte ja andmeid** → **Paigalda**.
 
 </details>
 
