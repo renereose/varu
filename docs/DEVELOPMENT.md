@@ -16,6 +16,7 @@ turn freely available content into a drive:
 | **Map files** | The PMTiles format, shared by the installer (which cuts maps) and the pocket renderer (which reads them) | `pmtiles/` |
 | **Pocket renderer** | Draws e-ink map screens from a drive, for a planned Raspberry Pi pocket device; for now it writes PNG mock-ups | `pocket/` |
 | **Viewer** | The web pages you see: start page, map and library | `viewer/` |
+| **Web app** | Varu from a web page, for iPhones and anyone without the apps: the launcher compiled to WebAssembly, run by a service worker over files saved in the browser | `web/` |
 
 ## Status
 
@@ -211,6 +212,40 @@ greyed-out Library card.
 | Wikipedia and reference works | ZIM archives from the [Kiwix catalogue](https://library.kiwix.org) | `library` |
 | Documents | URLs listed in the region file | `documents` |
 | Map renderer, fonts, icons | MapLibre GL JS, PMTiles, Protomaps basemaps, pinned and checksummed in `sources.toml` | `app` |
+
+## The web app
+
+For iPhones, iPads and anyone who can't use the apps, Varu can also be
+installed from a web page. The page downloads a region into the
+browser's private storage (the Origin Private File System), and a service
+worker answers the app's pages from there, so it works offline and can be
+added to the home screen.
+
+- `web/build.sh build/ee site/` turns a built drive into the site: the
+  install page, `sw.js`, and `data/<region>/` with the drive's app, map,
+  layers, road network and places (not the library). Files over 48 MB are
+  split into parts, since GitHub Pages refuses files over 100 MB, and
+  `files.json` lists every file with its size and hash.
+- The launcher itself runs in the browser: `launcher/wasm.go` builds it for
+  `GOOS=js`, and `sw.js` gives Go a small read-only file system over the
+  saved files. Directions, address search and the map are the same code as
+  on a drive; there is no second implementation.
+- `download.js` writes the files in a worker and records each finished
+  file's hash, so an interrupted download carries on and an update fetches
+  only what changed.
+- The viewer pages carry `<base href="/">`, and every link is relative to
+  it, so the same pages work at a drive's root and under `app/` on the site.
+- On iPhone and iPad a Home Screen app keeps storage apart from Safari, so
+  the page asks to be added to the Home Screen first and downloads there.
+
+Not in the web app: the library (too large for browser storage, for now)
+and sharing over Wi-Fi (a browser can't run a server). Browsers may clear
+saved sites when the device runs low on space; the page asks for
+persistent storage and says when it was not granted.
+
+To try it: `sh web/build.sh build/ee /tmp/site/varu`, then
+`python3 -m http.server -d /tmp/site 8730` and open
+`http://localhost:8730/varu/` (a service worker needs HTTPS or localhost).
 
 ## Adding a region
 

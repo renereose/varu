@@ -18,8 +18,8 @@ const PLAN_KEY = "varu.plan";
 
 const [manifest, guides, topics] = await Promise.all([
   loadManifest(),
-  fetch("/guides.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
-  fetch("/topics.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
+  fetch("guides.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
+  fetch("topics.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
@@ -55,7 +55,7 @@ $("situation-count").textContent = situations.length || "";
 const pois = manifest.pois ?? [];
 // Same rule as the library page: topics.json names a book without its edition
 // month, and a topic is only worth a link if one of its books is on this drive.
-const books = await fetch("/api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []);
+const books = await fetch("api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []);
 const editions = new Set((Array.isArray(books) ? books : []).map((b) => String(b.id).replace(/_\d{4}-\d{2}$/, "")));
 const topicOnDrive = (topic) => (topic.articles ?? []).some((a) => editions.has(a.book));
 const topicById = Object.fromEntries((topics.topics ?? []).map((topic) => [topic.id, topic]));
@@ -76,7 +76,7 @@ function showSituation(s) {
   for (const id of s.topics ?? []) {
     const topic = topicById[id];
     if (!topic || !topicOnDrive(topic)) continue;
-    links.push(el("a", { className: "btn", href: `/library/#topic-${encodeURIComponent(id)}` },
+    links.push(el("a", { className: "btn", href: `library/#topic-${encodeURIComponent(id)}` },
       icon("book-open"), t(lang, "readyMore").replace("{topic}", topic[lang] ?? topic.en)));
   }
   const steps = text.steps ?? [];

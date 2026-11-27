@@ -55,7 +55,7 @@ export function initShare(status, getLang) {
     busy = true;
     error = "";
     try {
-      const res = await fetch("/api/share", {
+      const res = await fetch("api/share", {
         method: "POST",
         headers: { "X-Varu": "1", "Content-Type": "application/json" },
         body: JSON.stringify({ on }),
@@ -77,7 +77,7 @@ export function initShare(status, getLang) {
     busy = true;
     error = "";
     try {
-      const res = await fetch("/api/status");
+      const res = await fetch("api/status");
       if (res.ok) status = await res.json();
     } catch {
       error = t(getLang(), "shareFailed");

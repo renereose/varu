@@ -49,6 +49,13 @@ function startMap(mapInfo) {
   // `pmtiles` is a global from vendor/pmtiles.js, loaded by map.html.
   const protocol = new globalThis.pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
+  // MapLibre loads GeoJSON in its own worker, whose requests WebKit sends
+  // past the web app's service worker. "page://" has the page fetch it.
+  maplibregl.addProtocol("page", async ({ url }, abort) => {
+    const res = await fetch(url.replace("page://", base), { signal: abort.signal });
+    if (!res.ok) throw new Error(`${res.status} for ${url}`);
+    return { data: await res.json() };
+  });
 
   const flavor = dark ? "dark" : "light";
 
@@ -309,7 +316,7 @@ function setPoiVisible(map, poi, visible) {
   if (!map.getSource(source)) {
     if (!visible) return;
     // Loaded on first use so an unused layer costs nothing.
-    map.addSource(source, { type: "geojson", data: `${base}${poi.file}` });
+    map.addSource(source, { type: "geojson", data: `page://${poi.file}` });
     map.addLayer({
       id: circle,
       type: "circle",

@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Varu</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d4b' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E">
-  <script src="/js/theme.js"></script>
+  <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body class="home-page">
   <header class="topbar">
     <div class="topbar-row">
-      <a class="brand" href="/"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
+      <a class="brand" href="./"><span class="logo"><svg data-icon="pin"></svg></span><strong>Varu</strong><span class="region" id="region"></span></a>
       <nav class="topnav" aria-label="Varu">
-        <a href="/" aria-current="page" data-i18n="navHome">Home</a>
-        <a href="/map.html" data-needs="map" data-i18n="navMap">Map</a>
-        <a href="/library/" data-needs="library" data-i18n="library">Library</a>
-        <a href="/ready.html" data-i18n="guideTitle">Emergency guide</a>
+        <a href="./" aria-current="page" data-i18n="navHome">Home</a>
+        <a href="map.html" data-needs="map" data-i18n="navMap">Map</a>
+        <a href="library/" data-needs="library" data-i18n="library">Library</a>
+        <a href="ready.html" data-i18n="guideTitle">Emergency guide</a>
       </nav>
       <div class="topbar-end">
         <span class="offline-badge" data-i18n="offlineReady">Offline ready</span>
@@ -38,7 +39,7 @@
         <p class="hero-meta"><span class="wide" id="meta-wide"></span><span class="narrow" id="meta-narrow"></span></p>
       </div>
 
-      <form id="home-search" class="home-search" role="search" action="/library/" hidden>
+      <form id="home-search" class="home-search" role="search" action="library/" hidden>
         <svg data-icon="search"></svg>
         <input name="q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false">
         <button type="submit" data-i18n="search">Search</button>
@@ -51,12 +52,12 @@
           <span><strong data-i18n="call112">Call 112</strong><span data-i18n="sos112Hint">Rescue, ambulance, police</span></span>
         </a>
         <div class="sos-row">
-          <a class="sos-link sos-shelter" id="quick-shelter" href="/map.html?nearest=shelter" hidden>
+          <a class="sos-link sos-shelter" id="quick-shelter" href="map.html?nearest=shelter" hidden>
             <svg data-icon="shield"></svg>
             <span><strong data-i18n="nearestShelter">Nearest shelter</strong><span data-i18n="nearestShelterHint">Show the closest one on the map</span></span>
             <svg class="chev" data-icon="chevron-right"></svg>
           </a>
-          <a class="sos-link" href="/ready.html">
+          <a class="sos-link" href="ready.html">
             <svg data-icon="list-checks"></svg>
             <span><strong data-i18n="whatNow">What to do now</strong><span data-i18n="whatNowHint">Steps, radio, supplies and your plan</span></span>
             <svg class="chev" data-icon="chevron-right"></svg>
@@ -68,7 +69,7 @@
     <section class="device" aria-labelledby="device-title">
       <h2 id="device-title" data-i18n="onDevice">On this device</h2>
       <div class="cards">
-        <a class="card" id="card-map" href="/map.html" hidden>
+        <a class="card" id="card-map" href="map.html" hidden>
           <svg class="card-art map-art" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <rect class="land" width="400" height="168"/>
             <path class="water" d="M262 0h138v62c-30 8-52 2-70-14-20-18-46-22-68-48z"/>
@@ -87,7 +88,7 @@
           </span>
           <svg class="chev" data-icon="chevron-right"></svg>
         </a>
-        <a class="card" id="card-library" href="/library/" hidden>
+        <a class="card" id="card-library" href="library/" hidden>
           <span class="card-art"><svg data-icon="library-big"></svg></span>
           <span class="card-icon"><svg data-icon="book-open"></svg></span>
           <span class="card-body">
@@ -97,7 +98,7 @@
           </span>
           <svg class="chev" data-icon="chevron-right"></svg>
         </a>
-        <a class="card card-warn" id="card-guide" href="/ready.html">
+        <a class="card card-warn" id="card-guide" href="ready.html">
           <span class="card-art"><svg data-icon="clipboard-list"></svg></span>
           <span class="card-icon"><svg data-icon="life-buoy"></svg></span>
           <span class="card-body">
@@ -156,10 +157,10 @@
   </main>
 
   <nav class="tabbar" aria-label="Varu">
-    <a href="/" aria-current="page"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
-    <a href="/map.html" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
-    <a href="/library/" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
-    <a href="/ready.html"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
+    <a href="./" aria-current="page"><svg data-icon="house"></svg><span data-i18n="navHome">Home</span></a>
+    <a href="map.html" data-needs="map"><svg data-icon="map"></svg><span data-i18n="navMap">Map</span></a>
+    <a href="library/" data-needs="library"><svg data-icon="book-open"></svg><span data-i18n="library">Library</span></a>
+    <a href="ready.html"><svg data-icon="life-buoy"></svg><span data-i18n="guideShort">Guide</span></a>
   </nav>
 
   <script type="module" src="js/home.js"></script>

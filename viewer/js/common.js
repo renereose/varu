@@ -402,7 +402,7 @@ export function applyStrings(lang) {
 
 export async function loadManifest() {
   try {
-    const res = await fetch("/manifest.json");
+    const res = await fetch("manifest.json");
     return res.ok ? await res.json() : {};
   } catch {
     return {};
@@ -411,7 +411,7 @@ export async function loadManifest() {
 
 export async function loadStatus() {
   try {
-    const res = await fetch("/api/status");
+    const res = await fetch("api/status");
     return res.ok ? await res.json() : {};
   } catch {
     return {};

@@ -8,8 +8,8 @@ import { initShell } from "./shell.js";
 const [manifest, status, books, guides] = await Promise.all([
   loadManifest(),
   loadStatus(),
-  fetch("/api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []),
-  fetch("/guides.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
+  fetch("api/library").then((res) => (res.ok ? res.json() : [])).catch(() => []),
+  fetch("guides.json").then((res) => (res.ok ? res.json() : {})).catch(() => ({})),
 ]);
 const lang = currentLanguage(manifest);
 applyStrings(lang);
@@ -62,7 +62,7 @@ const total = books.reduce((sum, b) => sum + (sizeOf[b.id] ?? 0), 0);
 $("card-library").hidden = !hasLibrary;
 $("card-library-meta").textContent = [plural(lang, "books", books.length), formatBytes(total)].filter(Boolean).join(" · ");
 $("library-list").hidden = !hasLibrary;
-$("library-list").replaceChildren(...books.map((b) => el("li", {}, el("a", { href: `/library/${encodeURIComponent(b.id)}/` },
+$("library-list").replaceChildren(...books.map((b) => el("li", {}, el("a", { href: `library/${encodeURIComponent(b.id)}/` },
   el("span", { className: "row-icon" }, icon("book-open")),
   el("span", { className: "row-text" }, el("strong", { textContent: b.title }), el("span", { textContent: b.description ?? "" })),
   el("span", { className: "size", textContent: formatBytes(sizeOf[b.id]) })))));
