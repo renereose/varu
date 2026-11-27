@@ -5,8 +5,8 @@
 
 importScripts("wasm_exec.js");
 
-const SHELL = "varu-shell-v1";
-const SHELL_FILES = ["./", "install.js", "download.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable.png", "apple-touch-icon.png"];
+const SHELL = "varu-shell-v2";
+const SHELL_FILES = ["./", "install.js", "download.js", "update.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable.png", "apple-touch-icon.png"];
 const scope = new URL(self.registration.scope).pathname; // "/varu/"
 const APP = `${scope}app/`;
 
@@ -70,7 +70,8 @@ async function app(request, url) {
     // The pages are written for a drive's root; here they live under app/.
     body = new TextDecoder().decode(body).replace('<base href="/">',
       `<base href="${APP}"><link rel="manifest" href="${scope}manifest.webmanifest">` +
-      `<link rel="apple-touch-icon" href="${scope}apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes">`);
+      `<link rel="apple-touch-icon" href="${scope}apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes">` +
+      `<script src="${scope}update.js" data-scope="${scope}" defer></script>`);
   }
   const headers = new Headers(res.headers);
   const to = headers.get("Location");
@@ -83,9 +84,13 @@ async function app(request, url) {
 async function start() {
   const root = await navigator.storage.getDirectory();
   const dir = await root.getDirectoryHandle("drive");
+  // The version in use (download.js): path -> hash, saved as "path~hash".
+  // An install from before that ("done") still has files named by path.
+  const state = JSON.parse(await (await (await dir.getFileHandle(".state")).getFile()).text());
+  const named = state.files ? (path, hash) => `${encodeURIComponent(path)}~${hash}` : (path) => encodeURIComponent(path);
   const files = new Map();
-  for await (const [name, handle] of dir.entries()) {
-    if (handle.kind === "file") files.set(`/drive/${decodeURIComponent(name)}`, await handle.getFile());
+  for (const [path, hash] of Object.entries(state.files ?? (state.partial ? {} : state.done))) {
+    files.set(`/drive/${path}`, await (await dir.getFileHandle(named(path, hash))).getFile());
   }
   if (!files.has("/drive/manifest.json") || !files.has("/drive/varu.wasm")) throw new Error("not installed");
   driveFS(files);

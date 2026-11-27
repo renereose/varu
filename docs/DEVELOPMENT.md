@@ -237,9 +237,19 @@ added to the home screen.
   `GOOS=js`, and `sw.js` gives Go a small read-only file system over the
   saved files. Directions, address search and the map are the same code as
   on a drive; there is no second implementation.
-- `download.js` writes the files in a worker and records each finished
-  file's hash, so an interrupted download carries on and an update fetches
-  only what changed.
+- `download.js` keeps the saved files, each named by its path and hash.
+  An update writes only the changed files beside the ones in use and then
+  switches over by rewriting `.state`, so Varu keeps working throughout and
+  an interrupted download carries on. Files no longer named are removed the
+  next time the app opens.
+- `update.js` runs in the app's pages: when Varu opens with internet it
+  compares `files.json` with what is saved. Up to 50 MB (new app code, a
+  new road network) updates on its own with a small banner; a new map asks
+  first, as the phone may be on mobile data. There are no push
+  notifications: those would need a server.
+- `varu.wasm` is built reproducibly (`-trimpath -buildvcs=false -buildid=`)
+  and reads the version from a `version` file, so a release that leaves the
+  Go code alone does not make phones download it again.
 - The viewer pages carry `<base href="/">`, and every link is relative to
   it, so the same pages work at a drive's root and under `app/` on the site.
 - On iPhone and iPad a Home Screen app keeps storage apart from Safari, so

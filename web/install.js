@@ -244,7 +244,7 @@ const s = {
 const name = () => (s.list ? s.list.name[lang] ?? s.list.name.en : "");
 const total = () => (s.list ? s.list.files.reduce((n, f) => n + f.size, 0) : 0);
 const partSize = (part) => (s.list ? s.list.files.filter((f) => part.has(f.path)).reduce((n, f) => n + f.size, 0) : 0);
-const current = () => s.installed && s.list && s.list.files.every((f) => s.installed.done[f.path] === f.hash);
+const current = () => s.installed && s.list && s.installed.update === 0;
 
 // ---------- drawing ----------
 
@@ -372,16 +372,20 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", showTheme)
 
 // ---------- storage ----------
 
-async function readInstalled() {
-  try {
-    const dir = await (await navigator.storage.getDirectory()).getDirectoryHandle("drive");
-    const state = JSON.parse(await (await (await dir.getFileHandle(".state")).getFile()).text());
-    if (state.partial || !state.done["manifest.json"]) return null;
-    const manifest = JSON.parse(await (await (await dir.getFileHandle("manifest.json")).getFile()).text());
-    return { ...state, built: manifest.built };
-  } catch {
-    return null;
-  }
+// What download.js, which keeps the saved files, says about them:
+// { installed, built, update (bytes a newer list would fetch) }.
+function readInstalled(list = null) {
+  return new Promise((resolve) => {
+    const worker = new Worker("download.js");
+    const done = (data) => {
+      worker.terminate();
+      if (data?.migrated) navigator.serviceWorker.controller?.postMessage("reload");
+      resolve(data?.installed ? data : null);
+    };
+    worker.onmessage = ({ data }) => done(data);
+    worker.onerror = () => done(null);
+    worker.postMessage({ status: true, list });
+  });
 }
 
 async function readFree() {
@@ -442,7 +446,7 @@ async function install() {
       return;
     }
     (await navigator.serviceWorker.ready).active?.postMessage("reload");
-    s.installed = await readInstalled();
+    s.installed = await readInstalled(s.list);
     $("not-persisted").hidden = persisted !== false;
     draw();
     screen("done");
@@ -473,6 +477,7 @@ async function main() {
     return;
   }
   s.list = await fetch(`${BASE}files.json`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  if (s.installed && s.list) s.installed = await readInstalled(s.list);
   s.free = await readFree();
   draw();
   if (s.installed) {
