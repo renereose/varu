@@ -131,10 +131,15 @@ async function siteFiles() {
   const files = new Map();
   for (const file of list.files) {
     const url = `${base}${file.path.split("/").map(encodeURIComponent).join("/")}`;
-    const get = async (res) => {
-      res = await res;
-      if (!res.ok) throw new Error(`${res.status} for ${file.path}`);
-      return res.arrayBuffer();
+    // GitHub Pages now and then answers 503 when asked quickly: try again.
+    const get = async (url, init) => {
+      for (let tries = 1; ; tries++) {
+        const res = await fetch(url, init).catch((err) => { if (tries === 4) throw err; });
+        if (res?.ok) return res.arrayBuffer();
+        await res?.body?.cancel(); // else it holds the connection
+        if (res && (tries === 4 || (res.status < 500 && res.status !== 429))) throw new Error(`${res.status} for ${file.path}`);
+        await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** tries));
+      }
     };
     let whole = null;
     const block = (n) => {
@@ -146,7 +151,7 @@ async function siteFiles() {
         const at = n * BLOCK;
         const part = file.parts ? Math.floor(at / list.partSize) : 0;
         const from = at - part * list.partSize;
-        p = get(fetch(file.parts ? `${url}.${part}` : url, { headers: { Range: `bytes=${from}-${from + BLOCK - 1}` } }));
+        p = get(file.parts ? `${url}.${part}` : url, { headers: { Range: `bytes=${from}-${from + BLOCK - 1}` } });
         p.catch(() => blocks.delete(key));
       }
       blocks.set(key, p);
@@ -156,7 +161,7 @@ async function siteFiles() {
     const read = async (from, to) => {
       to = Math.min(to, file.size);
       if (from >= to) return new ArrayBuffer(0);
-      if (file.size <= SMALL) return (await (whole ??= get(fetch(url)).catch((e) => { whole = null; throw e; }))).slice(from, to);
+      if (file.size <= SMALL) return (await (whole ??= get(url).catch((e) => { whole = null; throw e; }))).slice(from, to);
       const out = new Uint8Array(to - from);
       const first = Math.floor(from / BLOCK);
       const got = await Promise.all(Array.from({ length: Math.floor((to - 1) / BLOCK) - first + 1 }, (_, i) => block(first + i)));

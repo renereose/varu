@@ -98,10 +98,13 @@ async function download(dir, base, list, without) {
         next.partials[file.path] = file.hash;
         await save();
       }
-      for (let i = from; i < parts; i++) {
+      const part = async (i) => {
         const url = `${base}${file.path.split("/").map(encodeURIComponent).join("/")}${file.parts ? `.${i}` : ""}`;
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(`${res.status} for ${file.path}`);
+        if (!res.ok) {
+          await res.body?.cancel(); // else it holds the connection
+          throw Object.assign(new Error(`${res.status} for ${file.path}`), { final: res.status < 500 && res.status !== 429 });
+        }
         let at = i * list.partSize;
         access.truncate(at);
         const reader = res.body.getReader();
@@ -112,6 +115,21 @@ async function download(dir, base, list, without) {
           at += value.byteLength;
           done += value.byteLength;
           tick();
+        }
+      };
+      // GitHub Pages now and then answers 503, or a connection drops: wait
+      // and try again (2, 4, 8, 16 s) before giving up.
+      for (let i = from; i < parts; i++) {
+        for (let tries = 1; ; tries++) {
+          const before = done;
+          try {
+            await part(i);
+            break;
+          } catch (err) {
+            done = before;
+            if (tries === 5 || err.final) throw err;
+            await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** tries));
+          }
         }
       }
       access.flush();
