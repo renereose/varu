@@ -18,6 +18,9 @@
       done: "Varu is updated.",
       reload: "Reload",
       failed: "The update stopped. It carries on the next time Varu opens with internet.",
+      live: "This is Varu online. Install it to keep it working without the internet.",
+      install: "Install",
+      close: "Close",
     },
     et: {
       available: "Varu uus versioon on valmis ({size}).",
@@ -27,6 +30,9 @@
       done: "Varu on uuendatud.",
       reload: "Laadi uuesti",
       failed: "Uuendamine katkes. See jätkub, kui avad Varu järgmine kord internetiga.",
+      live: "See on Varu veebis. Paigalda see, et see töötaks ka ilma internetita.",
+      install: "Paigalda",
+      close: "Sulge",
     },
   };
 
@@ -127,6 +133,20 @@
     worker.postMessage({ base: new URL(`${scope}data/${manifest.region}/`, location.href).href, list });
   }
 
+  // Varu online (live/): no updates to check, only the way to install it.
+  function live() {
+    try { if (sessionStorage.getItem("varu.liveClosed")) return; } catch { /* private mode */ }
+    show(t("live"), [
+      [t("close"), false, () => { hide(); try { sessionStorage.setItem("varu.liveClosed", "1"); } catch { /* private mode */ } }],
+      [t("install"), true, () => { location.href = scope; }],
+    ]);
+  }
+
   // After the page has drawn, so the check never slows it down.
-  addEventListener("load", () => setTimeout(() => main().catch(() => {}), 1500));
+  if ("live" in document.currentScript.dataset) {
+    addEventListener("load", live);
+    // The page picks its language after loading: say it again in that one.
+    new MutationObserver(() => banner && live()).observe(document.documentElement, { attributeFilter: ["lang"] });
+  }
+  else addEventListener("load", () => setTimeout(() => main().catch(() => {}), 1500));
 })();

@@ -2,18 +2,27 @@
 // the launcher itself (varu.wasm, launcher/wasm.go), reading the drive the
 // install page saved in the browser's private storage (OPFS, folder
 // "drive"). Everything else here is the install page, kept for offline.
+//
+// Registered for live/ instead (live/index.html), it is the online Varu:
+// the same launcher reading the site's own data/ over the network, a piece
+// at a time, with nothing saved.
 
 importScripts("wasm_exec.js");
 
 const SHELL = "varu-shell-v2";
 const SHELL_FILES = ["./", "install.js", "download.js", "update.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable.png", "apple-touch-icon.png"];
-const scope = new URL(self.registration.scope).pathname; // "/varu/"
-const APP = `${scope}app/`;
+const scope = new URL(self.registration.scope).pathname; // "/varu/", or "/varu/live/"
+const LIVE = scope.endsWith("/live/");
+const SITE = LIVE ? scope.slice(0, -"live/".length) : scope;
+const APP = LIVE ? scope : `${scope}app/`;
+const REGION = "ee";
 
 self.addEventListener("install", (event) => {
+  if (LIVE) return self.skipWaiting();
   event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (event) => {
+  if (LIVE) return event.waitUntil(self.clients.claim());
   event.waitUntil(caches.keys()
     .then((keys) => Promise.all(keys.filter((k) => k !== SHELL).map((k) => caches.delete(k))))
     .then(() => self.clients.claim()));
@@ -55,6 +64,7 @@ async function app(request, url) {
     go = await (started ??= start());
   } catch (err) {
     started = null;
+    if (LIVE) return new Response(`Varu could not start: ${err?.message ?? err}`, { status: 503 });
     return Response.redirect(scope, 302); // nothing installed (yet): the install page
   }
   const path = `/${url.pathname.slice(APP.length)}${url.search}`;
@@ -68,10 +78,11 @@ async function app(request, url) {
   let body = [101, 204, 205, 304].includes(res.status) ? null : res.body;
   if (body && type.startsWith("text/html")) {
     // The pages are written for a drive's root; here they live under app/.
-    body = new TextDecoder().decode(body).replace('<base href="/">',
-      `<base href="${APP}"><link rel="manifest" href="${scope}manifest.webmanifest">` +
-      `<link rel="apple-touch-icon" href="${scope}apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes">` +
-      `<script src="${scope}update.js" data-scope="${scope}" defer></script>`);
+    body = new TextDecoder().decode(body).replace('<base href="/">', LIVE
+      ? `<base href="${APP}"><script>document.documentElement.dataset.live = ""</script><script src="${SITE}update.js" data-scope="${SITE}" data-live defer></script>`
+      : `<base href="${APP}"><link rel="manifest" href="${scope}manifest.webmanifest">` +
+        `<link rel="apple-touch-icon" href="${scope}apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes">` +
+        `<script src="${scope}update.js" data-scope="${scope}" defer></script>`);
   }
   const headers = new Headers(res.headers);
   const to = headers.get("Location");
@@ -82,6 +93,17 @@ async function app(request, url) {
 // Loads the drive's file list and starts the launcher. Fails when nothing
 // is installed.
 async function start() {
+  const files = LIVE ? await siteFiles() : await savedFiles();
+  if (!files.has("/drive/manifest.json") || !files.has("/drive/varu.wasm")) throw new Error("not installed");
+  driveFS(files);
+  const go = new Go();
+  const { instance } = await WebAssembly.instantiate(await files.get("/drive/varu.wasm").arrayBuffer(), go.importObject);
+  go.run(instance);
+  while (typeof globalThis.varuServe !== "function") await new Promise((r) => setTimeout(r, 0));
+  return globalThis.varuServe;
+}
+
+async function savedFiles() {
   const root = await navigator.storage.getDirectory();
   const dir = await root.getDirectoryHandle("drive");
   // The version in use (download.js): path -> hash, saved as "path~hash".
@@ -92,13 +114,67 @@ async function start() {
   for (const [path, hash] of Object.entries(state.files ?? (state.partial ? {} : state.done))) {
     files.set(`/drive/${path}`, await (await dir.getFileHandle(named(path, hash))).getFile());
   }
-  if (!files.has("/drive/manifest.json") || !files.has("/drive/varu.wasm")) throw new Error("not installed");
-  driveFS(files);
-  const go = new Go();
-  const { instance } = await WebAssembly.instantiate(await files.get("/drive/varu.wasm").arrayBuffer(), go.importObject);
-  go.run(instance);
-  while (typeof globalThis.varuServe !== "function") await new Promise((r) => setTimeout(r, 0));
-  return globalThis.varuServe;
+  return files;
+}
+
+// The site's data/ as files that fetch what is read. A small file comes
+// whole (and from the browser's cache next time); a large one (the map,
+// roads, places) in 256 KB blocks, the last 128 of them kept.
+async function siteFiles() {
+  const base = `${SITE}data/${REGION}/`;
+  const res = await fetch(`${base}files.json`, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`${res.status} for files.json`);
+  const list = await res.json();
+  const BLOCK = 256 * 1024;
+  const SMALL = 4 * 1024 * 1024;
+  const blocks = new Map(); // "path@n" -> Promise<ArrayBuffer>, oldest first
+  const files = new Map();
+  for (const file of list.files) {
+    const url = `${base}${file.path.split("/").map(encodeURIComponent).join("/")}`;
+    const get = async (res) => {
+      res = await res;
+      if (!res.ok) throw new Error(`${res.status} for ${file.path}`);
+      return res.arrayBuffer();
+    };
+    let whole = null;
+    const block = (n) => {
+      const key = `${file.path}@${n}`;
+      let p = blocks.get(key);
+      if (p) blocks.delete(key);
+      else {
+        // Parts are whole numbers of blocks, so a block is never in two.
+        const at = n * BLOCK;
+        const part = file.parts ? Math.floor(at / list.partSize) : 0;
+        const from = at - part * list.partSize;
+        p = get(fetch(file.parts ? `${url}.${part}` : url, { headers: { Range: `bytes=${from}-${from + BLOCK - 1}` } }));
+        p.catch(() => blocks.delete(key));
+      }
+      blocks.set(key, p);
+      if (blocks.size > 128) blocks.delete(blocks.keys().next().value);
+      return p;
+    };
+    const read = async (from, to) => {
+      to = Math.min(to, file.size);
+      if (from >= to) return new ArrayBuffer(0);
+      if (file.size <= SMALL) return (await (whole ??= get(fetch(url)).catch((e) => { whole = null; throw e; }))).slice(from, to);
+      const out = new Uint8Array(to - from);
+      const first = Math.floor(from / BLOCK);
+      const got = await Promise.all(Array.from({ length: Math.floor((to - 1) / BLOCK) - first + 1 }, (_, i) => block(first + i)));
+      got.forEach((data, i) => {
+        const at = (first + i) * BLOCK;
+        const piece = new Uint8Array(data, Math.max(0, from - at), Math.min(data.byteLength, to - at) - Math.max(0, from - at));
+        out.set(piece, Math.max(0, at - from));
+      });
+      return out.buffer;
+    };
+    files.set(`/drive/${file.path}`, {
+      size: file.size,
+      lastModified: 0,
+      slice: (from, to) => ({ arrayBuffer: () => read(from, to) }),
+      arrayBuffer: () => read(0, file.size),
+    });
+  }
+  return files;
 }
 
 // The little of Node's fs that Go's os package uses, read-only, over the

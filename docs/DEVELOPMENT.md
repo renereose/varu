@@ -258,6 +258,12 @@ added to the home screen.
   it, so the same pages work at a drive's root and under `app/` on the site.
 - On iPhone and iPad a Home Screen app keeps storage apart from Safari, so
   the page asks to be added to the Home Screen first and downloads there.
+- `live/` is Varu online, to try before installing: `live/index.html`
+  registers the same `sw.js` for that folder, and there it reads the site's
+  `data/` over the network instead of saved files, small files whole and
+  large ones in 256 KB pieces with HTTP Range requests. Nothing is saved.
+  The pages get `data-live`, so they say "online" instead of "stored on
+  this device", and a banner that links to the install page.
 
 Not in the web app: the library (too large for browser storage, for now)
 and sharing over Wi-Fi (a browser can't run a server). Browsers may clear
@@ -267,6 +273,8 @@ persistent storage and says when it was not granted.
 To try it: `sh web/build.sh build/ee /tmp/site/varu`, then
 `python3 -m http.server -d /tmp/site 8730` and open
 `http://localhost:8730/varu/` (a service worker needs HTTPS or localhost).
+`live/` needs a server that answers Range requests, as GitHub Pages does;
+Python's doesn't.
 
 ## Adding a region
 

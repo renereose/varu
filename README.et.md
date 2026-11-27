@@ -18,6 +18,7 @@
   &nbsp;·&nbsp; <a href="#-tee-perele-varu-mälupulk">Tee mälupulk</a>
   &nbsp;·&nbsp; <a href="#-paigalda-android-telefoni">Android-telefon</a>
   &nbsp;·&nbsp; <a href="#-paigalda-brauserist">iPhone / brauser</a>
+  &nbsp;·&nbsp; <a href="https://renereose.github.io/varu/live/">Proovi veebis</a>
   &nbsp;·&nbsp; <a href="#-küsimused-ja-mured">Abi</a>
 </p>
 
@@ -201,6 +202,10 @@ Et hiljem telefonis olevat muuta või uuendada, puuduta avalehel **Uuenda kaarte
 
 iPhone'ile ja iPadile, millele App Store'is Varut pole, ja kõigile, kes ei
 taha midagi paigaldada. Varu töötab brauseris ja hoiab oma andmeid seal.
+
+Enne paigaldamist ringi vaatamiseks ava **[Varu veebis](https://renereose.github.io/varu/live/)**:
+sama Varu otse veebilehelt, ilma midagi salvestamata. See vajab kogu aeg
+internetti; paigalda see, et see töötaks ka ilma.
 
 1. Ava **[renereose.github.io/varu](https://renereose.github.io/varu/)**.
    - **iPhone või iPad:** puuduta Safaris kõigepealt **Jaga → Lisa

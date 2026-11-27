@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varu</title>
+<link rel="icon" href="../icon-192.png">
+<style>
+  :root { color-scheme: light dark; --bg: #fffdf8; --ink: #1b2420; --muted: #5d6762; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1a211e; --ink: #e8ece9; --muted: #a3ada8; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; box-sizing: border-box;
+    background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, sans-serif; text-align: center; }
+  p { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <img src="../icon-192.png" width="72" height="72" alt="">
+  <h1 id="title">Starting Varu…</h1>
+  <p id="note"></p>
+  <p><a id="back" href="../">Install Varu instead</a></p>
+</main>
+<script>
+// The online Varu: sw.js, registered for this folder, answers every page
+// here with the launcher reading the site's data. Until it does, this page.
+const et = /^et\b/.test(navigator.language);
+if (et) {
+  document.documentElement.lang = "et";
+  document.getElementById("title").textContent = "Varu käivitub…";
+  document.getElementById("back").textContent = "Paigalda Varu hoopis";
+}
+const fail = () => {
+  document.getElementById("title").textContent = et ? "See brauser ei saa Varut käivitada" : "This browser can't start Varu";
+  document.getElementById("note").textContent = et ? "Proovi uut Safari, Chrome'i, Edge'i või Firefoxi." : "Try a recent Safari, Chrome, Edge or Firefox.";
+};
+if (!("serviceWorker" in navigator)) fail();
+else navigator.serviceWorker.register("../sw.js", { scope: "./" })
+  .then(() => navigator.serviceWorker.ready)
+  .then(() => location.reload(), fail);
+</script>
+</body>
+</html>

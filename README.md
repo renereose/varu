@@ -18,6 +18,7 @@
   &nbsp;·&nbsp; <a href="#-make-a-usb-stick-for-your-family">Make a USB stick</a>
   &nbsp;·&nbsp; <a href="#-install-on-an-android-phone">Android phone</a>
   &nbsp;·&nbsp; <a href="#-install-from-the-browser">iPhone / browser</a>
+  &nbsp;·&nbsp; <a href="https://renereose.github.io/varu/live/">Try it online</a>
   &nbsp;·&nbsp; <a href="#-questions-and-problems">Help</a>
 </p>
 
@@ -201,6 +202,10 @@ To change or update what's on the phone later, tap **Update maps and data** on t
 
 For iPhones and iPads, which have no App Store app, and for anyone who'd
 rather not install anything. Varu runs in the browser and keeps its data there.
+
+To look around first, open **[Varu online](https://renereose.github.io/varu/live/)**:
+the same Varu, straight from the web page, with nothing saved. It needs the
+internet the whole time; install it to keep it working without.
 
 1. Open **[renereose.github.io/varu](https://renereose.github.io/varu/)**.
    - **iPhone or iPad:** in Safari, first tap **Share → Add to Home Screen**,
