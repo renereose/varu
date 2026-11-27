@@ -1,123 +1,380 @@
-// The web app's install page: downloads a region into the browser's
-// private storage (download.js) and opens it (sw.js serves it under app/).
+// The web app's install wizard, in the installer's steps and look
+// (installer/wizard.html): country, what is included, then install.
+// download.js saves the region in the browser's private storage, and
+// sw.js serves it under app/.
+"use strict";
 
 const STRINGS = {
   en: {
-    title: "Varu on your phone or computer",
-    intro: "Maps, shelters, directions and emergency guidance, saved on this device so they work without the internet. Download once while you are online.",
-    iosFirstTitle: "On iPhone and iPad, add Varu to the Home Screen first",
+    installer: "Installer",
+    lead: "Maps, shelters, directions and emergency guidance, saved on this device so they work without the internet. The internet is needed only once, to download.",
+    loading: "Loading the list of downloads…",
+    retry: "Try again",
+    offlineTitle: "Could not load the list of downloads",
+    offline: "Check the internet connection. Varu needs the internet only once, to download everything.",
+    unsupportedTitle: "This browser cannot keep Varu",
+    unsupported: "It cannot save files for use without the internet. Use a recent Safari, Chrome, Edge or Firefox.",
+    iosFirstTitle: "First, add Varu to the Home Screen",
     iosStep1: "Tap Share {icon}, then Add to Home Screen.",
     iosStep2: "Open Varu from the Home Screen.",
-    iosStep3: "Download there. Safari and the Home Screen app keep separate storage, so a download made here would not reach the app.",
-    gotMap: "Street map with shelters, hospitals, pharmacies, water and more",
-    gotRoute: "Address search, and walking or driving directions",
-    gotGuide: "What to do in an emergency, radio, supplies and your own plan",
-    install: "Download",
-    downloading: "Downloading…",
-    keepOpen: "Keep this page open and the screen on until it finishes. If it stops, open this page again and it carries on.",
-    readyTitle: "{region} is saved on this device",
-    readyText: "Made on {date}. Works without the internet.",
-    updateAvailable: "Made on {date}. A newer version is available.",
+    iosStep3: "The installer opens there. Safari and the Home Screen app keep separate storage, so a download made here would not reach the app.",
+    stepCountry: "Country",
+    stepInclude: "What to include",
+    stepInstall: "Install",
+    stepOf: "Step {n} of {total} ·",
+    theme: "Theme",
+    themeSystem: "Same as the device",
+    themeLight: "Light",
+    themeDark: "Dark",
+    toDark: "Switch to dark",
+    toLight: "Switch to light",
+    countryTitle: "Your country",
+    countryHint: "The whole country is saved: the street map, places and directions everywhere in it.",
+    includeTitle: "What to include",
+    includeHint: "All of this is saved in this browser and works without the internet.",
+    partApp: "The app and the emergency guide",
+    partAppHint: "What to do, radio, supplies and your own plan",
+    partLayers: "Map layers",
+    partLayersHint: "Shelters, hospitals, pharmacies, water, fuel and more",
+    partPlaces: "Address search",
+    partPlacesHint: "Towns, streets and addresses",
+    partRoads: "Directions",
+    partRoadsHint: "On foot or by car, with live turn-by-turn",
+    partMap: "Street map",
+    partMapHint: "The whole country, down to street level",
+    partLibrary: "Library",
+    partLibraryHint: "Wikipedia and reference books: only in the apps and on USB sticks, too large for a browser for now",
+    reviewTitle: "Ready to install",
+    reviewHint: "Check the details, then install.",
+    rowCountry: "Country",
+    rowWhere: "Saved in",
+    rowSize: "Download",
+    rowFree: "Space this browser offers",
+    where: "This browser, on this device",
+    unknown: "Not known",
+    yourVaru: "Your Varu",
+    works: "Works",
+    offlineWorks: "Without the internet",
+    ofFree: "{free} available",
+    noSpace: "There may not be room: this browser offers about {free}, and Varu needs {size}.",
+    keepNote: "Keep this page open and the screen on while it downloads. If it stops, open this page again and it carries on.",
+    updateNote: "A newer version is ready. Only what changed is downloaded.",
+    back: "Back",
+    next: "Next",
+    install: "Install",
+    installing: "Installing…",
+    installingHint: "Saving in this browser, on this device.",
+    of: "{done} of {total}",
+    keepOpen: "Keep this page open and the screen on until it finishes.",
+    failed: "The download stopped: {error}. Install again to carry on where it stopped.",
+    doneTitle: "Varu is ready",
+    doneText: "{region} is saved on this device. Open Varu any time, also without the internet.",
+    doneMade: "{region}, made on {date}. Open Varu any time, also without the internet.",
+    newer: "A newer version is available.",
     notPersisted: "This browser may delete saved sites when the device runs low on space. Adding Varu to the home screen makes that less likely. Check now and then that it still opens.",
     open: "Open Varu",
-    addApp: "Add to home screen",
+    addApp: "Install as an app",
     update: "Update",
     remove: "Remove from this device",
     removeConfirm: "Remove the saved maps and data from this device?",
-    unsupported: "This browser cannot save Varu for offline use. Use a recent Safari, Chrome, Edge or Firefox.",
-    noSpace: "There may not be room: this browser offers about {free}, and Varu needs {size}.",
-    offline: "No internet connection. Varu needs the internet once, to download.",
-    failed: "The download stopped ({error}). Open this page again to carry on.",
-    footer: "Map data © OpenStreetMap contributors. Everything comes from this site, and nothing about you is sent anywhere.",
   },
   et: {
-    title: "Varu sinu telefonis või arvutis",
-    intro: "Kaardid, varjumiskohad, teejuhised ja hädaolukorra juhend, salvestatud sellesse seadmesse, et need töötaksid ilma internetita. Laadi need alla üks kord, kui oled võrgus.",
-    iosFirstTitle: "iPhone'is ja iPadis lisa Varu esmalt avakuvale",
+    installer: "Paigaldaja",
+    lead: "Kaardid, varjumiskohad, teejuhised ja hädaolukorra juhend, salvestatud sellesse seadmesse, et need töötaksid ilma internetita. Internetti on vaja üks kord, allalaadimiseks.",
+    loading: "Laadin allalaadimiste nimekirja…",
+    retry: "Proovi uuesti",
+    offlineTitle: "Allalaadimiste nimekirja ei õnnestunud laadida",
+    offline: "Kontrolli internetiühendust. Varu vajab internetti ainult üks kord, et kõik alla laadida.",
+    unsupportedTitle: "See brauser ei saa Varut hoida",
+    unsupported: "See ei saa faile võrguühenduseta kasutamiseks salvestada. Kasuta uut Safarit, Chrome'i, Edge'i või Firefoxi.",
+    iosFirstTitle: "Lisa Varu esmalt avakuvale",
     iosStep1: "Puuduta nuppu Jaga {icon} ja lisa Varu avakuvale (Home Screen).",
     iosStep2: "Ava Varu avakuvalt.",
-    iosStep3: "Laadi alla seal. Safari ja avakuva rakendus hoiavad andmeid eraldi, nii et siin alla laaditu rakenduseni ei jõuaks.",
-    gotMap: "Tänavakaart varjumiskohtade, haiglate, apteekide, vee ja muuga",
-    gotRoute: "Aadressiotsing ning jala- või autoteekond",
-    gotGuide: "Mida teha hädaolukorras, raadio, varud ja sinu oma plaan",
-    install: "Laadi alla",
-    downloading: "Laadin alla…",
-    keepOpen: "Hoia see leht avatuna ja ekraan sees, kuni allalaadimine lõpeb. Kui see katkeb, ava leht uuesti ja see jätkab.",
-    readyTitle: "{region} on selles seadmes",
-    readyText: "Koostatud {date}. Töötab ilma internetita.",
-    updateAvailable: "Koostatud {date}. Saadaval on uuem versioon.",
+    iosStep3: "Paigaldaja avaneb seal. Safari ja avakuva rakendus hoiavad andmeid eraldi, nii et siin alla laaditu rakenduseni ei jõuaks.",
+    stepCountry: "Riik",
+    stepInclude: "Mida kaasa võtta",
+    stepInstall: "Paigalda",
+    stepOf: "Samm {n}/{total} ·",
+    theme: "Teema",
+    themeSystem: "Nagu seadmes",
+    themeLight: "Hele",
+    themeDark: "Tume",
+    toDark: "Lülita tumedaks",
+    toLight: "Lülita heledaks",
+    countryTitle: "Sinu riik",
+    countryHint: "Salvestatakse kogu riik: tänavakaart, kohad ja teejuhised kõikjal selles.",
+    includeTitle: "Mida kaasa võtta",
+    includeHint: "Kõik see salvestatakse sellesse brauserisse ja töötab ilma internetita.",
+    partApp: "Rakendus ja hädaolukorra juhend",
+    partAppHint: "Mida teha, raadio, varud ja sinu oma plaan",
+    partLayers: "Kaardikihid",
+    partLayersHint: "Varjumiskohad, haiglad, apteegid, vesi, kütus ja muu",
+    partPlaces: "Aadressiotsing",
+    partPlacesHint: "Linnad, tänavad ja aadressid",
+    partRoads: "Teejuhised",
+    partRoadsHint: "Jala või autoga, juhistega pöörete kaupa",
+    partMap: "Tänavakaart",
+    partMapHint: "Kogu riik, tänavate tasemeni",
+    partLibrary: "Raamatukogu",
+    partLibraryHint: "Vikipeedia ja teatmeteosed: ainult rakendustes ja mälupulgal, brauseri jaoks praegu liiga suur",
+    reviewTitle: "Valmis paigaldama",
+    reviewHint: "Kontrolli andmeid ja paigalda.",
+    rowCountry: "Riik",
+    rowWhere: "Salvestatakse",
+    rowSize: "Allalaadimine",
+    rowFree: "Brauseri pakutav ruum",
+    where: "Sellesse brauserisse, selles seadmes",
+    unknown: "Pole teada",
+    yourVaru: "Sinu Varu",
+    works: "Töötab",
+    offlineWorks: "Ilma internetita",
+    ofFree: "{free} vaba",
+    noSpace: "Ruumi ei pruugi jätkuda: brauser pakub umbes {free}, Varu vajab {size}.",
+    keepNote: "Hoia see leht allalaadimise ajal avatuna ja ekraan sees. Kui see katkeb, ava leht uuesti ja see jätkab.",
+    updateNote: "Uuem versioon on valmis. Alla laaditakse ainult see, mis muutus.",
+    back: "Tagasi",
+    next: "Edasi",
+    install: "Paigalda",
+    installing: "Paigaldan…",
+    installingHint: "Salvestan sellesse brauserisse, selles seadmes.",
+    of: "{done} / {total}",
+    keepOpen: "Hoia see leht avatuna ja ekraan sees, kuni see lõpeb.",
+    failed: "Allalaadimine katkes: {error}. Paigalda uuesti, et jätkata sealt, kus see pooleli jäi.",
+    doneTitle: "Varu on valmis",
+    doneText: "{region} on selles seadmes. Ava Varu igal ajal, ka ilma internetita.",
+    doneMade: "{region}, koostatud {date}. Ava Varu igal ajal, ka ilma internetita.",
+    newer: "Saadaval on uuem versioon.",
     notPersisted: "See brauser võib salvestatud saidid kustutada, kui seadmes saab ruum otsa. Varu lisamine avakuvale muudab selle vähem tõenäoliseks. Kontrolli aeg-ajalt, et see ikka avaneb.",
     open: "Ava Varu",
-    addApp: "Lisa avakuvale",
+    addApp: "Paigalda rakendusena",
     update: "Uuenda",
     remove: "Eemalda sellest seadmest",
     removeConfirm: "Kas eemaldada salvestatud kaardid ja andmed sellest seadmest?",
-    unsupported: "See brauser ei saa Varu võrguühenduseta kasutamiseks salvestada. Kasuta uut Safarit, Chrome'i, Edge'i või Firefoxi.",
-    noSpace: "Ruumi ei pruugi jätkuda: brauser pakub umbes {free}, Varu vajab {size}.",
-    offline: "Internetiühendus puudub. Varu vajab internetti üks kord, allalaadimiseks.",
-    failed: "Allalaadimine katkes ({error}). Ava see leht uuesti, et jätkata.",
-    footer: "Kaardiandmed © OpenStreetMapi kaastöötajad. Kõik tuleb sellelt saidilt ja sinu kohta ei saadeta kuhugi midagi.",
   },
 };
-const SHARE_ICON = '<svg class="share" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>';
+
+// Icons drawn inline: Lucide (https://lucide.dev), ISC License, Copyright (c)
+// 2026 Lucide Icons and Contributors; the arrows, check, download, info and
+// search come from Feather, MIT License, Copyright (c) 2013-present Cole
+// Bemis. Permission to use, copy, modify, and/or distribute this software for
+// any purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies. THE
+// SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+// REGARD TO THIS SOFTWARE. "pin" is Varu's own map pin.
+const ICONS = {
+  "pin": '<path fill="currentColor" stroke="none" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>',
+  "arrow-left": '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  "arrow-right": '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  "check": '<path d="M20 6 9 17l-5-5"/>',
+  "circle-alert": '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+  "download": '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+  "history": '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+  "info": '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  "monitor": '<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
+  "moon": '<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>',
+  "refresh-cw": '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  "smartphone": '<rect x="6" y="2" width="12" height="20" rx="2" ry="2"/><path d="M12 18h.01"/>',
+  "sun": '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  "triangle-alert": '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  "wifi-off": '<path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/>',
+  "map": '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
+  "shield": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  "navigation": '<polygon points="3 11 22 2 13 21 11 13 3 11"/>',
+  "search": '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
+  "life-buoy": '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
+  "book-open": '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>',
+  "trash": '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+  "share": '<path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>',
+};
+// The parts of a region, in the order they download (download.js keeps it).
+const PARTS = [
+  { key: "partApp", icon: "life-buoy", has: (p) => p.startsWith("app/") || p === "varu.wasm" || p === "manifest.json" },
+  { key: "partLayers", icon: "shield", has: (p) => p.startsWith("pois/") },
+  { key: "partPlaces", icon: "search", has: (p) => p.endsWith(".places") },
+  { key: "partRoads", icon: "navigation", has: (p) => p.endsWith(".graph") },
+  { key: "partMap", icon: "map", has: (p) => p.endsWith(".pmtiles") },
+];
+const STEPS = ["stepCountry", "stepInclude", "stepInstall"];
 const REGION = "ee";
 const BASE = `data/${REGION}/`;
 
 const $ = (id) => document.getElementById(id);
-// The same remembered language as the app's pages (viewer/js/common.js).
-const stored = (document.cookie.match(/(?:^|; )varu_lang=([^;]*)/) || [])[1];
-let lang = STRINGS[stored] ? stored : navigator.language?.startsWith("et") ? "et" : "en";
-const t = (key, vars = {}) => STRINGS[lang][key].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
-const size = (bytes) => `${new Intl.NumberFormat(lang, { maximumFractionDigits: bytes < 1e9 ? 0 : 1 }).format(bytes < 1e9 ? bytes / 1e6 : bytes / 1e9)} ${bytes < 1e9 ? "MB" : "GB"}`;
-const date = (iso) => new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : lang, { dateStyle: "long" });
+const root = document.documentElement;
 const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-let list = null; // data/<region>/files.json
-let installed = null; // the saved drive's .state, when complete
-let installPrompt = null;
+// ---------- settings kept on this device, shared with the app ----------
+
+function pref(name) {
+  const cookie = document.cookie.match(new RegExp(`(?:^|; )varu_${name}=([^;]*)`));
+  if (cookie) return decodeURIComponent(cookie[1]);
+  try { return localStorage.getItem(`varu.${name}`); } catch { return null; }
+}
+function setPref(name, value) {
+  document.cookie = `varu_${name}=${encodeURIComponent(value)}; max-age=315360000; path=/; SameSite=Lax`;
+  try { localStorage.setItem(`varu.${name}`, value); } catch { /* private mode */ }
+}
+
+let lang = STRINGS[pref("lang")] ? pref("lang") : navigator.language?.startsWith("et") ? "et" : "en";
+const t = (key, vars = {}) => STRINGS[lang][key].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+const size = (bytes) => bytes < 1e9
+  ? `${new Intl.NumberFormat(lang).format(Math.max(1, Math.round(bytes / 1e6)))} MB`
+  : `${new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(bytes / 1e9)} GB`;
+const date = (iso) => new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : lang, { dateStyle: "long" });
+const svg = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] ?? ""}</svg>`;
+function el(tag, props = {}, ...children) {
+  const node = Object.assign(document.createElement(tag), props);
+  node.append(...children.filter((c) => c !== null && c !== undefined));
+  return node;
+}
+const icon = (name) => el("span", { innerHTML: svg(name) }).firstChild;
+function drawIcons() {
+  for (const node of document.querySelectorAll("svg[data-icon]")) node.replaceWith(icon(node.dataset.icon));
+}
+
+// ---------- state ----------
+
+const s = {
+  step: 1,
+  list: null, // data/<region>/files.json
+  installed: null, // the saved drive's state, when an install finished
+  free: null, // bytes this browser offers, if it says
+  prompt: null, // the browser's own "install app" prompt
+};
+const name = () => (s.list ? s.list.name[lang] ?? s.list.name.en : "");
+const total = () => (s.list ? s.list.files.reduce((n, f) => n + f.size, 0) : 0);
+const partSize = (part) => (s.list ? s.list.files.filter((f) => part.has(f.path)).reduce((n, f) => n + f.size, 0) : 0);
+const current = () => s.installed && s.list && s.list.files.every((f) => s.installed.done[f.path] === f.hash);
+
+// ---------- drawing ----------
 
 function draw() {
-  document.documentElement.lang = lang;
+  root.lang = lang;
   for (const node of document.querySelectorAll("[data-t]")) node.textContent = t(node.dataset.t);
-  $("ios-step1").innerHTML = t("iosStep1", { icon: SHARE_ICON });
-  $("langs").replaceChildren(...Object.keys(STRINGS).map((code) => {
-    const b = Object.assign(document.createElement("button"), { type: "button", textContent: code.toUpperCase() });
+  for (const node of document.querySelectorAll("[data-tl]")) {
+    node.setAttribute("aria-label", t(node.dataset.tl));
+    node.title = t(node.dataset.tl);
+  }
+  $("ios-step1").innerHTML = t("iosStep1", { icon: svg("share").replace('class="i"', 'class="i share"') });
+  $("langs").replaceChildren(...["et", "en"].map((code) => {
+    const b = el("button", { type: "button", textContent: code.toUpperCase() });
     b.setAttribute("aria-pressed", String(code === lang));
-    b.addEventListener("click", () => {
-      lang = code;
-      document.cookie = `varu_lang=${code}; max-age=315360000; path=/; SameSite=Lax`;
-      try { localStorage.setItem("varu.lang", code); } catch {}
-      draw();
-    });
+    b.addEventListener("click", () => { lang = code; setPref("lang", code); draw(); });
     return b;
   }));
-  const name = list ? list.name[lang] ?? list.name.en : "";
-  $("region-name").textContent = name;
-  $("region-size").textContent = list ? size(list.total) : "";
-  const current = installed && list && list.files.every((f) => installed.done[f.path] === f.hash);
-  $("ready-title").textContent = t("readyTitle", { region: name || "Varu" });
-  $("ready-text").textContent = installed ? t(current || !list ? "readyText" : "updateAvailable", { date: date(installed.built) }) : "";
-  $("update").hidden = !installed || !list || current;
+  showTheme();
+  if (!s.list) return;
+
+  // Step 1: the country.
+  $("regions").replaceChildren(el("li", { className: "card on" },
+    el("label", { className: "choice" },
+      el("input", { type: "radio", name: "region", checked: true }),
+      el("span", { className: "grow" }, el("strong", { textContent: name() })),
+      el("span", { className: "size", textContent: size(total()) }))));
+
+  // Step 2: what comes with it.
+  $("contents").replaceChildren(
+    ...PARTS.map((part) => el("li", { className: "card" },
+      el("div", { className: "choice" }, icon(part.icon),
+        el("span", { className: "grow" }, el("strong", { textContent: t(part.key) }), el("small", { textContent: t(`${part.key}Hint`) })),
+        el("span", { className: "size", textContent: size(partSize(part)) })))),
+    el("li", { className: "card off" },
+      el("div", { className: "choice" }, icon("book-open"),
+        el("span", { className: "grow" }, el("strong", { textContent: t("partLibrary") }), el("small", { textContent: t("partLibraryHint") })))));
+
+  // Step 3: the review.
+  const row = (iconName, label, value) => el("div", {}, icon(iconName), el("dt", { textContent: t(label) }), el("dd", { textContent: value }));
+  $("review").replaceChildren(
+    row("map", "rowCountry", name()),
+    row(ios ? "smartphone" : "monitor", "rowWhere", t("where")),
+    row("download", "rowSize", size(total())),
+    row("info", "rowFree", s.free === null ? t("unknown") : size(s.free)));
+  const short = s.free !== null && s.free < total() * 1.05;
+  $("space-box").hidden = !short;
+  $("space").textContent = t("noSpace", { free: size(s.free ?? 0), size: size(total()) });
+  $("update-note").hidden = !s.installed;
+
+  // "Your Varu", beside the steps on a wide screen.
+  const fact = (iconName, label, value) => el("div", {}, icon(iconName), el("span", {}, el("dt", { textContent: t(label) }), el("dd", { textContent: value })));
+  const track = el("div", { className: `track${short ? " over" : ""}` }, el("span"));
+  track.firstChild.style.width = `${s.free ? Math.min(100, (100 * total()) / s.free) : 100}%`;
+  $("summary").replaceChildren(
+    el("h2", { textContent: t("yourVaru") }),
+    el("dl", { className: "facts" },
+      fact("map", "rowCountry", name()),
+      fact(ios ? "smartphone" : "monitor", "rowWhere", t("where")),
+      fact("wifi-off", "works", t("offlineWorks"))),
+    el("hr"),
+    el("div", { className: "size-part" },
+      el("div", { className: "size-top" }, el("span", { textContent: t("rowSize") }), el("strong", { textContent: size(total()) })),
+      track,
+      s.free === null ? null : el("span", { textContent: t("ofFree", { free: size(s.free) }) })));
+
+  drawSteps();
+  drawDone();
 }
 
-function show(which) {
-  for (const id of ["choose", "progress-box", "ready"]) $(id).hidden = id !== which;
+function drawSteps() {
+  $("steps").replaceChildren(...STEPS.map((key, i) => {
+    const n = i + 1;
+    const li = el("li", {}, el("span", { className: "dot" }, n < s.step ? icon("check") : String(n)), t(key));
+    li.dataset.state = n < s.step ? "done" : n === s.step ? "now" : "next";
+    return li;
+  }));
+  $("bars").replaceChildren(...STEPS.map((_, i) => el("span", { className: i < s.step ? "on" : "" })));
+  $("step-count").textContent = t("stepOf", { n: s.step, total: STEPS.length });
+  $("step-name").textContent = t(STEPS[s.step - 1]);
+  for (const node of document.querySelectorAll("[data-step]")) node.hidden = Number(node.dataset.step) !== s.step;
+  $("back").style.visibility = s.step === 1 ? "hidden" : "";
+  $("next").hidden = s.step === STEPS.length;
+  $("install").hidden = s.step !== STEPS.length;
 }
 
-function problem(text) {
-  $("problem").textContent = text;
-  $("problem").hidden = !text;
+function drawDone() {
+  if (!s.installed) return;
+  $("done-title").textContent = t("doneTitle");
+  $("done-text").textContent = s.installed.built
+    ? t("doneMade", { region: name() || "Varu", date: date(s.installed.built) })
+    : t("doneText", { region: name() || "Varu" });
+  $("newer").hidden = $("update").hidden = !s.list || current();
 }
 
-async function drive(create = false) {
-  return (await navigator.storage.getDirectory()).getDirectoryHandle("drive", { create });
+// Shows one screen: "setup" (the steps), "progress", "done", "notice", "ios-first".
+function screen(which) {
+  for (const id of ["loading", "setup", "progress", "done", "notice", "ios-first"]) $(id).hidden = id !== which;
+  $("stepper").hidden = $("foot").hidden = which !== "setup";
+  window.scrollTo(0, 0);
 }
 
-// The saved drive's state, if an install finished.
+function notice(title, text) {
+  $("notice-title").textContent = t(title);
+  $("notice-text").textContent = t(text);
+  screen("notice");
+}
+
+// ---------- theme: as in the app (viewer/js/shell.js) ----------
+
+const isDark = () => (root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches);
+function showTheme() {
+  const chosen = root.dataset.theme ?? "system";
+  for (const b of document.querySelectorAll("[data-theme-choice]")) b.setAttribute("aria-pressed", String(b.dataset.themeChoice === chosen));
+  $("theme-toggle").replaceChildren(icon(isDark() ? "sun" : "moon"));
+  $("theme-toggle").setAttribute("aria-label", t(isDark() ? "toLight" : "toDark"));
+}
+function chooseTheme(theme) {
+  setPref("theme", theme);
+  if (theme === "light" || theme === "dark") root.dataset.theme = theme; else delete root.dataset.theme;
+  showTheme();
+}
+for (const b of document.querySelectorAll("[data-theme-choice]")) b.addEventListener("click", () => chooseTheme(b.dataset.themeChoice));
+$("theme-toggle").addEventListener("click", () => chooseTheme(isDark() ? "light" : "dark"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", showTheme);
+
+// ---------- storage ----------
+
 async function readInstalled() {
   try {
-    const dir = await drive();
+    const dir = await (await navigator.storage.getDirectory()).getDirectoryHandle("drive");
     const state = JSON.parse(await (await (await dir.getFileHandle(".state")).getFile()).text());
     if (state.partial || !state.done["manifest.json"]) return null;
     const manifest = JSON.parse(await (await (await dir.getFileHandle("manifest.json")).getFile()).text());
@@ -127,45 +384,75 @@ async function readInstalled() {
   }
 }
 
-async function checkSpace() {
-  const { quota = 0, usage = 0 } = (await navigator.storage.estimate?.()) ?? {};
-  const free = quota - usage;
-  $("space").hidden = !quota || free > list.total * 1.05;
-  $("space").textContent = t("noSpace", { free: size(free), size: size(list.total) });
+async function readFree() {
+  const { quota, usage = 0 } = (await navigator.storage.estimate?.().catch(() => null)) ?? {};
+  // What an update replaces is already counted in usage; leave it be.
+  return quota ? quota - usage : null;
 }
 
-async function download() {
-  problem("");
-  show("progress-box");
+// ---------- installing ----------
+
+function drawProgress(done, path) {
+  const sum = total();
+  $("bar").setAttribute("aria-valuenow", String(done / sum));
+  $("bar").firstElementChild.style.width = `${(100 * done) / sum}%`;
+  $("amount").textContent = t("of", { done: size(done), total: size(sum) });
+  // manifest.json comes last and closes the install: keep the last part going.
+  const now = path === "manifest.json" ? PARTS.length - 1 : Math.max(0, PARTS.findIndex((p) => p.has(path ?? "")));
+  $("current").textContent = t(PARTS[now].key);
+  $("parts").replaceChildren(...PARTS.map((part, i) => {
+    const li = el("li", {}, el("span", { className: "mark" }, i < now ? icon("check") : null), t(part.key),
+      el("span", { className: "size", textContent: size(partSize(part)) }));
+    li.dataset.state = i < now ? "done" : i === now ? "now" : "next";
+    return li;
+  }));
+}
+
+async function install() {
+  $("problem-box").hidden = true;
+  screen("progress");
+  drawProgress(0, "");
   const persisted = await navigator.storage.persist?.().catch(() => false);
   let lock = await navigator.wakeLock?.request("screen").catch(() => null);
-  const relock = async () => { if (document.visibilityState === "visible" && lock?.released) lock = await navigator.wakeLock.request("screen").catch(() => null); };
+  const relock = async () => {
+    if (document.visibilityState === "visible" && lock?.released) lock = await navigator.wakeLock.request("screen").catch(() => null);
+  };
   document.addEventListener("visibilitychange", relock);
+  // In the order of PARTS, so the list fills from the top.
+  const order = (f) => PARTS.findIndex((p) => p.has(f.path));
+  const list = { ...s.list, files: [...s.list.files].sort((a, b) => order(a) - order(b)) };
   const worker = new Worker("download.js");
   worker.postMessage({ base: new URL(BASE, location.href).href, list });
+  let latest = null; // progress comes in per chunk; draw it once a frame
   worker.onmessage = async ({ data }) => {
     if ("done" in data) {
-      $("bar").value = data.done / data.total;
-      $("progress-text").textContent = `${size(data.done)} / ${size(data.total)}`;
+      if (!latest) requestAnimationFrame(() => { drawProgress(latest.done, latest.path); latest = null; });
+      latest = data;
       return;
     }
     worker.terminate();
     document.removeEventListener("visibilitychange", relock);
     lock?.release().catch(() => {});
     if (data.error) {
-      problem(t("failed", { error: data.error }));
-      show("choose");
+      $("problem").textContent = t("failed", { error: data.error });
+      $("problem-box").hidden = false;
+      s.step = STEPS.length;
+      draw();
+      screen("setup");
       return;
     }
     (await navigator.serviceWorker.ready).active?.postMessage("reload");
-    installed = await readInstalled();
+    s.installed = await readInstalled();
     $("not-persisted").hidden = persisted !== false;
     draw();
-    show("ready");
+    screen("done");
   };
 }
 
+// ---------- start ----------
+
 async function main() {
+  drawIcons();
   draw();
   const supported = "serviceWorker" in navigator && navigator.storage?.getDirectory && await new Promise((resolve) => {
     const worker = new Worker("download.js");
@@ -174,52 +461,55 @@ async function main() {
     worker.postMessage({ check: true });
   });
   if (!supported) {
-    $("unsupported").hidden = false;
+    $("retry").hidden = true;
+    notice("unsupportedTitle", "unsupported");
     return;
   }
-  navigator.serviceWorker.register("sw.js").catch((err) => problem(String(err)));
-  installed = await readInstalled();
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+  s.installed = await readInstalled();
   // Opened from the home screen with everything saved: straight to the app.
-  if (installed && standalone) {
+  if (s.installed && standalone) {
     location.replace("app/");
     return;
   }
-  list = await fetch(`${BASE}files.json`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  if (list) list.total = list.files.reduce((n, f) => n + f.size, 0);
+  s.list = await fetch(`${BASE}files.json`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  s.free = await readFree();
   draw();
-  if (installed) {
+  if (s.installed) {
     $("not-persisted").hidden = (await navigator.storage.persisted?.()) !== false;
-    show("ready");
+    screen("done");
     return;
   }
   if (ios && !standalone) {
-    $("ios-first").hidden = false;
+    screen("ios-first");
     return;
   }
-  if (!list) {
-    problem(t("offline"));
+  if (!s.list) {
+    $("retry").hidden = false;
+    notice("offlineTitle", "offline");
     return;
   }
-  await checkSpace();
-  show("choose");
+  screen("setup");
 }
 
-$("install").addEventListener("click", download);
-$("update").addEventListener("click", download);
+$("next").addEventListener("click", () => { s.step++; drawSteps(); window.scrollTo(0, 0); });
+$("back").addEventListener("click", () => { s.step--; drawSteps(); window.scrollTo(0, 0); });
+$("install").addEventListener("click", install);
+$("update").addEventListener("click", () => { s.step = STEPS.length; draw(); screen("setup"); });
+$("retry").addEventListener("click", () => location.reload());
 $("remove").addEventListener("click", async () => {
   if (!confirm(t("removeConfirm"))) return;
   await (await navigator.storage.getDirectory()).removeEntry("drive", { recursive: true }).catch(() => {});
   (await navigator.serviceWorker.ready).active?.postMessage("reload");
-  installed = null;
   location.reload();
 });
 window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
-  installPrompt = event;
+  s.prompt = event;
   $("add-app").hidden = standalone;
 });
 $("add-app").addEventListener("click", async () => {
-  await installPrompt?.prompt();
+  await s.prompt?.prompt();
   $("add-app").hidden = true;
 });
 main();

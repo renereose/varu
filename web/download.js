@@ -7,7 +7,7 @@
 //
 // Message in:  { base, list } (base: the region's folder URL, list: files.json),
 // or { check } to ask whether this browser can do it.
-// Messages out: { done, total } while going, then { finished } or { error }.
+// Messages out: { done, total, path } while going (path: the file it is on), then { finished } or { error }.
 
 onmessage = async ({ data: { base, list, check } }) => {
   // The page asks first: writing files is only offered to workers.
@@ -20,13 +20,15 @@ onmessage = async ({ data: { base, list, check } }) => {
     const files = [...list.files.filter((f) => !last(f)), ...list.files.filter(last)];
     const total = files.reduce((n, f) => n + f.size, 0);
     let done = 0;
-    const tick = () => postMessage({ done, total });
+    let path = "";
+    const tick = () => postMessage({ done, total, path });
 
     // Files of an older install that this one no longer has.
     const wanted = new Set([".state", ...files.map((f) => encodeURIComponent(f.path))]);
     for await (const name of dir.keys()) if (!wanted.has(name)) await dir.removeEntry(name);
 
     for (const file of files) {
+      path = file.path;
       if (state.done[file.path] === file.hash) {
         done += file.size;
         tick();
