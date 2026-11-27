@@ -25,6 +25,9 @@ const STRINGS = {
     whatNow: "What to do now",
     whatNowHint: "Steps, radio, supplies and your plan",
     onDevice: "On this device",
+    heroStoredLive: "This is Varu online: nothing is saved on this device.",
+    heroStoredShortLive: "online",
+    onDeviceLive: "What's in Varu",
     mapsRoute: "Directions on foot or by car.",
     shelters: "{n} shelters",
     sheltersOne: "{n} shelter",
@@ -184,6 +187,9 @@ const STRINGS = {
     whatNow: "Mida teha kohe",
     whatNowHint: "Sammud, raadio, varud ja sinu plaan",
     onDevice: "Selles seadmes",
+    heroStoredLive: "See on Varu veebis: selles seadmes pole midagi salvestatud.",
+    heroStoredShortLive: "veebis",
+    onDeviceLive: "Mis Varus on",
     mapsRoute: "Teejuhised jalgsi või autoga.",
     shelters: "{n} varjumiskohta",
     sheltersOne: "{n} varjumiskoht",
@@ -372,8 +378,12 @@ export function setLanguage(code) {
   setPref("lang", code);
 }
 
+// Varu online (the web app's live/, sw.js marks it): nothing is stored here.
+const LIVE = globalThis.document?.documentElement.hasAttribute("data-live");
+
 /** Translate an interface key. */
 export function t(lang, key) {
+  if (LIVE && `${key}Live` in STRINGS.en) key = `${key}Live`;
   return STRINGS[lang]?.[key] ?? STRINGS.en[key] ?? key;
 }
 
