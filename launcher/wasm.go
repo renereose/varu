@@ -9,16 +9,24 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"runtime/debug"
+	"strings"
 	"syscall/js"
 )
 
+// The version comes from the "version" file beside the drive, not from the
+// build, so a release that leaves the Go code alone builds the same
+// varu.wasm and phones need not download it again (web/build.sh).
 var version = "dev"
 
 func main() {
 	// A browser's WebAssembly memory only grows: collect harder, so loading
 	// the road network and places leaves less behind.
 	debug.SetMemoryLimit(96 << 20)
+	if b, err := os.ReadFile("/drive/version"); err == nil {
+		version = strings.TrimSpace(string(b))
+	}
 	site := NewHandler(Config{Root: "/drive", Version: version})
 	// varuServe(method, url, range) resolves to {status, headers, body}.
 	js.Global().Set("varuServe", js.FuncOf(func(_ js.Value, args []js.Value) any {

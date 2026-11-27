@@ -20,16 +20,19 @@ rm -rf "$site"
 mkdir -p "$site"
 site=$(cd "$site" && pwd) # go build below runs in launcher/
 touch "$site/.nojekyll" # GitHub Pages: serve files as they are
-cp "$here"/index.html "$here"/install.js "$here"/download.js "$here"/sw.js \
+cp "$here"/index.html "$here"/install.js "$here"/download.js "$here"/update.js "$here"/sw.js \
   "$here"/manifest.webmanifest "$here"/*.png "$site"/
 cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$site"/
 wasm="$site/varu.wasm.tmp"
-(cd "$here/../launcher" && GOOS=js GOARCH=wasm go build -trimpath -ldflags "-s -w -X main.version=$version" -o "$wasm" .)
+# Reproducible: no build ID or VCS stamp, and the version goes in its own
+# file, so unchanged Go code gives a byte-identical varu.wasm.
+(cd "$here/../launcher" && GOOS=js GOARCH=wasm go build -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -o "$wasm" .)
+printf '%s\n' "$version" > "$site/version.tmp"
 
-python3 - "$drive" "$site" "$wasm" <<'EOF'
+python3 - "$drive" "$site" "$wasm" "$site/version.tmp" <<'EOF'
 import hashlib, json, os, shutil, sys
 
-drive, site, wasm = sys.argv[1:]
+drive, site, wasm, version = sys.argv[1:]
 PART = 48 * 1024 * 1024
 manifest = json.load(open(os.path.join(drive, "manifest.json")))
 region = manifest["region"]
@@ -44,7 +47,7 @@ for key in ("map", "routing", "places"):
         wanted.append(manifest[key]["file"])
 
 files = []
-for rel, src in [(r, os.path.join(drive, r)) for r in sorted(wanted)] + [("varu.wasm", wasm)]:
+for rel, src in [(r, os.path.join(drive, r)) for r in sorted(wanted)] + [("varu.wasm", wasm), ("version", version)]:
     rel = rel.replace(os.sep, "/")
     size = os.path.getsize(src)
     digest = hashlib.sha256()
@@ -64,6 +67,7 @@ for rel, src in [(r, os.path.join(drive, r)) for r in sorted(wanted)] + [("varu.
                 parts += 1
     files.append({"path": rel, "size": size, "hash": digest.hexdigest()[:16], "parts": parts})
 os.remove(wasm)
+os.remove(version)
 
 name = manifest.get("name", {})
 name = {k: v.split("–")[-1].strip() for k, v in (name.items() if isinstance(name, dict) else [("en", name)])}
