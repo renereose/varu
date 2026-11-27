@@ -31,7 +31,7 @@ const STRINGS = {
     countryTitle: "Your country",
     countryHint: "The whole country is saved: the street map, places and directions everywhere in it.",
     includeTitle: "What to include",
-    includeHint: "All of this is saved in this browser and works without the internet.",
+    includeHint: "Choose what to save in this browser. All of it works without the internet.",
     partApp: "The app and the emergency guide",
     partAppHint: "What to do, radio, supplies and your own plan",
     partLayers: "Map layers",
@@ -41,7 +41,12 @@ const STRINGS = {
     partRoads: "Directions",
     partRoadsHint: "On foot or by car, with live turn-by-turn",
     partMap: "Street map",
-    partMapHint: "The whole country, down to street level",
+    partMapHint: "The whole country down to street level, with shelters and the other map layers",
+    needsMap: "Needs the street map",
+    speed: "{speed}/s",
+    left: "about {n} min left",
+    leftSoon: "under a minute left",
+    change: "Change what is included",
     partLibrary: "Library",
     partLibraryHint: "Wikipedia and reference books: only in the apps and on USB sticks, too large for a browser for now",
     reviewTitle: "Ready to install",
@@ -104,7 +109,7 @@ const STRINGS = {
     countryTitle: "Sinu riik",
     countryHint: "Salvestatakse kogu riik: tänavakaart, kohad ja teejuhised kõikjal selles.",
     includeTitle: "Mida kaasa võtta",
-    includeHint: "Kõik see salvestatakse sellesse brauserisse ja töötab ilma internetita.",
+    includeHint: "Vali, mida sellesse brauserisse salvestada. Kõik see töötab ilma internetita.",
     partApp: "Rakendus ja hädaolukorra juhend",
     partAppHint: "Mida teha, raadio, varud ja sinu oma plaan",
     partLayers: "Kaardikihid",
@@ -114,7 +119,12 @@ const STRINGS = {
     partRoads: "Teejuhised",
     partRoadsHint: "Jala või autoga, juhistega pöörete kaupa",
     partMap: "Tänavakaart",
-    partMapHint: "Kogu riik, tänavate tasemeni",
+    partMapHint: "Kogu riik tänavate tasemeni, koos varjumiskohtade ja teiste kaardikihtidega",
+    needsMap: "Vajab tänavakaarti",
+    speed: "{speed}/s",
+    left: "umbes {n} min jäänud",
+    leftSoon: "alla minuti jäänud",
+    change: "Muuda, mida kaasa võtta",
     partLibrary: "Raamatukogu",
     partLibraryHint: "Vikipeedia ja teatmeteosed: ainult rakendustes ja mälupulgal, brauseri jaoks praegu liiga suur",
     reviewTitle: "Valmis paigaldama",
@@ -183,16 +193,25 @@ const ICONS = {
   "search": '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
   "life-buoy": '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
   "book-open": '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>',
+  "list-checks": '<path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/>',
   "trash": '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
   "share": '<path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>',
 };
-// The parts of a region, in the order they download (download.js keeps it).
+// The parts of a region, in the order they download. choice: what leaves
+// it out in step 2 (download.js knows the same names); none for the app.
 const PARTS = [
-  { key: "partApp", icon: "life-buoy", has: (p) => p.startsWith("app/") || p === "varu.wasm" || p === "manifest.json" },
-  { key: "partLayers", icon: "shield", has: (p) => p.startsWith("pois/") },
-  { key: "partPlaces", icon: "search", has: (p) => p.endsWith(".places") },
-  { key: "partRoads", icon: "navigation", has: (p) => p.endsWith(".graph") },
-  { key: "partMap", icon: "map", has: (p) => p.endsWith(".pmtiles") },
+  { key: "partApp", has: (p) => !/^pois\/|\.(pmtiles|places|graph)$/.test(p) },
+  { key: "partLayers", choice: "map", has: (p) => p.startsWith("pois/") },
+  { key: "partPlaces", choice: "places", has: (p) => p.endsWith(".places") },
+  { key: "partRoads", choice: "roads", has: (p) => p.endsWith(".graph") },
+  { key: "partMap", choice: "map", has: (p) => p.endsWith(".pmtiles") },
+];
+// Step 2. Search and directions are used on the map, so they need it.
+const CHOICES = [
+  { key: "partApp", icon: "life-buoy" },
+  { id: "map", key: "partMap", icon: "map" },
+  { id: "places", key: "partPlaces", icon: "search", needs: "map" },
+  { id: "roads", key: "partRoads", icon: "navigation", needs: "map" },
 ];
 const STEPS = ["stepCountry", "stepInclude", "stepInstall"];
 const REGION = "ee";
@@ -240,10 +259,16 @@ const s = {
   installed: null, // the saved drive's state, when an install finished
   free: null, // bytes this browser offers, if it says
   prompt: null, // the browser's own "install app" prompt
+  without: new Set(), // the parts left out
+  samples: [], // [time, bytes] of the last seconds, for the speed
 };
 const name = () => (s.list ? s.list.name[lang] ?? s.list.name.en : "");
-const total = () => (s.list ? s.list.files.reduce((n, f) => n + f.size, 0) : 0);
-const partSize = (part) => (s.list ? s.list.files.filter((f) => part.has(f.path)).reduce((n, f) => n + f.size, 0) : 0);
+// What is left out, with what needs a part that is left out.
+const without = () => new Set([...s.without, ...CHOICES.filter((c) => c.needs && s.without.has(c.needs)).map((c) => c.id)]);
+const picked = () => PARTS.filter((part) => !without().has(part.choice));
+const bytes = (parts) => (s.list ? s.list.files.filter((f) => parts.some((part) => part.has(f.path))).reduce((n, f) => n + f.size, 0) : 0);
+const total = () => bytes(picked());
+const partSize = (part) => bytes([part]);
 const current = () => s.installed && s.list && s.installed.update === 0;
 
 // ---------- drawing ----------
@@ -274,10 +299,21 @@ function draw() {
 
   // Step 2: what comes with it.
   $("contents").replaceChildren(
-    ...PARTS.map((part) => el("li", { className: "card" },
-      el("div", { className: "choice" }, icon(part.icon),
-        el("span", { className: "grow" }, el("strong", { textContent: t(part.key) }), el("small", { textContent: t(`${part.key}Hint`) })),
-        el("span", { className: "size", textContent: size(partSize(part)) })))),
+    ...CHOICES.map((choice) => {
+      const blocked = choice.needs && s.without.has(choice.needs);
+      const on = !s.without.has(choice.id) && !blocked;
+      const box = el("input", { type: "checkbox", checked: on, disabled: !choice.id || blocked });
+      box.addEventListener("change", () => {
+        if (box.checked) s.without.delete(choice.id);
+        else s.without.add(choice.id);
+        draw();
+      });
+      return el("li", { className: `card${on ? " on" : ""}${blocked ? " off" : ""}` },
+        el("label", { className: "choice" }, box, icon(choice.icon),
+          el("span", { className: "grow" }, el("strong", { textContent: t(choice.key) }),
+            el("small", { textContent: t(blocked ? "needsMap" : `${choice.key}Hint`) })),
+          el("span", { className: "size", textContent: size(bytes(PARTS.filter((part) => part.choice === choice.id))) })));
+    }),
     el("li", { className: "card off" },
       el("div", { className: "choice" }, icon("book-open"),
         el("span", { className: "grow" }, el("strong", { textContent: t("partLibrary") }), el("small", { textContent: t("partLibraryHint") })))));
@@ -396,15 +432,30 @@ async function readFree() {
 
 // ---------- installing ----------
 
+// "12 MB/s · about 3 min left", from the last few seconds.
+function speed(done, sum) {
+  const now = performance.now();
+  s.samples.push([now, done]);
+  while (s.samples.length > 2 && now - s.samples[0][0] > 5000) s.samples.shift();
+  const [then, before] = s.samples[0];
+  if (now - then < 1500) return "";
+  const rate = ((done - before) * 1000) / (now - then);
+  if (rate <= 0) return "";
+  const secs = (sum - done) / rate;
+  const fast = `${new Intl.NumberFormat(lang, { maximumFractionDigits: rate < 1e7 ? 1 : 0 }).format(rate / 1e6)} MB`;
+  return ` · ${t("speed", { speed: fast })} · ${secs < 60 ? t("leftSoon") : t("left", { n: Math.ceil(secs / 60) })}`;
+}
+
 function drawProgress(done, path) {
   const sum = total();
+  const parts = picked();
   $("bar").setAttribute("aria-valuenow", String(done / sum));
   $("bar").firstElementChild.style.width = `${(100 * done) / sum}%`;
-  $("amount").textContent = t("of", { done: size(done), total: size(sum) });
+  $("amount").textContent = t("of", { done: size(done), total: size(sum) }) + speed(done, sum);
   // manifest.json comes last and closes the install: keep the last part going.
-  const now = path === "manifest.json" ? PARTS.length - 1 : Math.max(0, PARTS.findIndex((p) => p.has(path ?? "")));
-  $("current").textContent = t(PARTS[now].key);
-  $("parts").replaceChildren(...PARTS.map((part, i) => {
+  const now = path === "manifest.json" ? parts.length - 1 : Math.max(0, parts.findIndex((p) => p.has(path ?? "")));
+  $("current").textContent = t(parts[now].key);
+  $("parts").replaceChildren(...parts.map((part, i) => {
     const li = el("li", {}, el("span", { className: "mark" }, i < now ? icon("check") : null), t(part.key),
       el("span", { className: "size", textContent: size(partSize(part)) }));
     li.dataset.state = i < now ? "done" : i === now ? "now" : "next";
@@ -425,8 +476,9 @@ async function install() {
   // In the order of PARTS, so the list fills from the top.
   const order = (f) => PARTS.findIndex((p) => p.has(f.path));
   const list = { ...s.list, files: [...s.list.files].sort((a, b) => order(a) - order(b)) };
+  s.samples = [];
   const worker = new Worker("download.js");
-  worker.postMessage({ base: new URL(BASE, location.href).href, list });
+  worker.postMessage({ base: new URL(BASE, location.href).href, list, without: [...without()] });
   let latest = null; // progress comes in per chunk; draw it once a frame
   worker.onmessage = async ({ data }) => {
     if ("done" in data) {
@@ -478,6 +530,7 @@ async function main() {
   }
   s.list = await fetch(`${BASE}files.json`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   if (s.installed && s.list) s.installed = await readInstalled(s.list);
+  s.without = new Set(s.installed?.without ?? []);
   s.free = await readFree();
   draw();
   if (s.installed) {
@@ -501,6 +554,7 @@ $("next").addEventListener("click", () => { s.step++; drawSteps(); window.scroll
 $("back").addEventListener("click", () => { s.step--; drawSteps(); window.scrollTo(0, 0); });
 $("install").addEventListener("click", install);
 $("update").addEventListener("click", () => { s.step = STEPS.length; draw(); screen("setup"); });
+$("change").addEventListener("click", () => { s.step = 2; draw(); screen("setup"); });
 $("retry").addEventListener("click", () => location.reload());
 $("remove").addEventListener("click", async () => {
   if (!confirm(t("removeConfirm"))) return;

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"net"
 	"net/http"
@@ -323,6 +324,29 @@ func TestRouteAPI(t *testing.T) {
 		if res.StatusCode != c.status || !strings.Contains(body, c.want) {
 			t.Errorf("%s: %d %s; want %d with %s", c.query, res.StatusCode, body, c.status, c.want)
 		}
+	}
+}
+
+// Parts whose files are missing (a web app install without the map) are
+// left out of the manifest the pages read.
+func TestManifestLeavesOutMissingParts(t *testing.T) {
+	root := newDrive(t)
+	manifest := `{"schema":1,"map":{"file":"maps/ee.pmtiles"},"routing":{"file":"maps/ee.graph"},` +
+		`"places":{"file":"maps/ee.places"},"pois":[{"id":"hospital","file":"pois/hospital.geojson"},{"id":"water","file":"pois/water.geojson"}]}`
+	if err := os.WriteFile(filepath.Join(root, "manifest.json"), []byte(manifest), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	_, body := get(t, NewHandler(Config{Root: root}), "/manifest.json", nil)
+	var m struct {
+		Map, Routing, Places *struct{ File string }
+		Pois                 []struct{ ID string }
+		Schema               int
+	}
+	if err := json.Unmarshal([]byte(body), &m); err != nil {
+		t.Fatal(err)
+	}
+	if m.Map == nil || m.Routing != nil || m.Places != nil || len(m.Pois) != 1 || m.Pois[0].ID != "hospital" || m.Schema != 1 {
+		t.Errorf("manifest: %s", body)
 	}
 }
 

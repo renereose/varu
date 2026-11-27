@@ -14,7 +14,7 @@
       available: "A new version of Varu is ready ({size}).",
       update: "Update",
       later: "Later",
-      updating: "Updating Varu… {done} of {total}",
+      updating: "Updating Varu… {done} of {total}{speed}",
       done: "Varu is updated.",
       reload: "Reload",
       failed: "The update stopped. It carries on the next time Varu opens with internet.",
@@ -23,7 +23,7 @@
       available: "Varu uus versioon on valmis ({size}).",
       update: "Uuenda",
       later: "Hiljem",
-      updating: "Uuendan Varut… {done} / {total}",
+      updating: "Uuendan Varut… {done} / {total}{speed}",
       done: "Varu on uuendatud.",
       reload: "Laadi uuesti",
       failed: "Uuendamine katkes. See jätkub, kui avad Varu järgmine kord internetiga.",
@@ -97,13 +97,22 @@
       }
     }
     let drawn = 0;
+    const samples = []; // [time, bytes] of the last seconds
+    const rate = (fetched) => {
+      const now = performance.now();
+      samples.push([now, fetched]);
+      while (samples.length > 2 && now - samples[0][0] > 5000) samples.shift();
+      const perSec = ((fetched - samples[0][1]) * 1000) / (now - samples[0][0] || 1);
+      return now - samples[0][0] < 1500 || perSec <= 0 ? ""
+        : ` · ${new Intl.NumberFormat(lang(), { maximumFractionDigits: perSec < 1e7 ? 1 : 0 }).format(perSec / 1e6)} MB/s`;
+    };
     worker.onmessage = ({ data }) => {
       if ("done" in data) {
         // Only what is fetched counts: files kept from before are counted done at once.
         const fetched = Math.min(update, Math.max(0, data.done - (data.total - update)));
         if (fetched - drawn < 1e6 && fetched < update) return;
         drawn = fetched;
-        return show(t("updating", { done: size(fetched), total: size(update) }), [], fetched / update);
+        return show(t("updating", { done: size(fetched), total: size(update), speed: rate(fetched) }), [], fetched / update);
       }
       worker.terminate();
       if (data.error) {

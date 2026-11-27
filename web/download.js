@@ -3,21 +3,32 @@
 //
 // Each file is saved under its path and hash ("app%2Findex.html~1a2b…"), so
 // a new version is written beside the old one and nothing in use changes
-// under the app's feet. ".state" names the files of the version in use,
-// and is replaced in one write when a new version is complete: that is
-// the switch-over. ".next" records an install or update under way, so an
-// interrupted one carries on at the part it was on. Files no version
-// names are removed at the next "status".
+// under the app's feet. ".state" names the files of the version in use and
+// the parts left out, and is replaced in one write when a new version is
+// complete: that is the switch-over. ".next" records an install or update
+// under way, so an interrupted one carries on where it was. Files no
+// version names are removed at the next "status".
 //
 // Messages in:
 //   { check }          can this browser do it? -> { supported }
-//   { status, list }   -> { installed, built, update (bytes to fetch), pending,
-//                         migrated (files were renamed: sw.js must read them again) }
-//   { base, list }     install or update from base (the region's folder URL)
+//   { status, list }   -> { installed, built, without, update (bytes to fetch),
+//                         pending, migrated (files were renamed: sw.js must read them again) }
+//   { base, list, without }  install or update from base (the region's folder
+//                      URL), leaving out the parts in without (as before if not given)
 //                      -> { done, total, path } while going, then { finished } or { error }
 // list is the region's files.json.
 
 const name = (path, hash) => `${encodeURIComponent(path)}~${hash}`;
+// The parts a person may leave out (install.js offers them).
+const PARTS = {
+  map: (path) => path.endsWith(".pmtiles") || path.startsWith("pois/"),
+  places: (path) => path.endsWith(".places"),
+  roads: (path) => path.endsWith(".graph"),
+};
+const wanted = (list, without) => (list?.files ?? []).filter((f) => !without.some((part) => PARTS[part]?.(f.path)));
+// Small files are fetched this many at a time: an app has hundreds, and
+// each costs a round trip.
+const AT_ONCE = 8;
 let migrated = false;
 
 onmessage = async ({ data }) => {
@@ -28,7 +39,7 @@ onmessage = async ({ data }) => {
   try {
     const dir = await (await navigator.storage.getDirectory()).getDirectoryHandle("drive", { create: true });
     if (data.status) postMessage(await status(dir, data.list));
-    else await download(dir, data.base, data.list);
+    else await download(dir, data.base, data.list, data.without);
   } catch (err) {
     postMessage({ error: String(err?.message ?? err) });
   }
@@ -39,43 +50,55 @@ async function status(dir, list) {
   const next = await readJSON(dir, ".next");
   // Clear out what no version names any more (the last update's leftovers).
   const keep = new Set([".state", ".next"]);
-  for (const files of [state.files, next?.files ?? {}]) for (const [p, h] of Object.entries(files)) keep.add(name(p, h));
-  if (next?.partial) keep.add(name(next.partial.path, next.partial.hash));
+  for (const files of [state.files, next?.files ?? {}, next?.partials ?? {}]) {
+    for (const [p, h] of Object.entries(files)) keep.add(name(p, h));
+  }
   for await (const entry of dir.keys()) if (!keep.has(entry)) await dir.removeEntry(entry).catch(() => {});
-  const update = (list?.files ?? []).filter((f) => state.files[f.path] !== f.hash).reduce((n, f) => n + f.size, 0);
-  return { installed: !!state.files["manifest.json"], built: state.built ?? null, update, pending: !!next, migrated };
+  const without = state.without ?? [];
+  const update = wanted(list, without).filter((f) => state.files[f.path] !== f.hash).reduce((n, f) => n + f.size, 0);
+  return { installed: !!state.files["manifest.json"], built: state.built ?? null, without, update, pending: !!next, migrated };
 }
 
-async function download(dir, base, list) {
+async function download(dir, base, list, without) {
   const state = await readState(dir);
-  const next = (await readJSON(dir, ".next")) ?? { files: {}, partial: null };
+  without ??= state.without ?? [];
+  const next = (await readJSON(dir, ".next")) ?? {};
+  next.files ??= {};
+  next.partials ??= {}; // large files part-way done: path -> hash
+  let saving = Promise.resolve();
+  const save = () => (saving = saving.then(() => writeJSON(dir, ".next", next)));
   const last = (f) => f.path === "manifest.json";
-  const files = [...list.files.filter((f) => !last(f)), ...list.files.filter(last)];
+  const files = wanted(list, without);
+  const order = [...files.filter((f) => !last(f)), ...files.filter(last)];
   const total = files.reduce((n, f) => n + f.size, 0);
   let done = 0;
-  let path = "";
-  const tick = () => postMessage({ done, total, path });
+  // Progress names the first file in order not yet finished.
+  const finished = new Set();
+  let first = 0;
+  const tick = () => {
+    while (first < order.length && finished.has(order[first].path)) first++;
+    postMessage({ done, total, path: order[Math.min(first, order.length - 1)].path });
+  };
 
-  for (const file of files) {
-    path = file.path;
+  async function fetchFile(file) {
     const fileName = name(file.path, file.hash);
     if ((state.files[file.path] === file.hash || next.files[file.path] === file.hash) && await sizeOf(dir, fileName) === file.size) {
       done += file.size;
-      tick();
-      continue;
+      return;
     }
     const access = await (await dir.getFileHandle(fileName, { create: true })).createSyncAccessHandle();
     try {
       const parts = file.parts || 1;
-      // Carry on at the first part not yet complete, if it is this same file.
-      const same = next.partial?.path === file.path && next.partial.hash === file.hash;
-      const first = same ? Math.min(Math.floor(access.getSize() / list.partSize), parts - 1) : 0;
-      access.truncate(first * list.partSize);
-      done += first * list.partSize;
-      tick();
-      next.partial = { path: file.path, hash: file.hash };
-      await writeJSON(dir, ".next", next);
-      for (let i = first; i < parts; i++) {
+      // A large file carries on at its first part not yet complete.
+      const from = file.parts && next.partials[file.path] === file.hash
+        ? Math.min(Math.floor(access.getSize() / list.partSize), parts - 1) : 0;
+      access.truncate(from * list.partSize);
+      done += from * list.partSize;
+      if (file.parts) {
+        next.partials[file.path] = file.hash;
+        await save();
+      }
+      for (let i = from; i < parts; i++) {
         const url = `${base}${file.path.split("/").map(encodeURIComponent).join("/")}${file.parts ? `.${i}` : ""}`;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`${res.status} for ${file.path}`);
@@ -97,13 +120,30 @@ async function download(dir, base, list) {
       access.close();
     }
     next.files[file.path] = file.hash;
-    next.partial = null;
-    await writeJSON(dir, ".next", next);
+    delete next.partials[file.path];
+    await save();
   }
 
+  // Everything but the manifest, a few at a time in order; then the manifest.
+  const queue = order.filter((f) => !last(f));
+  await Promise.all(Array.from({ length: AT_ONCE }, async () => {
+    for (let file; (file = queue.shift());) {
+      await fetchFile(file);
+      finished.add(file.path);
+      tick();
+    }
+  }));
+  for (const file of order.filter(last)) {
+    await fetchFile(file);
+    finished.add(file.path);
+    tick();
+  }
+  await saving;
+
   // Every file is there: switch over in one write.
-  const manifest = JSON.parse(await (await (await dir.getFileHandle(name("manifest.json", files.at(-1).hash))).getFile()).text());
-  await writeJSON(dir, ".state", { files: Object.fromEntries(files.map((f) => [f.path, f.hash])), built: manifest.built ?? null });
+  const manifestFile = files.find(last);
+  const manifest = JSON.parse(await (await (await dir.getFileHandle(name("manifest.json", manifestFile.hash))).getFile()).text());
+  await writeJSON(dir, ".state", { files: Object.fromEntries(files.map((f) => [f.path, f.hash])), without, built: manifest.built ?? null });
   await dir.removeEntry(".next").catch(() => {});
   postMessage({ finished: true });
 }
