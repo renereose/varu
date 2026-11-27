@@ -22,7 +22,7 @@ site=$(cd "$site" && pwd) # go build below runs in launcher/
 touch "$site/.nojekyll" # GitHub Pages: serve files as they are
 cp "$here"/index.html "$here"/install.js "$here"/download.js "$here"/update.js "$here"/sw.js \
   "$here"/manifest.webmanifest "$here"/*.png "$site"/
-mkdir "$site/live" && cp "$here/live.html" "$site/live/index.html"
+mkdir "$site/live" && cp "$here/live.html" "$site/live/index.html" && cp "$here/live.html" "$site/404.html"
 cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$site"/
 wasm="$site/varu.wasm.tmp"
 # Reproducible: no build ID or VCS stamp, and the version goes in its own

@@ -264,6 +264,8 @@ added to the home screen.
   large ones in 256 KB pieces with HTTP Range requests. Nothing is saved.
   The pages get `data-live`, so they say "online" instead of "stored on
   this device", and a banner that links to the install page.
+  `live.html` is also the site's `404.html`, so a link to a page under
+  `live/` in a browser that has not run Varu yet starts it and opens that page.
 
 Not in the web app: the library (too large for browser storage, for now)
 and sharing over Wi-Fi (a browser can't run a server). Browsers may clear
