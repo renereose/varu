@@ -79,9 +79,15 @@ and needs the internet only once, to download everything.
 | WikiMed medical encyclopedia (English) | 2.0 GB |
 | Post Disaster Resource Library (English) | 0.6 GB |
 
-> 💡 **iPhone?** There's no iPhone app yet. An iPhone can still use Varu
-> over Wi-Fi when a computer or Android phone [shares it](#sharing-with-other-phones),
-> or from a [Raspberry Pi on your Wi-Fi](#-raspberry-pi).
+> 💡 **iPhone or iPad?** There's no App Store app, but Varu installs from
+> its web page: open **[renereose.github.io/varu](https://renereose.github.io/varu/)**
+> in Safari, tap Share → Add to Home Screen, then open Varu from the Home
+> Screen and download it there. It has the map, search, directions and the
+> emergency guide, not the library. The web app is new and not yet tested on
+> a real iPhone. It also works in Chrome or Edge on a computer or Android
+> phone. An iPhone can also use Varu over Wi-Fi when a computer or Android
+> phone [shares it](#sharing-with-other-phones), or from a
+> [Raspberry Pi on your Wi-Fi](#-raspberry-pi).
 
 ---
 

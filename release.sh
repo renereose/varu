@@ -1,6 +1,7 @@
 #!/bin/sh
 # Builds every release file on this Mac and publishes them as a GitHub
-# release; no GitHub Actions involved.
+# release, and the web app on GitHub Pages (web/publish.sh); no workflows
+# of our own.
 #
 #   sh release.sh v0.1.2              build, tag and publish
 #   sh release.sh v0.1.2 --dry-run    build only; the files end up in dist/
@@ -59,6 +60,8 @@ done
 # books just indexed, which sit in the release's download cache.
 (cd launcher && VARU_ZIM_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/varu/zim" go test -count=1 -run TestTopics .)
 ANDROID_KEYSTORE=$keystore ANDROID_KEYSTORE_PASS=$pass make android VERSION="$version"
+# The web app (for iPhones and browsers), from the first country's drive.
+sh web/build.sh "build/${regions%% *}" build/web-site "$version"
 
 if [ -n "$dry" ]; then
   echo
@@ -78,3 +81,4 @@ gh release create "$version" dist/* --verify-tag --title "Varu $version" --notes
 
 The other files are what the app downloads."
 echo "Published $version"
+sh web/publish.sh build/web-site "$version"

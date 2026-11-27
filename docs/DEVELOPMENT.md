@@ -155,6 +155,13 @@ again instead of being downloaded and built anew. Anything missing there is
 still built. They are uploaded with the release all the same, because each
 app downloads from its own release.
 
+After the release, the web app is built from the first country's drive
+and published on GitHub Pages (`web/publish.sh`): the `gh-pages` branch is
+replaced by one commit with just the site, and GitHub serves it at
+https://renereose.github.io/varu/. GitHub publishes each push with its own
+"pages build and deployment" job; there is no workflow file in this
+repository.
+
 It runs the tests, builds each country's drive with a fresh map and places
 (without the library), packages it with `builder/release.py`, builds each
 library book's search index (the books are downloaded once into
