@@ -378,6 +378,15 @@ export function setLanguage(code) {
   setPref("lang", code);
 }
 
+// The pages carry <base href>, which makes href="#x" point at the base (the
+// start page) instead of this page: keep such links on the page they are on.
+globalThis.document?.addEventListener("click", (event) => {
+  const a = event.target.closest?.('a[href^="#"]');
+  if (!a || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  location.hash = a.getAttribute("href");
+});
+
 // Varu online (the web app's live/, sw.js marks it): nothing is stored here.
 const LIVE = globalThis.document?.documentElement.hasAttribute("data-live");
 
